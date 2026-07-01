@@ -331,23 +331,18 @@ def polyfit_plot(ax, x, y, color, *, deg=1, lowess_frac=None):
     #     ax.plot(sorted_x, trend(sorted_x), color=color, linestyle="--", linewidth=1.5)
     x_np = np.array(x, dtype=float)
     y_np = np.array(y, dtype=float)
-    mask = (~np.isnan(x_np)) & (~np.isnan(y_np))
+    mask = np.isfinite(x_np) & np.isfinite(y_np)   # NaN と inf を除外
     x_m, y_m = x_np[mask], y_np[mask]
     if len(x_m) < 2:
         return  # nothing to fit
-    if lowess_frac is not None:
-        # Fallback to polynomial fit when LOWESS dependencies are unavailable.
+    try:
         coeffs = np.polyfit(x_m, y_m, deg)
         poly = np.poly1d(coeffs)
         xs = np.linspace(x_m.min(), x_m.max(), 200)
         ax.plot(xs, poly(xs), color=color, linestyle="--", linewidth=1.5)
-    else:
-        # ordinary polyfit
-        coeffs = np.polyfit(x_m, y_m, deg)
-        poly = np.poly1d(coeffs)
-        xs = np.linspace(x_m.min(), x_m.max(), 200)
-        ax.plot(xs, poly(xs),
-                color=color, linestyle="--", linewidth=1.5)
+    except (np.linalg.LinAlgError, ValueError):
+        # 退化データ（点が少ない/分散が無い/収束せず）ではトレンド線を省略
+        return
 
 def plot_ctrl_attr_vs_metrics(predictions, metric_key, output_dir):
 
