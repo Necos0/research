@@ -31,6 +31,7 @@ dependencies:
       - safetensors
       # --- 評価・可読性指標（Metrics.py / sft_eval.py が使用） ---
       - sacrebleu
+      - sacremoses     # evaluate の SARI が要求
       - rouge-score
       - bert-score
       - evaluate
