@@ -291,7 +291,7 @@ def train_model(model, tokenizer, train_dataset, val_dataset, args, output_dir, 
         train_dataset=train_dataset,
         eval_dataset=val_dataset,
         args=training_args,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,   # transformers>=5 では tokenizer= は廃止
         callbacks=[PredictionLoggerCallback(
                         tokenizer=tokenizer, 
                         val_dataset=val_dataset, 

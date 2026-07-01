@@ -22,10 +22,11 @@ dependencies:
   - tqdm
   - pip
   - pip:
-      # --- HF スタック（学習・推論の本体） ---
-      - transformers
-      - datasets
-      - accelerate
+      # --- HF スタック（学習・推論の本体）。著者版に pin（transformers 5.x は API 非互換）---
+      - transformers==4.48.3
+      - tokenizers==0.21.0
+      - datasets==3.3.0
+      - accelerate==1.12.0
       - huggingface-hub
       - safetensors
       # --- 評価・可読性指標（Metrics.py / sft_eval.py が使用） ---
