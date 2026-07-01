@@ -1,0 +1,59 @@
+{
+    "id": "unique-instance-id",
+    "source": {
+      "dataset_name": "string",
+      "domain": "string",
+      "language": "string"
+    },
+    "alignment": {
+      "level": "string",
+      "source_text": "string",
+      "multiple_simplifications":"bool",
+      "simplified_text_1": "sstring",
+      "simplified_text_2": "string",
+      "simplified_text_3": "string",
+      "simplified_text_4": "string",
+      "simplified_text_5": "string",
+      "simplified_text_6": "string",
+      "simplified_text_7": "string",
+      "simplified_text_8": "string",
+      "simplified_text_9": "string",
+      "simplified_text_10": "string"
+    },
+    "simplification": {
+      "dimensions": {
+        "linguistic": {
+          "lexical": "bool",
+          "syntactic": "bool",
+          "other": "bool"
+        },
+        "information": {
+          "explanation": "bool",
+          "condensation": "bool",
+          "omission": "bool",
+          "other": "bool"
+        }
+      },
+      "control_attributes": {
+        "readability": "float",
+        "length_ratio": "float",
+        "vocabulary_level": "string",
+        "grade_level":"int",
+        "other": "string"
+      }
+    },
+    "annotations": {
+      "human": "bool",
+      "automatic": "bool",
+      "evaluation_scores": {
+        "bleu": "float",
+        "rouge": "float",
+        "sari":"float",
+        "other": {
+          "metric_name": "float"
+        }
+      }
+    },
+    "additional_comments": "string"
+  }
+  

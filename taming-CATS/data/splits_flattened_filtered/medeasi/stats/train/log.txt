@@ -1,0 +1,22 @@
+num_samples: 667
+source_metrics: {'FKGL': 15.0, 'FRE': 26.1, 'ARI': 16.4, 'Dale-Chall': 12.3, 'char_count': 154.9, 'word_count': 27.2, 'sentence_count': 1.1}
+target_metrics: {'FKGL': 10.4, 'FRE': 50.7, 'ARI': 11.3, 'Dale-Chall': 10.3, 'char_count': 129.0, 'word_count': 24.3, 'sentence_count': 1.2}
+combined_metrics: None
+
+SOURCE:
+FKGL: 15.0
+FRE: 26.1
+ARI: 16.4
+Dale-Chall: 12.3
+char_count: 154.9
+word_count: 27.2
+sentence_count: 1.1
+
+TARGET:
+FKGL: 10.4
+FRE: 50.7
+ARI: 11.3
+Dale-Chall: 10.3
+char_count: 129.0
+word_count: 24.3
+sentence_count: 1.2

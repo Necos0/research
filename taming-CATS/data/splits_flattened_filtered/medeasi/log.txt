@@ -1,0 +1,26 @@
+Input file: ./../data/splits_flattened/medeasi/train.jsonl
+Total instances: 1384
+Examples kept (all metrics decrease: ['FKGL', 'ARI', 'Dale-Chall']): 667
+Examples removed: 717
+Removed due to FKGL not decreasing: 460
+Removed due to ARI not decreasing: 426
+Removed due to Dale-Chall not decreasing: 461
+--------------------------------------------------
+Input file: ./../data/splits_flattened/medeasi/val.jsonl
+Total instances: 172
+Examples kept (all metrics decrease: ['FKGL', 'ARI', 'Dale-Chall']): 87
+Examples removed: 85
+Removed due to FKGL not decreasing: 50
+Removed due to ARI not decreasing: 49
+Removed due to Dale-Chall not decreasing: 58
+--------------------------------------------------
+Input file: ./../data/splits_flattened/medeasi/test.jsonl
+Total instances: 188
+Examples kept (all metrics decrease: ['FKGL', 'ARI', 'Dale-Chall']): 98
+Examples removed: 90
+Removed due to FKGL not decreasing: 57
+Removed due to ARI not decreasing: 56
+Removed due to Dale-Chall not decreasing: 54
+--------------------------------------------------
+Filtering completed for dataset: medeasi
+

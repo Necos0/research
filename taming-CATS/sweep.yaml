@@ -1,0 +1,36 @@
+method: grid  # "bayesian", "random", "grid"
+
+metric:
+  name: eval_loss
+  goal: minimize
+
+parameters:
+  weight_decay:
+    values: [0.0, 0.01, 0.1]
+  learning_rate:
+    values: [1e-6, 5e-6, 1e-5, 5e-5]
+  max_grad_norm:
+    values: [0.5, 1.0, 2.0]
+
+command:
+  - ${env}
+  - python
+  - src/sft_finetune.py
+  - --model_class=auto
+  - --model_family=base
+  - --model_name=Qwen/Qwen2.5-1.5B-Instruct
+  - --dataset_name=Med-EASi_hq
+  - --metric_name=FKGL
+  - --epochs=3
+  - --max_length=512
+  - --batch_size=4
+  - --warmup_steps=30
+  - --gradient_accumulation_steps=4
+  - --user_prompt_id=token_explanation
+  - --wandb_project_name=thesis-SFT
+  - --wandb_entity=shtosti
+  - --control_tokens=data/prompts/control_tokens.json
+  - --system_prompts=data/prompts/system_prompts.json
+  - --user_prompts=data/prompts/user_prompts.json
+  - --metric_mapping=data/metric_mapping.json
+  - ${args}

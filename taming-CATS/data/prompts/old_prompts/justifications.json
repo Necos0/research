@@ -1,0 +1,9 @@
+{
+    "justification": {
+        "target_group": "Exlpain why you simplify the way you do for this group, adding an explanation starting with the special token <EXPLANATION> following the generated simplification.",
+        "compression": "Calculate the compression rate and report it, starting with the special token <EXPLANATION> following the generated simplification.",
+        "fkgl": "Calculate the Flesh-Kincaid Grade Level for both input and simpified output, starting with the special token <EXPLANATION> following the generated simplification.",
+        "cefr": "Estimate the CEFR (Common European Framework for Languages) level for both input and simpified output, starting with the special token <EXPLANATION> following the generated simplification.",
+        "explanation": "Exlpain why you simplify the way you do, starting with the special token <EXPLANATION> following the generated simplification."
+      }
+}

@@ -1,0 +1,42 @@
+{
+    "medeasi": {
+        "total": 1744,
+        "kept": 852,
+        "removed": 892,
+        "per_metric_removals": {
+            "FKGL": 567,
+            "ARI": 531,
+            "Dale-Chall": 573
+        }
+    },
+    "simpa": {
+        "total": 2473,
+        "kept": 955,
+        "removed": 1518,
+        "per_metric_removals": {
+            "FKGL": 1178,
+            "ARI": 915,
+            "Dale-Chall": 1175
+        }
+    },
+    "wikilarge_ori_splitwise": {
+        "total": 1855,
+        "kept": 802,
+        "removed": 1053,
+        "per_metric_removals": {
+            "FKGL": 564,
+            "ARI": 522,
+            "Dale-Chall": 803
+        }
+    },
+    "newsela": {
+        "total": 7077,
+        "kept": 6625,
+        "removed": 452,
+        "per_metric_removals": {
+            "FKGL": 264,
+            "ARI": 210,
+            "Dale-Chall": 236
+        }
+    }
+}

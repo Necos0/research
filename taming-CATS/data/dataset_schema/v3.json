@@ -1,0 +1,50 @@
+{
+    "global_id": "unique-instance-id",
+    "source_text": "string",
+    "metadata": {
+        "dataset": "string",
+        "domain": "medicine/science/news/etc. (string)",
+        "language": "en/es/etc. (string)",
+        "annotation": "human/automatic (string)",
+        "level": "sentence/paragraph/text (string)"
+    },
+    "simplifications": [
+        {
+            "simplification_text": "string",
+            "simplification_version": 1,
+            "CEFR_level": "string",
+            "grade_level": 1,
+            "control_attributes": {
+                "LevSim": 0.0,
+                "NbChar": 0.0
+            },
+            "simplification_dimensions": {
+                "linguistic": {
+                    "lexical": true,
+                    "syntactic": true,
+                    "not_specified": true
+                },
+                "information": {
+                    "explicitation": false,
+                    "omission": false,
+                    "generalization": false
+                }
+            },
+            "target_metrics": {
+                "CEFR": "string",
+                "FRE": 0.0,
+                "ARI": 0.0,
+                "FKGL": 0.0,
+                "Dale-Chall": 0.0,
+                "charcount_ratio": 0.0,
+                "alphanumcount_ratio": 0.0,
+                "wordcount_ratio": 0.0,
+                "sentencecount_ratio": 0.0,
+                "BLEU": 0.0,
+                "ROUGE": 0.0,
+                "SARI": 0.0,
+                "BERTScore": 0.0
+            }
+        }
+    ]
+}

@@ -1,0 +1,44 @@
+{
+    "LAYPERSON": {
+        "no_token": {
+            "description": "prompt without a control token, target group specified in plain text",
+            "prompt": "Simplify the following text for laypeople with no domain knowledge: \n\n{TEXT}."
+        },
+        "token": {
+            "description": "prompt with a control token",
+            "prompt": "Simplify the following text for the target group specified in the control token prepended to the text: \n\n<TARGET_GROUP=LAYPERSON> {TEXT}."
+        },
+        "token_explanation": {
+            "description": "prompt with a control token and an explanation",
+            "prompt": "Simplify the following text for the target group specified in the control token prepended to the text: \n\n<TARGET_GROUP=LAYPERSON> {TEXT}. \n\n{EXPLANATION}."
+        }
+    },
+    "INTELLECTUAL_IMPAIRMENT": {
+        "no_token": {
+            "description": "prompt without a control token, target group specified in plain text",
+            "prompt": "Simplify the following text for persons with intellectual impairments: \n\n{TEXT}."
+        },
+        "token": {
+            "description": "prompt with a control token",
+            "prompt": "Simplify the following text for the target group specified in the control token prepended to the text: \n\n<TARGET_GROUP=INTELLECTUAL_IMPAIRMENT> {TEXT}."
+        },
+        "token_explanation": {
+            "description": "prompt with a control token and an explanation",
+            "prompt": "Simplify the following text for the target group specified in the control token prepended to the text: \n\n<TARGET_GROUP=INTELLECTUAL_IMPAIRMENT> {TEXT}. \n\n{EXPLANATION}."
+        }
+    },
+    "LEARNING_DISORDER": {
+        "no_token": {
+            "description": "prompt without a control token, target group specified in plain text",
+            "prompt": "Simplify the following text for persons with learning disorders: \n\n{TEXT}."
+        },
+        "token": {
+            "description": "prompt with a control token",
+            "prompt": "Simplify the following text for the target group specified in the control token prepended to the text: \n\n<TARGET_GROUP=LEARNING_DISORDER> {TEXT}."
+        },
+        "token_explanation": {
+            "description": "prompt with a control token and an explanation",
+            "prompt": "Simplify the following text for the target group specified in the control token prepended to the text: \n\n<TARGET_GROUP=LEARNING_DISORDER> {TEXT}. \n\n{EXPLANATION}."
+        }
+    }
+}

@@ -1,0 +1,134 @@
+{
+  "ARI": [
+    {
+    "id": "no_token",
+    "description": "prompt without a control token, simply with a target ARI value",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Automated Readability Index (ARI) score is approximately equal to {TARGET_VALUE}. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token",
+    "description": "prompt with a control token, which will be replaced with the target ARI value",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Automated Readability Index (ARI) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the ARI value of the source text. \nSOURCE TEXT: <ARI={SOURCE_VALUE}> {TEXT}"
+    },
+    {
+    "id": "token_explanation",
+    "description": "prompt with a control token and an explanation",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Automated Readability Index (ARI) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the ARI value of the source text. \nSOURCE TEXT: <ARI={SOURCE_VALUE}> {TEXT}\nEXPLANATION: {EXPLANATION}"
+    },
+    {
+    "id": "token_explanation_examples",
+    "description": "prompt with a control token, an explanation, and examples",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Automated Readability Index (ARI) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the ARI value of the source text. \nSOURCE TEXT: <ARI={SOURCE_VALUE}> {TEXT}\nEXPLANATION: {EXPLANATION} \nEXAMPLES: \n- {EXAMPLE_1} \n-{EXAMPLE_2} \n- {EXAMPLE_3}"
+    }
+  ],
+  "FKGL": [
+    {
+    "id": "no_token",
+    "description": "prompt without a control token, simply with a target FKGL value",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to {VALUE}. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token",
+    "description": "prompt with a control token, which will be replaced with the target FKGL value",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. The control token prepended to the source text indicates BLABLA of the source text. \nSOURCE TEXT: <FKGL={SOURCE_VALUE}> {TEXT}"
+    },
+    {
+    "id": "token_explanation",
+    "description": "prompt with a control token and an explanation",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. \nSOURCE TEXT: <FKGL={SOURCE_VALUE}> {TEXT}\nEXPLANATION: {EXPLANATION}"
+    },
+    {
+    "id": "token_explanation_examples",
+    "description": "prompt with a control token, an explanation, and examples",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. \nSOURCE TEXT: <FKGL={SOURCE_VALUE}> {TEXT}\nEXPLANATION: {EXPLANATION} \nEXAMPLES: \n- {EXAMPLE_1} \n-{EXAMPLE_2} \n- {EXAMPLE_3}"
+    }
+  ],
+  "DALE-CHALL": [
+    {
+    "id": "no_token",
+    "description": "prompt without a control token, simply with a target Dale-Chall value",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Dale-Chall Readability Score is approximately equal to {VALUE}. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token",
+    "description": "prompt with a control token, which will be replaced with the target Dale-Chall value",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Dale-Chall Readability Score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the Dale-Chall value of the source text. \nSOURCE TEXT: <DALE-CHALL={SOURCE_VALUE}> {TEXT}"
+    },
+    {
+    "id": "token_explanation",
+    "description": "prompt with a control token and an explanation",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Dale-Chall Readability Score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the Dale-Chall value of the source text. \nSOURCE TEXT: <DALE-CHALL={SOURCE_VALUE}> {TEXT}\nEXPLANATION: {EXPLANATION}"
+    },
+    {
+    "id": "token_explanation_examples",
+    "description": "prompt with a control token, an explanation, and examples",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Dale-Chall Readability Score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the Dale-Chall value of the source text. \nSOURCE TEXT: <DALE-CHALL={SOURCE_VALUE}> {TEXT}\nEXPLANATION: {EXPLANATION} \nEXAMPLES: \n- {EXAMPLE_1} \n-{EXAMPLE_2} \n- {EXAMPLE_3}"
+    }
+  ],
+  "CHAR_COMPRESSION": [
+    {
+    "id": "no_token",
+    "description": "prompt without a control token, simply with a target character compression value",
+    "prompt": "INSTRUCTION: Simplify the following text such that the number of characters in the output text is {VALUE} of the original. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token",
+    "description": "prompt with a control token, which will be replaced with the target character compression value",
+    "prompt": "INSTRUCTION: Simplify the following text such that the length of the output text (number of characters) relative to the source text is approximately equal to the ratio specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token_explanation",
+    "description": "prompt with a control token and an explanation",
+    "prompt": "INSTRUCTION: Simplify the following text such that the length of the output text (number of characters) relative to the source text is approximately equal to the ratio specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. \nSOURCE TEXT: {TEXT}\nEXPLANATION: {EXPLANATION}"
+    },
+    {
+    "id": "token_explanation_examples",
+    "description": "prompt with a control token, an explanation, and examples",
+    "prompt": "INSTRUCTION: Simplify the following text such that the length of the output text (number of characters) relative to the source text is approximately equal to the ratio specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. \nSOURCE TEXT: {TEXT}\nEXPLANATION: {EXPLANATION} \nEXAMPLES: \n- {EXAMPLE_1} \n-{EXAMPLE_2} \n- {EXAMPLE_3}"
+    }
+  ],
+  "WORD_COMPRESSION": [
+    {
+    "id": "no_token",
+    "description": "prompt without a control token, simply with a target word compression value",
+    "prompt": "INSTRUCTION: Simplify the following text such that the number of words in the output text is {VALUE} of the original. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token",
+    "description": "prompt with a control token, which will be replaced with the target word compression value",
+    "prompt": "INSTRUCTION: Simplify the following text such that the length of the output text (number of words) relative to the source text is approximately equal to the ratio specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token_explanation",
+    "description": "prompt with a control token and an explanation",
+    "prompt": "INSTRUCTION: Simplify the following text such that the length of the output text (number of words) relative to the source text is approximately equal to the ratio specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. \nSOURCE TEXT: {TEXT}\nEXPLANATION: {EXPLANATION}"
+    },
+    {
+    "id": "token_explanation_examples",
+    "description": "prompt with a control token, an explanation, and examples",
+    "prompt": "INSTRUCTION: Simplify the following text such that the length of the output text (number of words) relative to the source text is approximately equal to the ratio specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. \nSOURCE TEXT: {TEXT}\nEXPLANATION: {EXPLANATION} \nEXAMPLES: \n- {EXAMPLE_1} \n-{EXAMPLE_2} \n- {EXAMPLE_3}"
+    }
+  ],
+  "SENTENCE_COMPRESSION": [
+    {
+    "id": "no_token",
+    "description": "prompt without a control token, simply with a target sentence compression value",
+    "prompt": "INSTRUCTION: Simplify the following text such that the number of sentences in the output text is {VALUE} of the original. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token",
+    "description": "prompt with a control token, which will be replaced with the target sentence compression value",
+    "prompt": "INSTRUCTION: Simplify the following text such that the length of the output text (number of sentences) relative to the source text is approximately equal to the ratio specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token_explanation",
+    "description": "prompt with a control token and an explanation",
+    "prompt": "INSTRUCTION: Simplify the following text such that the length of the output text (number of sentences) relative to the source text is approximately equal to the ratio specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. \nSOURCE TEXT: {TEXT}\nEXPLANATION: {EXPLANATION}"
+    },
+    {
+    "id": "token_explanation_examples",
+    "description": "prompt with a control token, an explanation, and examples",
+    "prompt": "INSTRUCTION: Simplify the following text such that the length of the output text (number of sentences) relative to the source text is approximately equal to the ratio specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. \nSOURCE TEXT: {TEXT}\nEXPLANATION: {EXPLANATION} \nEXAMPLES: \n- {EXAMPLE_1} \n-{EXAMPLE_2} \n- {EXAMPLE_3}"
+    }
+  ]
+}

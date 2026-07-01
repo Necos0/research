@@ -1,0 +1,9 @@
+{
+    "FRE": "FRE",
+    "ARI": "ARI",
+    "FKGL": "FKGL",
+    "DALE-CHALL": "Dale-Chall",
+    "CHAR_COMPRESSION": "char_compression_rate",
+    "WORD_COMPRESSION": "word_compression_rate",
+    "SENTENCE_COMPRESSION": "sentence_compression_rate"
+}

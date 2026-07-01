@@ -1,0 +1,96 @@
+{
+    "ARI": {
+        "token": "<ARI={ARI_VALUE}>",
+        "description": "Automated Readability Index",
+        "value type": "float",
+        "explanation": "The <ARI={TARGET_VALUE}> token specifies that the target Automated Readability Index (ARI) score should be approximately {TARGET_VALUE}. Lower values indicate simpler text.",
+        "examples": [
+            "The <ARI=0> token specifies that the target Automated Readability Index (ARI) score should be approximately 0, which corresponds to the reading level of a pre-schooler in the US education system (5-6 years old).",
+            "The <ARI=1> token specifies that the target Automated Readability Index (ARI) score should be approximately 1, which corresponds to a 1st-grade reading level in the US education system (6-7 years old).",
+            "The <ARI=2> token specifies that the target Automated Readability Index (ARI) score should be approximately 2, which corresponds to a 2nd-grade reading level in the US education system (7-8 years old).",
+            "The <ARI=3> token specifies that the target Automated Readability Index (ARI) score should be approximately 3, which corresponds to a 3rd-grade reading level in the US education system (8-9 years old).",
+            "The <ARI=4> token specifies that the target Automated Readability Index (ARI) score should be approximately 4, which corresponds to a 4th-grade reading level in the US education system (9-10 years old).",
+            "The <ARI=5> token specifies that the target Automated Readability Index (ARI)ç score should be approximately 5, which corresponds to a 5th-grade reading level in the US education system (10-11 years old).",
+            "The <ARI=6> token specifies that the target Automated Readability Index (ARI) score should be approximately 6, which corresponds to a 6th-grade reading level in the US education system (11-12 years old).",
+            "The <ARI=7> token specifies that the target Automated Readability Index (ARI) score should be approximately 7, which corresponds to a 7th-grade reading level in the US education system (12-13 years old).",
+            "The <ARI=8> token specifies that the target Automated Readability Index (ARI) score should be approximately 8, which corresponds to an 8th-grade reading level in the US education system (13-14 years old).",
+            "The <ARI=9> token specifies that the target Automated Readability Index (ARI) score should be approximately 9, which corresponds to a 9th-grade reading level in the US education system (14-15 years old).",
+            "The <ARI=10> token specifies that the target Automated Readability Index (ARI) score should be approximately 10, which corresponds to a 10th-grade reading level in the US education system (15-16 years old).",
+            "The <ARI=11> token specifies that the target Automated Readability Index (ARI) score should be approximately 11, which corresponds to an 11th-grade reading level in the US education system (16-17 years old).",
+            "The <ARI=12> token specifies that the target Automated Readability Index (ARI) score should be approximately 12, which corresponds to a 12th-grade reading level in the US education system (18 years old or older)."
+        ]
+    },
+    "FKGL": {
+        "token": "<FKGL={FKGL_VALUE}>",
+        "description": "Flesch-Kincaid Grade Level",
+        "value type": "float",
+        "explanation": "The <FKGL={TARGET_VALUE}> token specifies that the target Flesch-Kincaid Grade Level should be approximately {TARGET_VALUE}. Lower values indicate simpler text.",
+        "examples": [
+            "The <FKGL=0> token specifies that the target Flesch-Kincaid Grade Level should be approximately 0, which corresponds to the reading level of a pre-schooler in the US education system (5-6 years old).",
+            "The <FKGL=1> token specifies that the target Flesch-Kincaid Grade Level should be approximately 1, which corresponds to a 1st-grade reading level in the US education system (6-7 years old).",
+            "The <FKGL=2> token specifies that the target Flesch-Kincaid Grade Level should be approximately 2, which corresponds to a 2nd-grade reading level in the US education system (7-8 years old).",
+            "The <FKGL=3> token specifies that the target Flesch-Kincaid Grade Level should be approximately 3, which corresponds to a 3rd-grade reading level in the US education system (8-9 years old).",
+            "The <FKGL=4> token specifies that the target Flesch-Kincaid Grade Level should be approximately 4, which corresponds to a 4th-grade reading level in the US education system (9-10 years old).",
+            "The <FKGL=5> token specifies that the target Flesch-Kincaid Grade Level should be approximately 5, which corresponds to a 5th-grade reading level in the US education system (10-11 years old).",
+            "The <FKGL=6> token specifies that the target Flesch-Kincaid Grade Level should be approximately 6, which corresponds to a 6th-grade reading level in the US education system (11-12 years old).",
+            "The <FKGL=7> token specifies that the target Flesch-Kincaid Grade Level should be approximately 7, which corresponds to a 7th-grade reading level in the US education system (12-13 years old).",
+            "The <FKGL=8> token specifies that the target Flesch-Kincaid Grade Level should be approximately 8, which corresponds to an 8th-grade reading level in the US education system (13-14 years old).",
+            "The <FKGL=9> token specifies that the target Flesch-Kincaid Grade Level should be approximately 9, which corresponds to a 9th-grade reading level in the US education system (14-15 years old).",
+            "The <FKGL=10> token specifies that the target Flesch-Kincaid Grade Level should be approximately 10, which corresponds to a 10th-grade reading level in the US education system (15-16 years old).",
+            "The <FKGL=11> token specifies that the target Flesch-Kincaid Grade Level should be approximately 11, which corresponds to an 11th-grade reading level in the US education system (16-17 years old).",
+            "The <FKGL=12> token specifies that the target Flesch-Kincaid Grade Level should be approximately 12, which corresponds to a 12th-grade reading level in the US education system (18 years old or older)."
+        ]
+    },
+    "DALE-CHALL": {
+        "token": "<DALE-CHALL={DALE_CHALL_VALUE}>",
+        "description": "Dale-Chall Readability Score",
+        "value type": "float",
+        "explanation": "The <DALE-CHALL={TARGET_VALUE}> token specifies that the target Dale-Chall readability score should be approximately {TARGET_VALUE}. Lower values indicate simpler text.",
+        "examples": [
+            "The <DALE-CHALL=4> (or lower) token specifies that the target Dale-Chall readability score should be approximately 4 or below, which corresponds to a 4th-grade reading level in the US education system and below.",
+            "The <DALE-CHALL=5> token specifies that the target Dale-Chall readability score should be approximately 5, which corresponds to a 5th- or 6th-grade reading level in the US education system.",
+            "The <DALE-CHALL=6> token specifies that the target Dale-Chall readability score should be approximately 6, which corresponds to a 7th- or 8th-grade reading level in the US education system.",
+            "The <DALE-CHALL=7> token specifies that the target Dale-Chall readability score should be approximately 7, which corresponds to a 9th- or 10th-grade reading level in the US education system.",
+            "The <DALE-CHALL=8> token specifies that the target Dale-Chall readability score should be approximately 8, which corresponds to an 11th- or 12th-grade reading level in the US education system.",
+            "The <DALE-CHALL=9> (or higher) token specifies that the target Dale-Chall readability score should be approximately 9, which corresponds to a college reading level in the US education system (or higher)."
+        ]
+    },
+    "CHAR_COMPRESSION": {
+        "token": "<CHAR_COMPRESSION={CHAR_COMPRESSION_VALUE}>",
+        "description": "Character-level Compression Rate",
+        "value type": "float",
+        "explanation": "The <CHAR_COMPRESSION={TARGET_VALUE}> token specifies that the character-level compression rate should be around {TARGET_VALUE}. Values less than 1 indicate text reduction. Values greater than 1 indicate text expansion.",
+        "examples": [
+            "The <CHAR_COMPRESSION=0.2> token specifies that the character-level compression rate should be around 0.2, which means the output text should be approximately one-fifth (1/5) the length of the original text.",
+            "The <CHAR_COMPRESSION=0.5> token specifies that the character-level compression rate should be around 0.5, which means the output text should be approximately half (1/2) the length of the original text.",
+            "The <CHAR_COMPRESSION=0.8> token specifies that the character-level compression rate should be around 0.8, which means the output text should be approximately 80% of the length of the original text.",
+            "The <CHAR_COMPRESSION=1.0> token specifies that the character-level compression rate should be around 1.0, which means the output text should be approximately the length as the original text.",
+            "The <CHAR_COMPRESSION=1.2> token specifies that the character-level compression rate should be around 1.2, which means the output text should be approximately 120% of the length of the original text."
+        ]
+    },
+    "WORD_COMPRESSION": {
+        "token": "<WORD_COMPRESSION={WORD_COMPRESSION_VALUE}>",
+        "description": "Word-level Compression Rate",
+        "value type": "float",
+        "explanation": "The <WORD_COMPRESSION={TARGET_VALUE}> token specifies that the word-level compression rate should be around {TARGET_VALUE}. Values less than 1 indicate text reduction. Values greater than 1 indicate text expansion.",
+        "examples": [
+            "The <WORD_COMPRESSION=0.2> token specifies that the word-level compression rate should be around 0.2, which means the number of words in the output text should be approximately one-fifth (1/5) of the number of words in the original text.",
+            "The <WORD_COMPRESSION=0.5> token specifies that the word-level compression rate should be around 0.5, which means the number of words in the output text should be approximately half (1/2) of the number of words in the original text.",
+            "The <WORD_COMPRESSION=0.8> token specifies that the word-level compression rate should be around 0.8, which means the number of words in the output text should be approximately 80% of the number of words in the original text.",
+            "The <WORD_COMPRESSION=1.0> token specifies that the word-level compression rate should be around 1.0, which means the number of words in the output text should be approximately the same as the number of words in the original text.",
+            "The <WORD_COMPRESSION=1.2> token specifies that the word-level compression rate should be around 1.2, which means the number of words in the output text should be approximately 120% of the number of words in the original text."
+        ]
+    },
+    "SENTENCE_COMPRESSION": {
+        "token": "<SENTENCE_COMPRESSION={SENTENCE_COMPRESSION_VALUE}>",
+        "description": "Sentence-level Compression Rate",
+        "value type": "float",
+        "explanation": "The <SENTENCE_COMPRESSION={TARGET_VALUE}> token specifies that the sentence-level compression rate should be around {TARGET_VALUE}. Values less than 1 indicate the simplification should contain fewer sentences than the original text. Values greater than 1 indicate the simplification should contain more sentences than the original text.",
+        "examples": [
+            "The <SENTENCE_COMPRESSION=0.5> token specifies that the sentence-level compression rate should be around 0.5, which means the number of sentences in the output text should be approximately half (1/2) of the number of sentences in the original text.",
+            "The <SENTENCE_COMPRESSION=1.0> token specifies that the sentence-level compression rate should be around 1.0, which means the number of sentences in the output text should be approximately the same as the number of sentences in the original text.",
+            "The <SENTENCE_COMPRESSION=1.5> token specifies that the sentence-level compression rate should be around 1.5, which means the number of sentences in the output text should be approximately 150% of the number of sentences in the original text.",
+            "The <SENTENCE_COMPRESSION=2.0> token specifies that the sentence-level compression rate should be around 2.0, which means the number of sentences in the output text should be approximately double the number of sentences in the original text."
+        ]
+    }
+}

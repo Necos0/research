@@ -1,0 +1,85 @@
+{
+    "llama":
+    {
+        "Llama-3.2-1B-Instruct":
+        {
+            "path": "meta-llama/Llama-3.2-1B-Instruct",
+            "size": "XS",
+            "url": "https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct"
+        },
+        "Llama-3.2-3B-Instruct":
+        {
+            "path": "meta-llama/Llama-3.2-3B-Instruct",
+            "size": "S",
+            "url": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct"
+        },
+        "Llama-3.1-8B-Instruct":
+        {
+            "path": "meta-llama/Llama-3.1-8B-Instruct",
+            "size": "M",
+            "url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct"
+        },
+        "Meta-Llama-3-8B-Instruct":
+        {
+            "path": "meta-llama/Meta-Llama-3-8B-Instruct",
+            "size": "M",
+            "url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+            "note": "this is an older version. use Llama-3.1-8B-Instruct instead."
+        },
+        "Llama-2-13b-chat-hf":
+        {
+            "path": "meta-llama/Llama-2-13b-chat-hf",
+            "size": "L",
+            "url": "https://huggingface.co/meta-llama/Llama-2-13b-chat-hf"
+        },
+        "Llama-4-Scout-17B-16E-Instruct":
+        {
+            "path": "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+            "size": "XL",
+            "url": "https://huggingface.co/meta-llama/Llama-4-Scout-17B-16E-Instruct"
+        }
+    },
+    "mistral":
+    {
+        "Ministral-3b-instruct":
+        {
+            "path": "ministral/Ministral-3b-instruct",
+            "size": "S",
+            "url": "https://huggingface.co/mistralai/Ministral-3b-instruct"
+        },
+        "Mistral-7B-Instruct-v0.1":
+        {
+            "path": "mistralai/Mistral-7B-Instruct-v0.3",
+            "size": "M",
+            "url": "https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3"
+        }
+    },
+    "qwen":
+    {
+        "Qwen3-1.7B":
+        {
+            "path": "Qwen/Qwen3-1.7B",
+            "size": "XS",
+            "url": "https://huggingface.co/Qwen/Qwen3-1.7B"
+        },
+        "Qwen3-4B":
+        {
+            "path": "Qwen/Qwen3-4B",
+            "size": "S",
+            "url": "https://huggingface.co/Qwen/Qwen3-4B"
+        },
+        "Qwen3-8B":
+        {
+            "path": "Qwen/Qwen3-8B",
+            "size": "M",
+            "url": "https://huggingface.co/Qwen/Qwen3-8B"
+        },
+        "Qwen3-14B":
+        {
+            "path": "Qwen/Qwen3-14B",
+            "size": "L",
+            "url": "https://huggingface.co/Qwen/Qwen3-14B"
+        }
+        
+    }
+}

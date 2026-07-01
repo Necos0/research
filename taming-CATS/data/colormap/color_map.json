@@ -1,0 +1,59 @@
+{
+    "divergence_stats": {
+        "JSD": "mediumblue",
+        "EMD": "mediumseagreen",
+        "KS": "hotpink"
+    },
+    "splits": {
+        "train": "dodgerblue",
+        "test": "seagreen",
+        "val": "mediumvioletred",
+        "dev": "darkorange",
+        "full": "grey"
+    },
+    "metrics": {
+        "char_count": "dodgerblue",
+        "word_count": "darkorange",
+        "sentence_count": "olive",
+        "FKGL": "red",
+        "ARI": "green",
+        "FRE": "olive",
+        "Dale-Chall": "purple",
+        "DALE-CHALL": "purple",
+        "BLEU": "orchid",
+        "BERTScore": "mediumseagreen",
+        "BLEU_ref": "orchid",
+        "BERTScore_ref": "mediumseagreen",
+        "COMET": "dodgerblue",
+        "SARI": "mediumturquoise"
+    },
+    "datasets": {
+        "medeasi": "green",
+        "newsela": "grey",
+        "simpa": "palevioletred",
+        "wikilarge": "blue"
+    },
+    "text_type": {
+        "source": "orchid",
+        "target": "seagreen",
+        "reference": "darkorange"
+    },
+    "common_color": "skyblue",
+    "overlap_color": "skyblue",
+    "models": {
+        "Llama-3.2-1B-Instruct": {"color": "seagreen", "hatches": "."},
+        "Llama-3.2-3B-Instruct": {"color": "seagreen", "hatches": "\\"},
+        "Meta-Llama-3-8B-Instruct": {"color": "seagreen", "hatches": "O"},
+        "Llama-3.1-8B-Instruct": {"color": "seagreen", "hatches": "O"},
+        "Llama-2-13b-chat-hf": {"color": "seagreen", "hatches": "++"},
+        "Ministral-3b-instruct": {"color": "palevioletred", "hatches": "\\"},
+        "Mistral-7B-Instruct-v0.1": {"color": "palevioletred", "hatches": "O"},
+        "Qwen2.5-1.5B-Instruct": {"color": "cornflowerblue", "hatches": "."},
+        "Qwen3-1.7B": {"color": "cornflowerblue", "hatches": "."},
+        "Qwen3-4B": {"color": "cornflowerblue", "hatches": "\\"},
+        "Qwen3-8B": {"color": "cornflowerblue", "hatches": "O"},
+        "Qwen3-14B": {"color": "cornflowerblue", "hatches": "++"},
+        "Qwen2.5-7B-Instruct": {"color": "cornflowerblue", "hatches": "O"},
+        "Qwen2.5-14B-Instruct": {"color": "cornflowerblue", "hatches": "++"}
+    }
+}

@@ -1,0 +1,41 @@
+# venv
+.env
+venv/
+
+# dataset files
+**/dataset.jsonl
+
+**/HuggingFace/
+
+**/wandb/
+
+# model files
+**/model.safetensors
+**/*.safetensors
+*.safetensors
+**/training_args.bin
+**/tokenizer.json
+**/optimizer.pt
+**/scheduler.pt
+*.tmp
+**/rng_state.pth
+**/scaler.pt
+**/*.pt
+**/tokenizer.model
+
+# pychache
+__pycache__/
+*.pyc
+*.pyo
+
+**/.DS_Store
+
+# experimental target group prompts
+**/target_group_prompts.json
+
+# old dev experiments 
+./output/old_experiments/
+
+# job logs (keep the folder, ignore its contents)
+logs/*
+!logs/.gitkeep

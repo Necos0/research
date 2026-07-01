@@ -1,0 +1,62 @@
+{
+    "global_id": "string",
+    "source_text": "string",
+    "metadata": {
+      "dataset": "string",
+      "original_split": "string",
+      "experiment_split": "string",
+      "domain": "string",
+      "language": "string",
+      "annotation": "string",
+      "level": "string"
+    },
+    "source_metrics": {
+      "FRE": "float",
+      "ARI": "float",
+      "FKGL": "float",
+      "Dale-Chall": "float",
+      "char_count": "int",
+      "alphanum_count": "int",
+      "word_count": "int",
+      "sentence_count": "int"
+    },
+    "simplifications": [
+      {
+        "simplification_text": "string",
+        "simplification_version": "int",
+        "grade_level": "int",
+        "control_attributes_access": {
+          "attribute_1": "float",
+          "attribute_2": "float",
+          "...": "float"
+        },
+        "control_attributes_muss": {
+          "attribute_1": "float",
+          "attribute_2": "float",
+          "...": "float"
+        },
+        "simplification_dimensions": {
+          "linguistic": {
+            "lexical": "boolean",
+            "syntactic": "boolean"
+          }
+        },
+        "target_metrics": {
+          "FRE": "float",
+          "ARI": "float",
+          "FKGL": "float",
+          "Dale-Chall": "float",
+          "char_count": "int",
+          "alphanum_count": "int",
+          "word_count": "int",
+          "sentence_count": "int",
+          "char_compression_rate": "float",
+          "word_compression_rate": "float",
+          "sentence_compression_rate": "float",
+          "BLEU": "float",
+          "BERTScore": "float"
+        }
+      }
+    ]
+  }
+  

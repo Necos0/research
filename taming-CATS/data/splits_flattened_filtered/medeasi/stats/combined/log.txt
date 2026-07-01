@@ -1,0 +1,20 @@
+Combined Dataset Statistics
+Total samples: 852
+
+SOURCE:
+FKGL: 14.9
+FRE: 26.7
+ARI: 16.2
+Dale-Chall: 12.2
+char_count: 152.9
+word_count: 26.8
+sentence_count: 1.1
+
+TARGET:
+FKGL: 10.4
+FRE: 51.0
+ARI: 11.1
+Dale-Chall: 10.2
+char_count: 127.9
+word_count: 24.1
+sentence_count: 1.2

@@ -1,0 +1,100 @@
+{
+    "schema": "v4",
+    "type": "object",
+    "properties": {
+      "global_id": { "type": "string" },
+      "source_text": { "type": "string" },
+      "metadata": {
+        "type": "object",
+        "properties": {
+          "dataset": { "type": "string" },
+          "split": { "type": "string" },
+          "domain": { "type": "string" },
+          "language": { "type": "string" },
+          "annotation": { "type": "string" },
+          "level": { "type": "string" }
+        }
+      },
+      "source_metrics": {
+        "type": "object",
+        "properties": {
+          "CEFR": { "type": "string" },
+          "FRE": { "type": "number" },
+          "ARI": { "type": "number" },
+          "FKGL": { "type": "number" },
+          "Dale-Chall": { "type": "number" },
+          "char_count": { "type": "integer" },
+          "alphanum_count": { "type": "integer" },
+          "word_count": { "type": "integer" },
+          "sentence_count": { "type": "integer" }
+        }
+      },
+      "simplifications": {
+        "type": "dict",
+        "items": {
+          "type": "object",
+          "properties": {
+            "simplification_text": { "type": "string" },
+            "simplification_version": { "type": "integer" },
+            "CEFR_level": { "type": "string" },
+            "grade_level": { "type": "integer" },
+            "control_attributes": {
+              "type": "object",
+              "properties": {
+                "LevSim": { "type": "number" },
+                "NbChar": { "type": "number" }
+              }
+            },
+            "simplification_dimensions": {
+              "type": "object",
+              "properties": {
+                "linguistic": {
+                  "type": "object",
+                  "properties": {
+                    "lexical": { "type": "boolean" },
+                    "syntactic": { "type": "boolean" },
+                    "not_specified": { "type": "boolean" }
+                  }
+                },
+                "information": {
+                  "type": "object",
+                  "properties": {
+                    "explicitation": { "type": "boolean" },
+                    "omission": { "type": "boolean" },
+                    "generalization": { "type": "boolean" }
+                  }
+                }
+              }
+            },
+            "target_metrics": {
+              "type": "object",
+              "properties": {
+                "CEFR": { "type": "string" },
+                "FRE": { "type": "number" },
+                "ARI": { "type": "number" },
+                "FKGL": { "type": "number" },
+                "Dale-Chall": { "type": "number" },
+                "char_count": { "type": "integer" },
+                "alphanum_count": { "type": "integer" },
+                "word_count": { "type": "integer" },
+                "sentence_count": { "type": "integer" },
+                "char_compression_rate": { "type": "number" },
+                "word_compression_rate": { "type": "number" },
+                "sentence_compression_rate": { "type": "number" }
+              }
+            },
+            "evaluation_metrics": {
+              "type": "object",
+              "properties": {
+                "BLEU": { "type": "number" },
+                "ROUGE": { "type": "number" },
+                "SARI": { "type": "number" },
+                "BERTScore": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
