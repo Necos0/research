@@ -96,3 +96,4 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
 - **データ読み込み**: 現状コードは `shtosti/<DATASET>`（著者の HF Hub）から取得する（`src/helpers/hugging_face.py`）。ローカル同梱の `data/splits_flattened_filtered/` を使うなら、**ローカル読み込み分岐を追加するパッチをベース作業ブランチに1度入れる**（`--dataset_name medeasi` で参照）。
 - サーバーは CUDA のため `bf16=True` はそのままでよい（Mac 固有の dtype パッチは不要）。
 
+

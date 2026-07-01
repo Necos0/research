@@ -3,13 +3,20 @@
 echo "Script started: $(date)"
 
 # =========================================================================
-# TODO
-MODEL_DIR="FKGL-Med-EASi-Ministral-3b-instruct-token_explanation-20250518"
+# 実験: Med-EASi × <FKGL> 再現（最小サイズ・1シード）
+export WANDB_MODE=disabled
 METRIC_NAME="FKGL"
-DATASET="Med-EASi"
-MODEL_NAME="Ministral-3b-instruct"
-
+DATASET="medeasi"                       # ← ローカル folder 名
+MODEL_NAME="Qwen3-0.6B"                 # short name（学習で使ったモデル）
 USER_PROMPT_ID="token_explanation"
+
+# 学習で生成された最新の models/ ディレクトリを自動選択
+MODEL_DIR=$(ls -1dt "models/${METRIC_NAME}-${DATASET}-${USER_PROMPT_ID}-"* 2>/dev/null | head -1 | xargs -n1 basename)
+if [ -z "$MODEL_DIR" ]; then
+  echo "ERROR: models/${METRIC_NAME}-${DATASET}-${USER_PROMPT_ID}-* が見つかりません。先に ./run_sft_finetune.sh を実行してください。"
+  exit 1
+fi
+echo "Using MODEL_DIR=$MODEL_DIR"
 # =========================================================================
 
 
@@ -20,11 +27,7 @@ OUTPUT_DIR="output/sft_inference/$MODEL_DIR"
 mkdir -p "$OUTPUT_DIR"
 
 SEEDS=(
-  37 
-  15 
-  96 
-  2 
-  28
+  37
   )
 i=1
 for SEED in "${SEEDS[@]}"; do
@@ -39,9 +42,9 @@ for SEED in "${SEEDS[@]}"; do
     --dataset_name "$DATASET"
     --model_class "auto"
     --model_family "base"
-    --max_length 4096
+    --max_length 1024
     --batch_size 16
-    --slice_test -1
+    --slice_test 8
     --output_file "$OUTPUT_FILE"
     --control_tokens "data/prompts/control_tokens.json"
     --system_prompts "data/prompts/system_prompts.json"
@@ -68,13 +71,7 @@ done
 echo "Running evaluation script..."
 
 INPUT_DIR=$OUTPUT_DIR
-INPUT_FILES=(
-  "$INPUT_DIR/output_1.json"
-  "$INPUT_DIR/output_2.json"
-  "$INPUT_DIR/output_3.json"
-  "$INPUT_DIR/output_4.json"
-  "$INPUT_DIR/output_5.json"
-)
+INPUT_FILES=( "$INPUT_DIR"/output_*.json )   # 実際に生成されたシード分だけを集約
 
 python src/sft_eval.py \
   --input_files "${INPUT_FILES[@]}" \

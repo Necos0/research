@@ -1,32 +1,25 @@
 #!/bin/bash
 
-# *** TODO ***
+# =========================================================================
+# 実験: Med-EASi × <FKGL> 再現（最小サイズのGPUスモークテスト）
+#   - データはローカル data/splits_flattened_filtered/medeasi を使用
+#   - 学習を極小化（16件・1エポック）してパイプライン疎通を確認する
+# =========================================================================
 
-MAX_LENGTH=4096
+export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
 
-# --- model name
+MAX_LENGTH=1024                     # Med-EASi は短文。最小化のため 4096→1024
+
+# --- model name（最小テストは 0.6B。本走行なら 1B/1.7B に切替）
 # MODEL_NAME="meta-llama/Llama-3.2-1B-Instruct"
-# MODEL_NAME="meta-llama/Llama-3.2-3B-Instruct"
-MODEL_NAME="Qwen/Qwen3-1.7B"
-# MODEL_NAME="Qwen/Qwen3-4B"
-# MODEL_NAME="ministral/Ministral-3b-instruct"
+# MODEL_NAME="Qwen/Qwen3-1.7B"
+MODEL_NAME="Qwen/Qwen3-0.6B"
 
 DATASETS=(
-    # "Med-EASi" 
-    # "SimPA" 
-    # "WikiLarge_ori_splitwise"
-    # "Med-EASi_hq"
-    # "SimPA_hq"
-    # "WikiLarge_ori_splitwise_hq"
-    # "NoFluff_hq"
-    "Newsela_s"
+    "medeasi"                       # ← ローカル folder 名（splits_flattened_filtered/medeasi）
     )
 METRICS=(
-    # "ARI"
-    # "FKGL" 
-    # "DALE-CHALL"
-    "CHAR_COMPRESSION"
-    "WORD_COMPRESSION"
+    "FKGL"
     )
 
 for DATASET_NAME in "${DATASETS[@]}"; do
@@ -41,8 +34,8 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --model_family "base" \
             --model_name "$MODEL_NAME" \
             --dataset_name "$DATASET_NAME" \
-            --slice_train "-1" \
-            --slice_val "-1" \
+            --slice_train "16" \
+            --slice_val "8" \
             --batch_size "4" \
             --eval_batch_size "4" \
             --gradient_accumulation_steps "4" \
@@ -51,7 +44,7 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --warmup_steps "30" \
             --max_grad_norm "0.5" \
             --logging_steps "10" \
-            --epochs "3" \
+            --epochs "1" \
             --patience "4" \
             --max_length "$MAX_LENGTH"\
             --wandb_project_name "ATS_with_control_tokens" \
