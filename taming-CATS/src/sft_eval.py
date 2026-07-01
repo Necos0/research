@@ -669,6 +669,7 @@ def main():
     }
 
     # Write back to the summary file
+    os.makedirs(os.path.dirname(args.summary_file) or ".", exist_ok=True)
     with open(args.summary_file, "w", encoding="utf-8") as f:
         json.dump(all_results, f, indent=4)
 
