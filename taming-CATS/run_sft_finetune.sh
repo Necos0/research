@@ -10,10 +10,10 @@ export WANDB_MODE=disabled          # W&B を使わない（著者entityへの�
 
 MAX_LENGTH=1024                     # Med-EASi は短文。最小化のため 4096→1024
 
-# --- model name（最小テストは 0.6B。本走行なら 1B/1.7B に切替）
+# --- model name（最小テストは 0.5B。本走行なら 1B などに切替）
+#   ※ transformers==4.48.3 は Qwen3 未対応のため Qwen2.5 系を使う
 # MODEL_NAME="meta-llama/Llama-3.2-1B-Instruct"
-# MODEL_NAME="Qwen/Qwen3-1.7B"
-MODEL_NAME="Qwen/Qwen3-0.6B"
+MODEL_NAME="Qwen/Qwen2.5-0.5B-Instruct"
 
 DATASETS=(
     "medeasi"                       # ← ローカル folder 名（splits_flattened_filtered/medeasi）

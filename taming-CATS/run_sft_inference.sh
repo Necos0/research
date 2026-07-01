@@ -7,7 +7,7 @@ echo "Script started: $(date)"
 export WANDB_MODE=disabled
 METRIC_NAME="FKGL"
 DATASET="medeasi"                       # ← ローカル folder 名
-MODEL_NAME="Qwen3-0.6B"                 # short name（学習で使ったモデル）
+MODEL_NAME="Qwen2.5-0.5B-Instruct"      # short name（学習で使ったモデル）
 USER_PROMPT_ID="token_explanation"
 
 # 学習で生成された最新の models/ ディレクトリを自動選択
