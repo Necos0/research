@@ -39,3 +39,5 @@ __pycache__/
 # job logs (keep the folder, ignore its contents)
 logs/*
 !logs/.gitkeep
+# 学習実行時に自動生成される最終モデルパス（追跡不要）
+last_run_path.txt
