@@ -35,5 +35,64 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
     - 変数が一個なため、因果がクリーンで、実装が最も軽い。
 - 悪い点
     - 先行研究で行っていた平易化レベルの制御能力を捨てる。
-    　→中間発表は、<keep>タグのみの影響を検証。
+    　→中間発表は、<keep>タグのみの影響を検証する。
+
+
+# ロードマップ(中間発表まで)
+[] Medeasiのデータセット、<FKGL>タグを使った再現実験を行う
+    [] 学習サイズを限りなく小さくし、ローカルでテスト
+    [] 1Bのモデルで実際に動かす
+[] Medeasiのデータセットに対して、<keep>タグで保持する情報を追加する
+    [] 学習サイズを限りなく小さくし、ローカルでテスト
+    [] 1Bのモデルで実際に動かす
+[] <keep>タグを使って1Bのモデルをファインチューニングする
+[] 結果を比較する
+
+---
+
+## 実験の実行フロー（共通運用）
+
+- **実行環境**: 学習・推論・評価はすべて **研究室サーバー（CUDA GPU）** で回す。手元の Mac は CUDA 非搭載のため、**コード編集と git 操作のみ**（学習は回さない）。
+- **仮想環境**: 各自がサーバー上で `environment.yml` から **conda 仮想環境を構築** して実行する（conda-forge ベースで `cuda-toolkit`＋`pytorch` を env に同梱する研究室標準の流儀。定義は `taming-CATS/environment.yml`）。
+- **バージョン管理**: 実験ごとに **ブランチを切って** 再現性を担保する。`main` は常に動く状態に保つ。
+
+### 手順
+
+1. **（Mac）実験用ブランチを作成**
+   ```bash
+   git switch -c exp/<実験名>        # 例: exp/fkgl-medeasi-repro
+   ```
+2. **（Mac）設定・コードを編集してコミット**
+   - 主な変更対象は `run_sft_finetune.sh` / `run_sft_inference.sh` の変数（`MODEL_NAME` / `DATASETS` / `METRICS` 等）。必要なら `src/`。
+   ```bash
+   git add -A && git commit -m "exp: <条件の説明>"
+   ```
+3. **（Mac）GitHub へ push**
+   ```bash
+   git push -u origin exp/<実験名>
+   ```
+4. **（サーバー）SSH して該当ブランチを取得**（push ではなく pull）
+   ```bash
+   ssh <lab-server>
+   cd <repo>/taming-CATS
+   git fetch origin && git switch exp/<実験名>   # 初回。2回目以降は git pull
+   ```
+5. **（サーバー）conda 仮想環境を構築・有効化**
+   ```bash
+   conda env create -f environment.yml    # 初回のみ。各自 wada-yuto 環境を構築
+   conda activate wada-yuto
+   # 依存を更新したら: conda env update -f environment.yml --prune
+   ```
+6. **（サーバー）実験を回す**
+   ```bash
+   export WANDB_MODE=disabled             # W&B を使わない場合
+   ./run_sft_finetune.sh                  # → models/ に保存
+   ./run_sft_inference.sh                 # → output/ に保存（末尾で評価も自動実行）
+   ```
+7. **結果の回収**: モデル重み（`*.safetensors`）は `.gitignore` 対象で git では戻せない。**評価サマリ（`output/sft_results/all_results.json`）や図はサーバーで commit → push** して手元に取り込み、重い生成物は必要分だけ `scp` で回収する。
+
+### 共通の前提修正（作業ブランチに1度だけ）
+
+- **データ読み込み**: 現状コードは `shtosti/<DATASET>`（著者の HF Hub）から取得する（`src/helpers/hugging_face.py`）。ローカル同梱の `data/splits_flattened_filtered/` を使うなら、**ローカル読み込み分岐を追加するパッチをベース作業ブランチに1度入れる**（`--dataset_name medeasi` で参照）。
+- サーバーは CUDA のため `bf16=True` はそのままでよい（Mac 固有の dtype パッチは不要）。
 

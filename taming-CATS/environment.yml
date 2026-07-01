@@ -1,18 +1,44 @@
-name: sft
+# 研究室サーバー（CUDA GPU）向け conda 環境。
+# 各自 `conda env create -f environment.yml` で仮想環境を構築して実験を回す。
+# 設計方針（demo-mnist と同じ流儀）:
+#   - conda-forge ベースで CUDA(cuda-toolkit) と PyTorch を env に同梱（システム CUDA に依存しない）
+#   - HF スタックと評価系ライブラリは pip で導入
+name: wada-yuto
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - python=3.12
+  - cuda-toolkit=13.2        # 研究室 GPU/ドライバに合わせて調整
+  - pytorch                  # conda-forge の GPU ビルド。固定するなら例: pytorch=2.9.1=cuda129_*
+  - ipykernel
+  - numpy
   - pandas
-  - accelerate
-  - bitsandbytes
-  - peft
-  - pytorch
-  - tensorboard
-  - transformers
   - matplotlib
-  - optuna
+  - scikit-learn
+  - sentencepiece
+  - protobuf
+  - pyyaml
   - python-dotenv
-  - datasets
-prefix: /home/hhubar/data/conda/envs/sft
+  - tqdm
+  - pip
+  - pip:
+      # --- HF スタック（学習・推論の本体） ---
+      - transformers
+      - datasets
+      - accelerate
+      - huggingface-hub
+      - safetensors
+      # --- 評価・可読性指標（Metrics.py / sft_eval.py が使用） ---
+      - sacrebleu
+      - rouge-score
+      - bert-score
+      - evaluate
+      - nltk
+      - textstat
+      # --- ロギング ---
+      - wandb
+      # --- 用途に応じて有効化 ---
+      # - peft            # LoRA/PEFT 学習を使うとき（run_sft_finetune_peft.sh）
+      # - bitsandbytes    # 量子化/PEFT を使うとき（CUDA バージョン一致が必要）
+      # - vllm            # 推論高速化 --use_vllm を使うとき
+      # - optuna          # ハイパラ探索（sweep）を使うとき
