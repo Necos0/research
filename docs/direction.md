@@ -54,14 +54,17 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
 ## 実験の実行フロー（共通運用）
 
 - **実行環境**: 学習・推論・評価はすべて **研究室サーバー（CUDA GPU）** で回す。手元の Mac は CUDA 非搭載のため、**コード編集のみ**（学習は回さない）。
-- **転送手段**: サーバーへの反映は **git ではなく rsync（SSH 経由の差分転送）** で行う。共有マシンに GitHub 認証情報を置かず、SSH ログインだけで済ませるため。Mac 側では従来どおり `exp/<実験名>` ブランチで **編集・コミットして履歴を残す**（サーバーへは push しない）。
+- **コードの受け渡し**: サーバーへのコード反映は **GitHub 経由の `git clone` / `git pull`** で行う。Mac 側で `exp/<実験名>` ブランチを **編集・コミットして GitHub へ push**、サーバー側で取り込む。公開リポジトリなので、サーバーは **HTTPS で読み取りのみ**（認証情報を共有マシンに置かない）。
+- **ブランチ＝実験、clone は1個**: サーバーには clone を **1個だけ**置き、実験ごとに **`git fetch origin && git switch exp/<実験名>`**（同一ブランチ更新時は `git pull`）で **対象ブランチを引いて切り替える**。各ブランチが各実験に対応する。
+- **切り替え時の注意**: `output/`・`models/` は `.gitignore` 対象で **ブランチを切り替えても消えない**。前実験の生成物が残ると `run_sft_inference.sh` が別実験のモデルを拾う恐れがあるため、**回収済みの `output/`・`models/` は削除してから**新しい実験を回す。
+- **結果の回収**: モデル重みや出力は git に載らないため、サーバー → Mac へ **scp で回収**する。Mac 側には `output/`・`models/` を置かず、サーバーの `output`・`models` を実験別に **`results/<実験名>/`**（実験別アーカイブ。`results/` は `.gitignore` 済み）へ集約し、実験間で上書きしないようにする。
 - **配置**: リポジトリ・HF キャッシュ・conda env は、サーバーの割当領域 **`/mnt/gpu/workspace/2025/yuto_wada`** 配下に**すべて置く**（共有ストレージを圧迫しない）。
 - **仮想環境**: `environment.yml` から **conda 仮想環境を構築** して実行する（conda-forge ベースで `cuda-toolkit`＋`pytorch` を env に同梱する研究室標準の流儀。定義は `taming-CATS/environment.yml`）。
 - **バージョン管理**: 実験ごとに **ブランチを切って** 再現性を担保する。`main` は常に動く状態に保つ。
 
 ```
-（Mac）編集・コミット → rsync で workspace へ送信
-   →（サーバー）conda env 構築 → 実験実行 → rsync で結果を回収
+（Mac）編集・コミット・push → GitHub
+   →（サーバー）git clone/pull → conda env → 実験実行 → scp で結果を回収
 ```
 
 ### 手順
@@ -81,32 +84,44 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
    ```bash
    git add -A && git commit -m "exp: <条件の説明>"
    ```
-3. **（Mac）割当領域へ送信**（rsync。編集後の再送も同じコマンドで差分だけ転送）
+3. **（Mac）GitHub へ push**
    ```bash
-   rsync -av --exclude='__pycache__' --exclude='*.pyc' --exclude='.DS_Store' \
-     /Users/wadaketsunin/research <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/
+   git push -u origin exp/<実験名>
    ```
-4. **（サーバー）SSH して conda 仮想環境を有効化**
+4. **（サーバー）SSH → 対象ブランチを引く → tmux → conda 仮想環境を有効化**
+   - clone は割当領域に **1個だけ**。実験ごとに **対象ブランチを `git switch` で切り替える**（各ブランチ＝各実験）。
+   - 学習は長時間かかるため、SSH が切れてもジョブが止まらないよう **tmux セッション内で回す**。conda activate や実行はすべて tmux の中で行う。
    ```bash
    ssh <user>@<host>
-   cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS
+   cd /mnt/gpu/workspace/2025/yuto_wada
+   git clone https://github.com/Necos0/research.git   # 初回のみ（公開リポジトリなので認証不要）
+   cd research/taming-CATS
+   git fetch origin && git switch exp/<実験名>          # 対象ブランチに切り替え（同一ブランチ更新時は git pull）
+   # 別実験から切り替えたら、前実験の生成物を掃除（回収済みが前提。推論が別モデルを拾うのを防ぐ）
+   rm -rf output models                                # 必要な結果は事前に scp で回収しておくこと
+   tmux new -s exp-<実験名>                # 新規セッション作成（再接続時は: tmux attach -t exp-<実験名>）
    conda activate /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto   # HF_HOME / WANDB_MODE は env に登録済み
    # 依存を更新したら: conda env update -f environment.yml --prune
    # env を抜けるとき: conda deactivate
    ```
-5. **（サーバー）実験を回す**（env を activate 済みなら HF_HOME / WANDB_MODE は設定済み）
+5. **（サーバー・tmux 内）実験を回す**（env を activate 済みなら HF_HOME / WANDB_MODE は設定済み）
    ```bash
    nvidia-smi                             # 空き GPU を確認
    export CUDA_VISIBLE_DEVICES=0          # 空いている番号を指定（実行するシェルごとに指定）
    ./run_sft_finetune.sh                  # → models/ に保存
    ./run_sft_inference.sh                 # → output/ に保存（末尾で評価も自動実行）
    ```
-6. **（Mac）結果を回収**（rsync でサーバーから手元へ）
+   - 実行を開始したら **`Ctrl-b` → `d` で detach** し、SSH を切ってよい（ジョブは tmux 内で継続）。
+   - 進捗確認は再 SSH して `tmux attach -t exp-<実験名>`。セッション一覧は `tmux ls`、終わった後は `tmux kill-session -t exp-<実験名>`。
+6. **（Mac）結果を回収**（scp でサーバーから手元の `results/<実験名>/` へまとめる）
    ```bash
-   rsync -av <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output/ \
-     /Users/wadaketsunin/research/taming-CATS/output/
+   mkdir -p /Users/wadaketsunin/research/results/<実験名>
+   scp -r <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
+     <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
+     /Users/wadaketsunin/research/results/<実験名>/
    ```
-   - モデル重み（`*.safetensors`）は `.gitignore` 対象で重いので、必要な分だけ同様に rsync で回収する。評価サマリ（`output/sft_results/all_results.json`）や図を手元に取り込んで確認する。
+   - **Mac 側には `output/`・`models/` を置かず、実験ごとに `results/<実験名>/` に集約する**（`results/` は `.gitignore` 済み。実験間で上書きされない）。
+   - モデル重み（`*.safetensors`）は重いので、不要なら上の `models` 行を外し、評価サマリ（`output/sft_results/all_results.json`）や図だけ回収してもよい。
 
 ### 共通の前提修正（作業ブランチに1度だけ）
 

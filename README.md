@@ -32,12 +32,13 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 ## 実験の実行フロー
 
 - 学習・推論・評価は **研究室サーバー（CUDA GPU）** で実行。手元の Mac は編集用。
-- サーバーの割当領域 **`/mnt/gpu/workspace/2025/yuto_wada`** 配下に、リポジトリ・HF キャッシュ・conda env を**すべて置く**（共有ストレージを圧迫しない／共有マシンに GitHub 認証情報を置かない）。
-- 転送は **rsync**（GitHub 認証は不要、SSH ログインのみ）。Mac 側では従来どおり `exp/...` ブランチで編集・コミットして履歴を残す。
+- サーバーの割当領域 **`/mnt/gpu/workspace/2025/yuto_wada`** 配下に、リポジトリ・HF キャッシュ・conda env を**すべて置く**（共有ストレージを圧迫しない）。
+- コードの受け渡しは **GitHub 経由の `git clone` / `git pull`**。Mac 側で `exp/...` ブランチを編集・コミットして push、サーバーで取り込む。公開リポジトリなので **HTTPS 読み取りのみ**（認証情報を共有マシンに置かない）。結果（モデル重み等、git 非管理）は **scp** で Mac 側の `results/<実験名>/`（`.gitignore` 済みの実験別アーカイブ）へ回収する。
+- **各ブランチ＝各実験**。サーバーの clone は **1個だけ**置き、実験ごとに `git fetch origin && git switch exp/...` で対象ブランチを引いて切り替える。`output/`・`models/` はブランチ切り替えで消えないため、**回収済みなら削除してから**次の実験を回す（推論が別実験のモデルを拾うのを防ぐ）。
 
 ```
-（Mac）編集・コミット → rsync で workspace へ送信
-   →（サーバー）conda env 構築 → 実験実行 → rsync で結果を回収
+（Mac）編集・コミット・push → GitHub
+   →（サーバー）git clone/pull → conda env 構築 → 実験実行 → scp で結果を回収
 ```
 
 conda 仮想環境は `taming-CATS/environment.yml`（conda-forge ベースで `cuda-toolkit`＋`pytorch` を同梱）から構築する。詳しい方針は [docs/direction.md](docs/direction.md)。
@@ -53,30 +54,38 @@ conda 仮想環境は `taming-CATS/environment.yml`（conda-forge ベースで `
 `<user>@<host>` は研究室サーバーに置き換える。リポジトリ・キャッシュ・env はすべて割当領域 `/mnt/gpu/workspace/2025/yuto_wada` 配下に置く。
 
 ```bash
-# --- (Mac) 割当領域へ送信。編集後の再送も同じコマンド（差分のみ転送） ---
-rsync -av --exclude='__pycache__' --exclude='*.pyc' --exclude='.DS_Store' \
-  /Users/wadaketsunin/research <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/
+# --- (Mac) コミットして GitHub へ push ---
+git push -u origin exp/fkgl-medeasi-repro
 
-# --- (サーバー) セットアップ ---
+# --- (サーバー) 取得 ---
 ssh <user>@<host>
-cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS
-export HF_HOME=/mnt/gpu/workspace/2025/yuto_wada/hf_cache   # 重み等の DL 先を割当領域に隔離
-export WANDB_MODE=disabled
+cd /mnt/gpu/workspace/2025/yuto_wada
+git clone https://github.com/Necos0/research.git        # 初回のみ（公開リポジトリ・認証不要）
+cd research/taming-CATS
+git fetch origin && git switch exp/fkgl-medeasi-repro    # 対象ブランチに切り替え（同一ブランチ更新時は git pull）
+# 別実験から切り替えた場合は前実験の生成物を掃除（回収済みが前提）: rm -rf output models
 
-# conda env（初回のみ。割当領域に作成）
+# --- (サーバー) conda env（初回のみ。割当領域に作成し、環境変数を env に登録） ---
+export HF_HOME=/mnt/gpu/workspace/2025/yuto_wada/hf_cache   # env 作成時の DL を割当領域へ
 conda env create -f environment.yml --prefix /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto
 conda activate /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto
+conda env config vars set HF_HOME=/mnt/gpu/workspace/2025/yuto_wada/hf_cache WANDB_MODE=disabled
+conda activate /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto   # 反映のため再 activate
 
-# --- (サーバー) 実行 ---
+# --- (サーバー) 実行（長時間ジョブは tmux 内で回す） ---
+tmux new -s exp-fkgl-medeasi-repro  # 再接続: tmux attach -t exp-fkgl-medeasi-repro
 nvidia-smi                          # 空き GPU を確認
 export CUDA_VISIBLE_DEVICES=0       # 空いている番号を指定
 ./run_sft_finetune.sh               # 学習 → models/ に保存
 ./run_sft_inference.sh              # 学習済みモデルを自動検出 → 推論 → 評価
 cat output/sft_results/all_results.json  # FKGL 要求値 vs 達成値の相関/MAE を確認
+# 実行を開始したら Ctrl-b d で detach → SSH を切ってよい
 
-# --- (Mac) 結果を回収 ---
-rsync -av <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output/ \
-  /Users/wadaketsunin/research/taming-CATS/output/
+# --- (Mac) 結果を回収（実験別に results/<実験名>/ へまとめる。ローカルに output/models は置かない） ---
+mkdir -p /Users/wadaketsunin/research/results/fkgl-medeasi-repro
+scp -r <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
+  <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
+  /Users/wadaketsunin/research/results/fkgl-medeasi-repro/
 ```
 
 ## ドキュメント
