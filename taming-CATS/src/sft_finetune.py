@@ -107,7 +107,8 @@ def load_and_prepare_model(args, model_family, model_name, model_class, peft_ena
     print(f"--- tokenizer pad_token_id: {tokenizer.pad_token_id}")
     print(f"--- tokenizer eos_token_id: {tokenizer.eos_token_id}")
     print(f"--- special tokens:")
-    for token in tokenizer.additional_special_tokens:
+    # Qwen2Tokenizer 等は additional_special_tokens 属性を持たず AttributeError になるため防御
+    for token in getattr(tokenizer, "additional_special_tokens", None) or []:
         print(f"{token}: {tokenizer.convert_tokens_to_ids(token)}")
 
     return model, tokenizer
