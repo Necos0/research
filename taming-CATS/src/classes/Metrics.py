@@ -133,7 +133,7 @@ class Metrics:
         Computes BERTScore using evaluate library.
         Compares the source and the target.
         """
-        if not self.source:
+        if os.getenv("SKIP_BERTSCORE") or not self.source:
             return 0.0
         bertscore_model = self.load_bertscore()
         results = bertscore_model.compute(
@@ -147,7 +147,7 @@ class Metrics:
         Computes BERTScore using evaluate library.
         Compares the target and the reference.
         """
-        if not self.reference:
+        if os.getenv("SKIP_BERTSCORE") or not self.reference:
             return 0.0
         bertscore_model = self.load_bertscore()
         results = bertscore_model.compute(
