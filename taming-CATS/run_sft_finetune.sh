@@ -8,7 +8,7 @@
 
 export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
 
-MAX_LENGTH=1024                     # Med-EASi は短文。最小化のため 4096→1024
+MAX_LENGTH=512                      # 語彙15万で巨大ロジット→OOM回避のため短めに
 
 # --- model name（最小テストは 0.5B。本走行なら 1B などに切替）
 #   ※ transformers==4.48.3 は Qwen3 未対応のため Qwen2.5 系を使う
@@ -36,8 +36,8 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --dataset_name "$DATASET_NAME" \
             --slice_train "16" \
             --slice_val "8" \
-            --batch_size "4" \
-            --eval_batch_size "4" \
+            --batch_size "1" \
+            --eval_batch_size "1" \
             --gradient_accumulation_steps "4" \
             --learning_rate "5e-6" \
             --weight_decay "0.01" \
