@@ -36,6 +36,7 @@ dependencies:
       - evaluate
       - nltk
       - textstat
+      - seaborn        # sft_eval.py の可視化で使用
       # --- ロギング ---
       - wandb
       # --- 学習コードが無条件 import するため必須（フルFTでも要る） ---

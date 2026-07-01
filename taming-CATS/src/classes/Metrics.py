@@ -20,6 +20,7 @@ except Exception:
     _LENS_AVAILABLE = False
 
 nltk.download('punkt')
+nltk.download('punkt_tab')  # 新しい nltk は sent_tokenize に punkt_tab を要求
 
 class Metrics:
     bertscore_model = None # on first use if ref provided
