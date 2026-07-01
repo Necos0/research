@@ -7,8 +7,17 @@ import evaluate
 import torch
 import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
-from comet.models import download_model as download_comet_model, load_from_checkpoint
-from lens import download_model as download_lens_model, LENS
+# COMET / LENS は重い評価指標。未インストールでも動くよう任意化（スモークテスト対応）
+try:
+    from comet.models import download_model as download_comet_model, load_from_checkpoint
+    _COMET_AVAILABLE = True
+except Exception:
+    _COMET_AVAILABLE = False
+try:
+    from lens import download_model as download_lens_model, LENS
+    _LENS_AVAILABLE = True
+except Exception:
+    _LENS_AVAILABLE = False
 
 nltk.download('punkt')
 
@@ -56,6 +65,9 @@ class Metrics:
     @staticmethod
     def load_lens():
         """Loads LENS model via lens-metric and caches it for reuse."""
+        if not _LENS_AVAILABLE:
+            Metrics.lens_unavailable = True
+            return None
         if Metrics.lens_unavailable:
             return None
 
@@ -145,7 +157,7 @@ class Metrics:
 
     def compute_comet(self):
         """Computes COMET score."""
-        if not self.reference:
+        if not _COMET_AVAILABLE or not self.reference:
             return 0.0
         self.load_comet()
         data = [{"src": self.source, "mt": self.text, "ref": self.reference}]
