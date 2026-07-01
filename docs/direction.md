@@ -39,57 +39,74 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
 
 
 # ロードマップ(中間発表まで)
-[] Medeasiのデータセット、<FKGL>タグを使った再現実験を行う
-    [] 学習サイズを限りなく小さくし、研究室GPUでテスト
-    [] 1Bのモデルで実際に動かす
-[] Medeasiのデータセットに対して、<keep>タグで保持する情報を追加する
-    [] 学習サイズを限りなく小さくし、研究室GPUでテスト
-    [] 1Bのモデルで実際に動かす
-[] <keep>タグを使って1Bのモデルをファインチューニングする
-[] 結果を比較する
+
+- [ ] Medeasiのデータセット、`<FKGL>` タグを使った再現実験を行う
+  - [x] 学習サイズを限りなく小さくし、研究室GPUでテスト
+  - [ ] 1Bのモデルで実際に動かす
+- [ ] Medeasiのデータセットに対して、`<keep>` タグで保持する情報を追加する
+  - [ ] 学習サイズを限りなく小さくし、研究室GPUでテスト
+  - [ ] 1Bのモデルで実際に動かす
+- [ ] `<keep>` タグを使って1Bのモデルをファインチューニングする
+- [ ] 結果を比較する
 
 ---
 
 ## 実験の実行フロー（共通運用）
 
-- **実行環境**: 学習・推論・評価はすべて **研究室サーバー（CUDA GPU）** で回す。手元の Mac は CUDA 非搭載のため、**コード編集と git 操作のみ**（学習は回さない）。
-- **仮想環境**: 各自がサーバー上で `environment.yml` から **conda 仮想環境を構築** して実行する（conda-forge ベースで `cuda-toolkit`＋`pytorch` を env に同梱する研究室標準の流儀。定義は `taming-CATS/environment.yml`）。
+- **実行環境**: 学習・推論・評価はすべて **研究室サーバー（CUDA GPU）** で回す。手元の Mac は CUDA 非搭載のため、**コード編集のみ**（学習は回さない）。
+- **転送手段**: サーバーへの反映は **git ではなく rsync（SSH 経由の差分転送）** で行う。共有マシンに GitHub 認証情報を置かず、SSH ログインだけで済ませるため。Mac 側では従来どおり `exp/<実験名>` ブランチで **編集・コミットして履歴を残す**（サーバーへは push しない）。
+- **配置**: リポジトリ・HF キャッシュ・conda env は、サーバーの割当領域 **`/mnt/gpu/workspace/2025/yuto_wada`** 配下に**すべて置く**（共有ストレージを圧迫しない）。
+- **仮想環境**: `environment.yml` から **conda 仮想環境を構築** して実行する（conda-forge ベースで `cuda-toolkit`＋`pytorch` を env に同梱する研究室標準の流儀。定義は `taming-CATS/environment.yml`）。
 - **バージョン管理**: 実験ごとに **ブランチを切って** 再現性を担保する。`main` は常に動く状態に保つ。
 
+```
+（Mac）編集・コミット → rsync で workspace へ送信
+   →（サーバー）conda env 構築 → 実験実行 → rsync で結果を回収
+```
+
 ### 手順
+
+`<user>@<host>` は研究室サーバーに置き換える。リポジトリ・キャッシュ・env はすべて割当領域 `/mnt/gpu/workspace/2025/yuto_wada` 配下に置く。
 
 1. **（Mac）実験用ブランチを作成**
    ```bash
    git switch -c exp/<実験名>        # 例: exp/fkgl-medeasi-repro
    ```
-2. **（Mac）設定・コードを編集してコミット**
+2. **（Mac）設定・コードを編集してコミット**（履歴を残すだけ。サーバーへは push しない）
    - 主な変更対象は `run_sft_finetune.sh` / `run_sft_inference.sh` の変数（`MODEL_NAME` / `DATASETS` / `METRICS` 等）。必要なら `src/`。
+   - **README.md の「現在の実験」節に、このブランチの実験概要を記載する**（ブランチごとに必ず更新する）。最低限、次の3項目を書く：
+     - **ブランチ**: `exp/<実験名>`
+     - **目的**: この実験で確認・検証したいこと（1〜2行）
+     - **設定**: モデル / データ / 制御属性 / データ件数・エポック・max_length / 推論条件 など、他条件と区別できる主要パラメータ
    ```bash
    git add -A && git commit -m "exp: <条件の説明>"
    ```
-3. **（Mac）GitHub へ push**
+3. **（Mac）割当領域へ送信**（rsync。編集後の再送も同じコマンドで差分だけ転送）
    ```bash
-   git push -u origin exp/<実験名>
+   rsync -av --exclude='__pycache__' --exclude='*.pyc' --exclude='.DS_Store' \
+     /Users/wadaketsunin/research <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/
    ```
-4. **（サーバー）SSH して該当ブランチを取得**（push ではなく pull）
+4. **（サーバー）SSH して conda 仮想環境を有効化**
    ```bash
-   ssh <lab-server>
-   cd <repo>/taming-CATS
-   git fetch origin && git switch exp/<実験名>   # 初回。2回目以降は git pull
-   ```
-5. **（サーバー）conda 仮想環境を構築・有効化**
-   ```bash
-   conda env create -f environment.yml    # 初回のみ。各自 wada-yuto 環境を構築
-   conda activate wada-yuto
+   ssh <user>@<host>
+   cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS
+   conda activate /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto   # HF_HOME / WANDB_MODE は env に登録済み
    # 依存を更新したら: conda env update -f environment.yml --prune
+   # env を抜けるとき: conda deactivate
    ```
-6. **（サーバー）実験を回す**
+5. **（サーバー）実験を回す**（env を activate 済みなら HF_HOME / WANDB_MODE は設定済み）
    ```bash
-   export WANDB_MODE=disabled             # W&B を使わない場合
+   nvidia-smi                             # 空き GPU を確認
+   export CUDA_VISIBLE_DEVICES=0          # 空いている番号を指定（実行するシェルごとに指定）
    ./run_sft_finetune.sh                  # → models/ に保存
    ./run_sft_inference.sh                 # → output/ に保存（末尾で評価も自動実行）
    ```
-7. **結果の回収**: モデル重み（`*.safetensors`）は `.gitignore` 対象で git では戻せない。**評価サマリ（`output/sft_results/all_results.json`）や図はサーバーで commit → push** して手元に取り込み、重い生成物は必要分だけ `scp` で回収する。
+6. **（Mac）結果を回収**（rsync でサーバーから手元へ）
+   ```bash
+   rsync -av <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output/ \
+     /Users/wadaketsunin/research/taming-CATS/output/
+   ```
+   - モデル重み（`*.safetensors`）は `.gitignore` 対象で重いので、必要な分だけ同様に rsync で回収する。評価サマリ（`output/sft_results/all_results.json`）や図を手元に取り込んで確認する。
 
 ### 共通の前提修正（作業ブランチに1度だけ）
 
