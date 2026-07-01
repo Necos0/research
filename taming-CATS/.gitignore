@@ -33,8 +33,9 @@ __pycache__/
 # experimental target group prompts
 **/target_group_prompts.json
 
-# old dev experiments 
-./output/old_experiments/
+# 実験成果物（結果は rsync で回収、git には含めない）
+output/
+models/
 
 # job logs (keep the folder, ignore its contents)
 logs/*
