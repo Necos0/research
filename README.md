@@ -18,7 +18,10 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 - **ブランチ**: `exp/fkgl-medeasi-repro`
 - **目的**: データ準備→学習→推論→評価のパイプラインが端から端まで通ることを確認する（数値の再現ではなく疎通確認）。
-- **設定**: モデル `Qwen/Qwen2.5-0.5B-Instruct` / データ `medeasi`（ローカル）/ 制御属性 `FKGL` / train 16件・val 8件・1エポック・max_length 512 / 推論は1シード（seed=37）・test 8件。
+- **設定**:
+  - モデル `Qwen/Qwen2.5-0.5B-Instruct` / データ `medeasi`（ローカル）/ 制御属性 `FKGL`
+  - 学習: train 16件・val 8件 / batch_size 1（gradient_accumulation 4 → 実効4）/ learning_rate 5e-6 / 1エポック / max_length 512
+  - 推論: test 8件 / 1シード（seed=37）/ batch_size 16 / max_length 1024
 
 ### 特別な操作
 
