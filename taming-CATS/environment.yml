@@ -37,8 +37,9 @@ dependencies:
       - textstat
       # --- ロギング ---
       - wandb
+      # --- 学習コードが無条件 import するため必須（フルFTでも要る） ---
+      - peft
+      - bitsandbytes    # CUDA 前提。GPU サーバーで導入
       # --- 用途に応じて有効化 ---
-      # - peft            # LoRA/PEFT 学習を使うとき（run_sft_finetune_peft.sh）
-      # - bitsandbytes    # 量子化/PEFT を使うとき（CUDA バージョン一致が必要）
       # - vllm            # 推論高速化 --use_vllm を使うとき
       # - optuna          # ハイパラ探索（sweep）を使うとき
