@@ -37,6 +37,7 @@ dependencies:
       - evaluate
       - nltk
       - textstat
+      - lens-metric    # LENS 評価（Metrics.compute_lens が使用。初回は davidheineman/lens を DL）
       - seaborn        # sft_eval.py の可視化で使用
       # --- ロギング ---
       - wandb
