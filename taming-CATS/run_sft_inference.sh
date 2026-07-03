@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# --- 標準出力＋標準エラーをタイムスタンプ付きログに保存（SARI/LENS/MAE 等が残る）
+#   端末表示は tee で維持しつつ logs/ にも書き出す。logs/* は .gitignore 済み。
+mkdir -p logs
+LOG_FILE="logs/inference_$(date +%Y%m%d_%H%M%S).log"
+exec > >(tee -a "$LOG_FILE") 2>&1
+echo "Logging to $LOG_FILE"
+
 echo "Script started: $(date)"
 
 # =========================================================================

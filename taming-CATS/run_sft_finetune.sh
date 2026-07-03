@@ -9,6 +9,13 @@
 
 export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
 
+# --- 標準出力＋標準エラーをタイムスタンプ付きログに保存（eval_loss 等が残る）
+#   端末表示は tee で維持しつつ logs/ にも書き出す。logs/* は .gitignore 済み。
+mkdir -p logs
+LOG_FILE="logs/finetune_$(date +%Y%m%d_%H%M%S).log"
+exec > >(tee -a "$LOG_FILE") 2>&1
+echo "Logging to $LOG_FILE"
+
 MAX_LENGTH=512                      # 大語彙で巨大ロジット→OOM回避のため短めに
 
 # --- model name（本走行の 1B モデル）
