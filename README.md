@@ -14,20 +14,21 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | `results/` | サーバーから scp で回収した実験別の結果（`.gitignore` 済み） |
 | `2604.01779v1.pdf` | 参照論文 |
 
-## 現在の実験：Med-EASi × `<FKGL>` 再現（最小GPUスモークテスト）
+## 現在の実験：Med-EASi × `<FKGL>` 再現（1B モデルでの実走行）
 
-- **ブランチ**: `exp/fkgl-medeasi-repro`
-- **目的**: データ準備→学習→推論→評価のパイプラインが端から端まで通ることを確認する（数値の再現ではなく疎通確認）。
+- **ブランチ**: `exp/fkgl-medeasi-1b`
+- **目的**: ロードマップ1.2。スモークテストで疎通確認したパイプラインを、実運用サイズの 1B モデル・Med-EASi 全件で実走行し、`<FKGL>` 制御による再現結果を得る。
 - **設定**:
-  - モデル `Qwen/Qwen2.5-0.5B-Instruct` / データ `medeasi`（ローカル）/ 制御属性 `FKGL`
-  - 学習: train 16件・val 8件 / batch_size 1（gradient_accumulation 4 → 実効4）/ learning_rate 5e-6 / 1エポック / max_length 512
-  - 推論: test 8件 / 1シード（seed=37）/ batch_size 16 / max_length 1024
+  - モデル `meta-llama/Llama-3.2-1B-Instruct` / データ `medeasi`（ローカル）/ 制御属性 `FKGL`
+  - 学習: train 667件・val 87件（全件）/ batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6 / 3エポック / max_length 512
+  - 推論: test 98件（全件）/ 1シード（seed=37）/ batch_size 16 / max_length 1024
 
 ### 特別な操作
 
-標準の実行手順は [docs/direction.md](docs/direction.md)。この実験に固有の操作は次のみ：
+標準の実行手順は [docs/direction.md](docs/direction.md)。この実験に固有の操作は次のとおり：
 
-- **推論時は BERTScore をスキップする**。評価の BERTScore が語彙15万規模で GPU OOM を起こすため、環境変数 `SKIP_BERTSCORE=1` を付けて回す（`src/classes/Metrics.py` が参照）。
+- **`meta-llama/Llama-3.2-1B-Instruct` は gated モデル**。事前に HF 上でライセンスを承認し、サーバー側で `export HF_TOKEN=<token>`（読み取り可トークン）を設定してから学習を回す。
+- **推論時は BERTScore をスキップする**。評価の BERTScore が大語彙で GPU OOM を起こすため、環境変数 `SKIP_BERTSCORE=1` を付けて回す（`src/classes/Metrics.py` が参照）。
   ```bash
   SKIP_BERTSCORE=1 ./run_sft_inference.sh
   ```

@@ -3,11 +3,11 @@
 echo "Script started: $(date)"
 
 # =========================================================================
-# 実験: Med-EASi × <FKGL> 再現（最小サイズ・1シード）
+# 実験: Med-EASi × <FKGL> 再現（1B モデル・全件テスト・1シード）
 export WANDB_MODE=disabled
 METRIC_NAME="FKGL"
 DATASET="medeasi"                       # ← ローカル folder 名
-MODEL_NAME="Qwen2.5-0.5B-Instruct"      # short name（学習で使ったモデル）
+MODEL_NAME="Llama-3.2-1B-Instruct"      # short name（学習で使ったモデル）
 USER_PROMPT_ID="token_explanation"
 
 # 学習で生成された最新の models/ ディレクトリを自動選択
@@ -44,7 +44,7 @@ for SEED in "${SEEDS[@]}"; do
     --model_family "base"
     --max_length 1024
     --batch_size 16
-    --slice_test 8
+    --slice_test -1
     --output_file "$OUTPUT_FILE"
     --control_tokens "data/prompts/control_tokens.json"
     --system_prompts "data/prompts/system_prompts.json"
