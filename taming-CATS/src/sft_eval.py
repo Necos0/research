@@ -525,7 +525,7 @@ def plot_error_std_binned(reference_vals, real_errors, metric_key, output_dir, n
         edgecolor="black"
         )
     plt.axvline(mean_error, color='black', linestyle='--', label=f'Mean Error: {mean_error:.2f}')
-    plt.xlabel("std of errors", fontsize=14)
+    plt.xlabel(f"signed error ({metric_key}: prediction − target)", fontsize=14)
     plt.ylabel("count", fontsize=14)
     ax = plt.gca()
     ax.tick_params(axis='both', labelsize=12)

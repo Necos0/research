@@ -33,20 +33,12 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
 ## トレードオフ
 - 良い点
     - 変数が一個なため、因果がクリーンで、実装が最も軽い。
+    - 数値情報を保持できる。
 - 悪い点
     - 先行研究で行っていた平易化レベルの制御能力を捨てる。
     　→中間発表は、<keep>タグのみの影響を検証する。
+    - 数値情報の保持によって既存の評価指標が低く出る可能性がある。
 
-
-# ロードマップ(中間発表まで)
-
-- [ ] 1 Medeasiのデータセット、`<FKGL>` タグを使った再現実験を行う
-  - [x] 1.1 学習サイズを限りなく小さくし、研究室GPUでテスト
-  - [ ] 1.2 1Bのモデルで実際に動かす
-- [ ] 2 Medeasiのデータセットに対して、`<keep>` タグで保持する情報を追加する
-  - [ ] 2.1 学習サイズを限りなく小さくし、研究室GPUでテスト
-  - [ ] 2.2 1Bのモデルで実際に動かす
-- [ ] 結果を比較する
 
 ---
 
@@ -56,7 +48,7 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
 - **コードの受け渡し**: サーバーへのコード反映は **GitHub 経由の `git clone` / `git pull`** で行う。Mac 側で `exp/<実験名>` ブランチを **編集・コミットして GitHub へ push**、サーバー側で取り込む。公開リポジトリなので、サーバーは **HTTPS で読み取りのみ**（認証情報を共有マシンに置かない）。
 - **ブランチ＝実験、clone は1個**: サーバーには clone を **1個だけ**置き、実験ごとに **`git fetch origin && git switch exp/<実験名>`**（同一ブランチ更新時は `git pull`）で **対象ブランチを引いて切り替える**。各ブランチが各実験に対応する。
 - **切り替え時の注意**: `output/`・`models/` は `.gitignore` 対象で **ブランチを切り替えても消えない**。前実験の生成物が残ると `run_sft_inference.sh` が別実験のモデルを拾う恐れがあるため、**回収済みの `output/`・`models/` は削除してから**新しい実験を回す。
-- **結果の回収**: モデル重みや出力は git に載らないため、サーバー → Mac へ **scp で回収**する。Mac 側には `output/`・`models/` を置かず、サーバーの `output`・`models` を実験別に **`results/<実験名>/`**（実験別アーカイブ。`results/` は `.gitignore` 済み）へ集約し、実験間で上書きしないようにする。
+- **結果の回収**: モデル重み・出力・実行ログは git に載らないため、サーバー → Mac へ **scp で回収**する。Mac 側には `output/`・`models/`・`logs/` を置かず、サーバーの `output`・`models`・`logs`（標準出力の tee 保存先。`eval_loss` や評価数値が残る）を実験別に **`results/<実験名>/`**（実験別アーカイブ。`results/` は `.gitignore` 済み）へ集約し、実験間で上書きしないようにする。
 - **配置**: リポジトリ・HF キャッシュ・conda env は、サーバーの割当領域 **`/mnt/gpu/workspace/2025/yuto_wada`** 配下に**すべて置く**（共有ストレージを圧迫しない）。
 - **仮想環境**: `environment.yml` から **conda 仮想環境を構築** して実行する（conda-forge ベースで `cuda-toolkit`＋`pytorch` を env に同梱する研究室標準の流儀。定義は `taming-CATS/environment.yml`）。
 - **バージョン管理**: 実験ごとに **ブランチを切って** 再現性を担保する。`main` は常に動く状態に保つ。
@@ -68,7 +60,7 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
 
 ### 手順
 
-`<user>@<host>` は研究室サーバーに置き換える。リポジトリ・キャッシュ・env はすべて割当領域 `/mnt/gpu/workspace/2025/yuto_wada` 配下に置く。
+研究室サーバーは `wada_yuto@calc40`。リポジトリ・キャッシュ・env はすべて割当領域 `/mnt/gpu/workspace/2025/yuto_wada` 配下に置く。
 
 1. **（Mac）実験用ブランチを作成**
    ```bash
@@ -91,7 +83,7 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
    - clone は割当領域に **1個だけ**。実験ごとに **対象ブランチを `git switch` で切り替える**（各ブランチ＝各実験）。
    - 学習は長時間かかるため、SSH が切れてもジョブが止まらないよう **tmux セッション内で回す**。conda activate や実行はすべて tmux の中で行う。
    ```bash
-   ssh <user>@<host>
+   ssh wada_yuto@calc40
    cd /mnt/gpu/workspace/2025/yuto_wada
    git clone https://github.com/Necos0/research.git   # 初回のみ（公開リポジトリなので認証不要）
    cd research/taming-CATS
@@ -115,12 +107,13 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
 6. **（Mac）結果を回収**（scp でサーバーから手元の `results/<実験名>/` へまとめる）
    ```bash
    mkdir -p /Users/wadaketsunin/research/results/<実験名>
-   scp -r <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
-     <user>@<host>:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
+   scp -r wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
+     wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
+     wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
      /Users/wadaketsunin/research/results/<実験名>/
    ```
-   - **Mac 側には `output/`・`models/` を置かず、実験ごとに `results/<実験名>/` に集約する**（`results/` は `.gitignore` 済み。実験間で上書きされない）。
-   - モデル重み（`*.safetensors`）は重いので、不要なら上の `models` 行を外し、評価サマリ（`output/sft_results/all_results.json`）や図だけ回収してもよい。
+   - **Mac 側には `output/`・`models/`・`logs/` を置かず、実験ごとに `results/<実験名>/` に集約する**（`results/` は `.gitignore` 済み。実験間で上書きされない）。
+   - モデル重み（`*.safetensors`）は重いので、不要なら上の `models` 行を外し、評価サマリ（`output/sft_results/all_results.json`）や実行ログ（`logs/`）・図だけ回収してもよい。
 
 ### 共通の前提修正（作業ブランチに1度だけ）
 

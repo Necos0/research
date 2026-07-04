@@ -10,6 +10,7 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | --- | --- |
 | `taming-CATS/` | 実装本体（Taming-CATS 再現コード＋本研究の実験設定）。使用データは Med-EASi のみに整理済み |
 | `docs/direction.md` | 研究方針・提案手法・ロードマップ・実験の実行フロー（メインの索引） |
+| `docs/elsi-map.md` | 本研究の ELSI（倫理的・法的・社会的課題）マップ |
 | `docs/results_fkgl_medeasi_smoketest.html` | スモークテストの結果レポート |
 | `results/` | サーバーから scp で回収した実験別の結果（`.gitignore` 済み） |
 | `2604.01779v1.pdf` | 参照論文 |
