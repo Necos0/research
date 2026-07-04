@@ -2,15 +2,15 @@
 
 LLM によるテキスト平易化において、可読性レベルの制御に加えて **「原文中の数値情報を欠落させない」** ことを制御トークンで実現する研究のリポジトリ。先行研究 **Taming-CATS** の制御トークン機構を土台にする。
 
-研究の狙い・提案手法・ロードマップ・実験の実行フロー（サーバー運用、git clone/pull、tmux、結果回収など）は **[docs/direction.md](docs/direction.md)** を参照。
+研究の狙い・提案手法・実験の実行フロー（サーバー運用、git clone/pull、tmux、結果回収など）は **[docs/direction.md](docs/direction.md)**、中間発表までのロードマップは **[docs/roadmap.md](docs/roadmap.md)** を参照。
 
 ## リポジトリ構成
 
 | パス | 内容 |
 | --- | --- |
 | `taming-CATS/` | 実装本体（Taming-CATS 再現コード＋本研究の実験設定）。使用データは Med-EASi のみに整理済み |
-| `docs/direction.md` | 研究方針・提案手法・ロードマップ・実験の実行フロー（メインの索引） |
-| `docs/elsi-map.md` | 本研究の ELSI（倫理的・法的・社会的課題）マップ |
+| `docs/direction.md` | 研究方針・提案手法・実験の実行フロー（メインの索引） |
+| `docs/roadmap.md` | 中間発表までのロードマップ（進捗チェックリスト） |
 | `docs/results_fkgl_medeasi_smoketest.html` | スモークテストの結果レポート |
 | `results/` | サーバーから scp で回収した実験別の結果（`.gitignore` 済み） |
 | `2604.01779v1.pdf` | 参照論文 |
