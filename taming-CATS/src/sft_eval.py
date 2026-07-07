@@ -7,6 +7,7 @@ import seaborn as sns
 import numpy as np
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from helpers.utils import get_correlation_data
+from helpers.keep import extract_numbers
 import pandas as pd
 import scipy.stats as stats
 from collections import defaultdict
@@ -573,7 +574,25 @@ def main():
     with open(f"{args.output_dir}/output_averaged.json", "w", encoding="utf-8") as f:
         json.dump(predictions, f, indent=4)
 
-    source_vals, reference_vals, prediction_vals = extract_metric_values(predictions, metric_key_mapped, use_source=use_source)
+    # KEEP は原文に数値が無い事例だと保持率が自明に 1.0（reference/prediction とも）
+    # になり、損失や平均が薄まる。損失・制御統計は「原文に数値がある事例」だけで計算する。
+    loss_predictions = predictions
+    numeric_sources_only = False
+    if args.metric_key == "KEEP":
+        numeric_subset = [
+            item for item in predictions if extract_numbers(item.get("source_text", ""))
+        ]
+        if numeric_subset:
+            loss_predictions = numeric_subset
+            numeric_sources_only = True
+            print(
+                f"KEEP: losses computed on {len(numeric_subset)}/{len(predictions)} "
+                "samples with numbers in the source"
+            )
+        else:
+            print("[WARN] KEEP: no samples with numbers in the source; using all samples for losses")
+
+    source_vals, reference_vals, prediction_vals = extract_metric_values(loss_predictions, metric_key_mapped, use_source=use_source)
 
     mse, mae = compute_mean_losses(reference_vals, prediction_vals)
     per_sample_mse, per_sample_mae, per_sample_real_loss = compute_per_sample_losses(reference_vals, prediction_vals)
@@ -610,22 +629,30 @@ def main():
         "MSE": mse,
         "MAE": mae,
         "std_error": std_error,
-        "var_error": var_error
+        "var_error": var_error,
+        "num_samples": len(reference_vals),
+        "numeric_sources_only": numeric_sources_only,
     }
 
     with open(f"{args.output_dir}/stats.json", "w") as f:
         json.dump(loss_output, f, indent=4)
     print(f"Saved loss values to stats.json")
 
-    for i, item in enumerate(predictions):
-        if i < len(reference_vals):
-            item[f"{args.metric_key}_losses"] = {
-                "reference": reference_vals[i],
-                "prediction": prediction_vals[i],
-                "squared_error": per_sample_mse[i],
-                "absolute_error": per_sample_mae[i],
-                "real_loss": per_sample_real_loss[i]
-            }
+    # extract_metric_values と同じ順序・条件で損失計算対象の事例にだけ付与する
+    # （値が欠けた事例を挟んでもインデックスがずれないようにする）
+    sample_index = 0
+    for item in loss_predictions:
+        if item["reference_metrics"].get(metric_key_mapped) is None or \
+           item["prediction_metrics"].get(metric_key_mapped) is None:
+            continue
+        item[f"{args.metric_key}_losses"] = {
+            "reference": reference_vals[sample_index],
+            "prediction": prediction_vals[sample_index],
+            "squared_error": per_sample_mse[sample_index],
+            "absolute_error": per_sample_mae[sample_index],
+            "real_loss": per_sample_real_loss[sample_index]
+        }
+        sample_index += 1
 
     with open(f"{args.output_dir}/output_averaged.json", "w", encoding="utf-8") as f:
         json.dump(predictions, f, indent=4)
@@ -667,7 +694,9 @@ def main():
             "MSE": mse,
             "MAE": mae,
             "std_error": std_error,
-            "var_error": var_error
+            "var_error": var_error,
+            "num_samples": len(reference_vals),
+            "numeric_sources_only": numeric_sources_only,
         },
         "mean_metrics": mean_metrics,
         "mean_ctrl":    mean_ctrl,
