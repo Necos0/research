@@ -13,7 +13,6 @@ echo "Script started: $(date)"
 # 実験: Med-EASi × <KEEP> 最小GPUスモークテスト（ロードマップ2.1・少量テスト・1シード）
 export WANDB_MODE=disabled
 
-echo "Using LOCAL_DATA_DIR=$LOCAL_DATA_DIR"
 METRIC_NAME="KEEP"
 DATASET="medeasi"                       # ← ローカル folder 名
 MODEL_NAME="Qwen2.5-0.5B-Instruct"      # short name（学習で使ったモデル）
@@ -69,10 +68,14 @@ for SEED in "${SEEDS[@]}"; do
     ARGS+=( --peft_path "$MODEL_PATH" )
   fi
 
-  python src/sft_inference.py "${ARGS[@]}"
+  # 推論が失敗したら即中断（出力ファイルが無いまま評価に進むのを防ぐ）
+  python src/sft_inference.py "${ARGS[@]}" || {
+    echo "ERROR: inference (seed $SEED) が失敗しました。評価はスキップします。"
+    exit 1
+  }
 
-  ((i++))
   echo "Inference $i completed."
+  ((i++))
 
 done
 

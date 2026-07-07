@@ -190,14 +190,17 @@ class Metrics:
 
     def compute_lens(self):
         """Computes LENS score for text simplification quality."""
-        if not self.source:
+        # LENS は参照ベースの指標。参照なしの呼び出し（例: reference 自体の
+        # メトリクス計算）で references=[[]] を渡すと lens 内部の DataLoader が
+        # 空になり TypeError で落ちるため、ここで打ち切る。
+        if os.getenv("SKIP_LENS") or not self.source or not self.reference:
             return None
 
         lens_model = self.load_lens()
         if lens_model is None:
             return None
 
-        references = [[self.reference]] if self.reference else [[]]
+        references = [[self.reference]]
         score_kwargs = {
             "batch_size": 8,
         }
@@ -213,12 +216,15 @@ class Metrics:
             )
         except TypeError:
             # Older versions may not accept devices.
-            scores = lens_model.score(
-                [self.source],
-                [self.text],
-                references,
-                batch_size=8,
-            )
+            try:
+                scores = lens_model.score(
+                    [self.source],
+                    [self.text],
+                    references,
+                    batch_size=8,
+                )
+            except Exception:
+                return None
         except Exception:
             return None
 
