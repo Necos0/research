@@ -1,33 +1,33 @@
 #!/bin/bash
 
 # =========================================================================
-# 実験: Med-EASi × <FKGL> 再現（1B モデルでの実走行）
-#   - データはローカル data/splits_flattened_filtered/medeasi を全件使用
-#   - 実走行リファレンス run_sft_finetune_2.sh の設定に合わせる
-#     （全件・batch 4・grad_accum 4・lr 5e-6・3エポック）
+# 実験: Med-EASi × <KEEP> 最小GPUスモークテスト（ロードマップ2.1）
+#   - 目的: <KEEP>（数値保持）制御トークンの学習パイプラインが端から端まで
+#           動くことを、研究室GPUで最小サイズ・非gatedモデルで確認する。
+#   - データはローカル data/splits_flattened_full/medeasi（フル・未フィルタ、keep付き）を
+#     少量スライス使用。場所は python 呼び出しの --local_data_dir で指定する。
+#   - ※事前に `python src/add_keep_metric.py --dataset medeasi` で
+#     source_metrics/target_metrics に "keep" を付与しておくこと（本ブランチは付与済み）。
 # =========================================================================
 
 export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
 
-# --- 標準出力＋標準エラーをタイムスタンプ付きログに保存（eval_loss 等が残る）
-#   端末表示は tee で維持しつつ logs/ にも書き出す。logs/* は .gitignore 済み。
+# --- 標準出力＋標準エラーをタイムスタンプ付きログに保存
 mkdir -p logs
 LOG_FILE="logs/finetune_$(date +%Y%m%d_%H%M%S).log"
 exec > >(tee -a "$LOG_FILE") 2>&1
 echo "Logging to $LOG_FILE"
 
-MAX_LENGTH=512                      # 大語彙で巨大ロジット→OOM回避のため短めに
+MAX_LENGTH=1024                     # Med-EASi は短文。最小化のため短めに
 
-# --- model name（本走行の 1B モデル）
-#   ※ gated モデルのため、サーバー側で HF トークン（ライセンス承認済み）が必要
-#   ※ transformers==4.48.3 は Qwen3 未対応。0.5B スモークは Qwen2.5-0.5B を使用した
-MODEL_NAME="meta-llama/Llama-3.2-1B-Instruct"
+# --- model name（非gatedの小型モデルでスモーク。1B実走行は別ブランチ 2.2 で）
+MODEL_NAME="Qwen/Qwen2.5-0.5B-Instruct"
 
 DATASETS=(
     "medeasi"                       # ← ローカル folder 名（splits_flattened_filtered/medeasi）
     )
 METRICS=(
-    "FKGL"
+    "KEEP"
     )
 
 for DATASET_NAME in "${DATASETS[@]}"; do
@@ -42,8 +42,9 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --model_family "base" \
             --model_name "$MODEL_NAME" \
             --dataset_name "$DATASET_NAME" \
-            --slice_train "-1" \
-            --slice_val "-1" \
+            --local_data_dir "data/splits_flattened_full" \
+            --slice_train "32" \
+            --slice_val "8" \
             --batch_size "4" \
             --eval_batch_size "4" \
             --gradient_accumulation_steps "4" \
@@ -52,7 +53,7 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --warmup_steps "30" \
             --max_grad_norm "0.5" \
             --logging_steps "10" \
-            --epochs "3" \
+            --epochs "1" \
             --patience "4" \
             --max_length "$MAX_LENGTH"\
             --wandb_project_name "ATS_with_control_tokens" \

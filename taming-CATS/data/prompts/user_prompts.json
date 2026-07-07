@@ -130,5 +130,27 @@
     "description": "prompt with a control token, an explanation, and examples",
     "prompt": "INSTRUCTION: Simplify the following text such that the length of the output text (number of sentences) relative to the source text is approximately equal to the ratio specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. \nSOURCE TEXT: {TEXT}\nEXPLANATION: {EXPLANATION} \nEXAMPLES: \n- {EXAMPLE_1} \n-{EXAMPLE_2} \n- {EXAMPLE_3}"
     }
+  ],
+  "KEEP": [
+    {
+    "id": "no_token",
+    "description": "prompt without a control token, simply instructing to keep the listed numbers",
+    "prompt": "INSTRUCTION: Simplify the following text while preserving exactly (unchanged and without omission) the following numbers: {VALUE}. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token",
+    "description": "prompt with a control token listing the numbers that must be preserved",
+    "prompt": "INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. \nSOURCE TEXT: <KEEP={SOURCE_VALUE}> {TEXT}"
+    },
+    {
+    "id": "token_explanation",
+    "description": "prompt with a control token and an explanation",
+    "prompt": "INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. \nSOURCE TEXT: <KEEP={SOURCE_VALUE}> {TEXT}\nEXPLANATION: {EXPLANATION}"
+    },
+    {
+    "id": "token_explanation_examples",
+    "description": "prompt with a control token, an explanation, and examples",
+    "prompt": "INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. \nSOURCE TEXT: <KEEP={SOURCE_VALUE}> {TEXT}\nEXPLANATION: {EXPLANATION} \nEXAMPLES: \n- {EXAMPLE_1} \n-{EXAMPLE_2} \n- {EXAMPLE_3}"
+    }
   ]
 }

@@ -1,11 +1,12 @@
 from datasets import load_dataset
 import os
 
-def load_dataset_from_hf(DATASET, split="validation", slice=-1) -> list:
+def load_dataset_from_hf(DATASET, split="validation", slice=-1, local_data_dir="data/splits_flattened_full") -> list:
 
     # ローカルに整形済みデータがあればそれを優先（研究室サーバーでのオフライン再現用）。
     # 無ければ従来どおり著者の HF Hub (shtosti/<DATASET>) から取得する。
-    local_dir = os.path.join("data/splits_flattened_filtered", DATASET)
+    # local_data_dir でルートを切り替え可能（例: フル未フィルタ版 data/splits_flattened_full）。
+    local_dir = os.path.join(local_data_dir, DATASET)
     if os.path.isdir(local_dir):
         dataset = load_dataset(
             "json",

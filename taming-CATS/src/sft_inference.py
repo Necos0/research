@@ -122,7 +122,7 @@ def load_and_prepare_model(model_name, model_family, model_path, model_class, ma
 
 
 def is_source_metric(args):
-    if args.metric_name in ["FRE", "FKGL", "ARI", "DALE-CHALL", "Dale-Chall"]:
+    if args.metric_name in ["FRE", "FKGL", "ARI", "DALE-CHALL", "Dale-Chall", "KEEP"]:
         return True
     return False
     
@@ -132,7 +132,7 @@ def is_compression_metric(args):
     return False
 
 def load_and_prepare_test_set(dataset_name, tokenizer, max_length, control_tokens, system_prompts, user_prompts, metric_mapping, args, user_prompt_id, model_family, slice_test=None, source_based_metric=False, compression_metric=False):
-    test_dataset = load_dataset_from_hf(dataset_name, split="test", slice=slice_test)
+    test_dataset = load_dataset_from_hf(dataset_name, split="test", slice=slice_test, local_data_dir=args.local_data_dir)
     
     def process_instance(row):
 
@@ -448,6 +448,8 @@ def parse_args():
     parser.add_argument("--model_path", type=str, required=True, help="The path to the model dir.")
     parser.add_argument("--model_name", type=str, required=False, help="The name of the model on Hugging Face.")
     parser.add_argument("--dataset_name", type=str, required=True, help="The name of the dataset on Hugging Face.")
+    parser.add_argument("--local_data_dir", type=str, default="data/splits_flattened_full",
+                        help="ローカルスプリットのルート（フィルタ済みは data/splits_flattened_filtered）。存在しなければ HF Hub から取得。")
     parser.add_argument("--model_class", type=str, required=True, choices=["llama", "auto"], help="Model class to use.")
     parser.add_argument("--model_family", type=str, default="base", choices=["llama", "mistral", "qwen", "base"], help="Model family to use.")
     parser.add_argument("--max_length", type=int, default=512, help="Max length for tokenization.")

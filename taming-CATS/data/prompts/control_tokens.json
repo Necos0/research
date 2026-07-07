@@ -92,5 +92,16 @@
             "The <SENTENCE_COMPRESSION=1.5> token specifies that the sentence-level compression rate should be around 1.5, which means the number of sentences in the output text should be approximately 150% of the number of sentences in the original text.",
             "The <SENTENCE_COMPRESSION=2.0> token specifies that the sentence-level compression rate should be around 2.0, which means the number of sentences in the output text should be approximately double the number of sentences in the original text."
         ]
+    },
+    "KEEP": {
+        "token": "<KEEP={KEEP_VALUE}>",
+        "description": "Numbers that must be preserved in the simplification",
+        "value type": "list",
+        "explanation": "The <KEEP={TARGET_VALUE}> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.",
+        "examples": [
+            "The <KEEP=0.2> token specifies that the number 0.2 appears in the source text and must be kept in the simplification (for example a percentage such as 0.2%).",
+            "The <KEEP=1995, 65> token specifies that both numbers 1995 and 65 must appear unchanged in the simplification (for example a year and an age).",
+            "The <KEEP=none> token specifies that the source text contains no numbers, so there is no numerical information that must be preserved."
+        ]
     }
 }

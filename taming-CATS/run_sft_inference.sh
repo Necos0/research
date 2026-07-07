@@ -10,11 +10,13 @@ echo "Logging to $LOG_FILE"
 echo "Script started: $(date)"
 
 # =========================================================================
-# 実験: Med-EASi × <FKGL> 再現（1B モデル・全件テスト・1シード）
+# 実験: Med-EASi × <KEEP> 最小GPUスモークテスト（ロードマップ2.1・少量テスト・1シード）
 export WANDB_MODE=disabled
-METRIC_NAME="FKGL"
+
+echo "Using LOCAL_DATA_DIR=$LOCAL_DATA_DIR"
+METRIC_NAME="KEEP"
 DATASET="medeasi"                       # ← ローカル folder 名
-MODEL_NAME="Llama-3.2-1B-Instruct"      # short name（学習で使ったモデル）
+MODEL_NAME="Qwen2.5-0.5B-Instruct"      # short name（学習で使ったモデル）
 USER_PROMPT_ID="token_explanation"
 
 # 学習で生成された最新の models/ ディレクトリを自動選択
@@ -47,11 +49,12 @@ for SEED in "${SEEDS[@]}"; do
     --seed "$SEED"
     --model_path "$MODEL_PATH"
     --dataset_name "$DATASET"
+    --local_data_dir "data/splits_flattened_full"   # 学習時と同じデータを指定すること
     --model_class "auto"
     --model_family "base"
     --max_length 1024
-    --batch_size 16
-    --slice_test -1
+    --batch_size 8
+    --slice_test 16
     --output_file "$OUTPUT_FILE"
     --control_tokens "data/prompts/control_tokens.json"
     --system_prompts "data/prompts/system_prompts.json"

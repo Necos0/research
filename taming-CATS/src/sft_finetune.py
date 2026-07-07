@@ -168,7 +168,9 @@ def show_examples(dataset, n=3, show_tokens=False):
         print("=" * 50)
 
 def is_source_metric(args):
-    if args.metric_name in ["FRE", "FKGL", "ARI", "DALE-CHALL"]:
+    # KEEP は原文由来の数値を保持対象とするため source ベース
+    #（原文側トークン <KEEP=...> を SOURCE TEXT にも前置する）
+    if args.metric_name in ["FRE", "FKGL", "ARI", "DALE-CHALL", "KEEP"]:
         return True
     elif args.metric_name in ["CHAR_COMPRESSION", "WORD_COMPRESSION", "SENTENCE_COMPRESSION"]:
         return False
@@ -231,8 +233,8 @@ def load_and_prepare_dataset(dataset_name, tokenizer, args, source_based_metric=
         }
 
 
-    train_dataset = load_dataset_from_hf(dataset_name, split="train", slice=args.slice_train)
-    val_dataset = load_dataset_from_hf(dataset_name, split="validation", slice=args.slice_val)
+    train_dataset = load_dataset_from_hf(dataset_name, split="train", slice=args.slice_train, local_data_dir=args.local_data_dir)
+    val_dataset = load_dataset_from_hf(dataset_name, split="validation", slice=args.slice_val, local_data_dir=args.local_data_dir)
 
     train_dataset = train_dataset.shuffle(seed=args.seed)
     val_dataset = val_dataset.shuffle(seed=args.seed)
@@ -324,6 +326,8 @@ def parse_args():
     parser.add_argument("--model_family", type=str, default="base", choices=["llama", "mistral", "qwen", "base"], help="Model type to choose from.")
     parser.add_argument("--model_name", type=str, required=True, help="Model name on Hugging Face.")
     parser.add_argument("--dataset_name", type=str, required=True)
+    parser.add_argument("--local_data_dir", type=str, default="data/splits_flattened_full",
+                        help="ローカルスプリットのルート（フィルタ済みは data/splits_flattened_filtered）。存在しなければ HF Hub から取得。")
     parser.add_argument("--slice_train", type=int, default=-1)
     parser.add_argument("--slice_val", type=int, default=-1)
     parser.add_argument("--batch_size", type=int, default=4)

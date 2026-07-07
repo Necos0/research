@@ -496,7 +496,13 @@ def plot_error_std_vs_reference(reference_vals, real_errors, metric_key, output_
         "reference": reference_vals,
         "error": real_errors
     })
-    df["bin"] = pd.qcut(df["reference"], q=num_bins, duplicates='drop')
+    # KEEP のように参照値の分散が小さい（多くが 1.0）と qcut が有効なビン境界を作れず
+    # 例外になる。ビン分割できない場合はこのプロットを省略して評価全体を止めない。
+    try:
+        df["bin"] = pd.qcut(df["reference"], q=num_bins, duplicates='drop')
+    except (ValueError, IndexError) as e:
+        print(f"[WARN] Skipping error-std-by-reference-bin plot (degenerate reference values): {e}")
+        return
     std_by_bin = df.groupby("bin")["error"].std()
     bin_labels = [f"{interval.left:.1f}–{interval.right:.1f}" for interval in std_by_bin.index]
 

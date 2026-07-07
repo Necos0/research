@@ -1,0 +1,8 @@
+Input dataset: data/datasets/medeasi/dataset.jsonl (1892 examples)
+Split assignments inherited from data/splits_flattened_filtered: 852 examples
+Newly assigned (group-ratio balanced [no_numbers/retained/lost], FKGL-stratified, seed=42): 1040 examples
+data/splits_flattened_full/medeasi/train.jsonl: 1499 rows (342 contain numbers [22.8%], 249 with keep tag != none)
+data/splits_flattened_full/medeasi/val.jsonl: 191 rows (44 contain numbers [23.0%], 32 with keep tag != none)
+data/splits_flattened_full/medeasi/test.jsonl: 203 rows (47 contain numbers [23.2%], 47 with keep tag != none)
+Total flattened rows: 1893
+Done building full <KEEP> splits for medeasi.

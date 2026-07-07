@@ -7,6 +7,7 @@ import evaluate
 import torch
 import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
+from helpers.keep import keep_retention
 # COMET / LENS は重い評価指標。未インストールでも動くよう任意化（スモークテスト対応）
 try:
     from comet.models import download_model as download_comet_model, load_from_checkpoint
@@ -107,6 +108,14 @@ class Metrics:
 
     def compute_dale_chall(self):
         return textstat.dale_chall_readability_score(self.text)
+
+    def compute_keep(self):
+        """数値保持率: 原文(source)の数値のうち self.text に保持されている割合。
+
+        原文が渡されない場合（source_metrics 計算時など）は 1.0（保持対象なし=満点）。
+        <KEEP> 制御の達成度を機械的に測る指標で、評価時に reference と prediction を比較する。
+        """
+        return keep_retention(self.source, self.text)
 
     def compute_bleu(self):
         """
@@ -230,6 +239,7 @@ class Metrics:
             'ARI': self.compute_ari(),
             'FKGL': self.compute_fkgl(),
             'Dale-Chall': self.compute_dale_chall(),
+            'keep': self.compute_keep(),
             'BLEU': self.compute_bleu(),
             'BERTScore': self.compute_bertscore(),
             'BLEU_ref': self.compute_bleu_w_reference(),
