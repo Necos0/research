@@ -15,16 +15,16 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | `results/` | サーバーから scp で回収した実験別の結果（`.gitignore` 済み） |
 | `2604.01779v1.pdf` | 参照論文 |
 
-## 現在の実験：Med-EASi × `<KEEP>` 最小GPUスモークテスト
+## 現在の実験：Med-EASi × `<KEEP>` 1B モデルでの実走行
 
-- **ブランチ**: `exp/keep-medeasi-smoketest`
-- **目的**: ロードマップ2.0/2.1。原文中の数値を保持させる新しい制御トークン `<KEEP>` を導入し、データ・プロンプト・学習/推論/評価パイプラインが端から端まで動くことを、研究室GPUで最小サイズ・非gatedモデルで確認する。
+- **ブランチ**: `exp/keep-medeasi-1b`
+- **目的**: ロードマップ2.2。`<KEEP>`（数値保持）制御トークンを実運用サイズの 1B モデル・フルデータ全件で学習・評価し、数値保持の制御効果を測る。学習条件は FKGL 1B 実走行（`exp/fkgl-medeasi-1b`）に合わせ、結果を比較可能にする。
 - **設定**:
-  - モデル `Qwen/Qwen2.5-0.5B-Instruct`（非gated）/ データ `medeasi`（ローカル `data/splits_flattened_full`＝フル未フィルタ・keep付き）/ 制御属性 `KEEP`
-  - 学習: train 32件・val 8件（スライス）/ batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6 / 1エポック / max_length 1024
-  - 推論: test 16件（スライス）/ 1シード（seed=37）/ batch_size 8 / max_length 1024
+  - モデル `meta-llama/Llama-3.2-1B-Instruct`（gated・HF トークン要）/ データ `medeasi`（ローカル `data/splits_flattened_full`＝フル未フィルタ・keep付き）/ 制御属性 `KEEP`
+  - 学習: train 1499件・val 191件（全件）/ batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6 / 3エポック / max_length 512（512超プロンプトは train 中1件・keepタグなし事例のみで切り捨て影響なし）
+  - 推論: test 203件（全件）/ 1シード（seed=37）/ batch_size 16 / max_length 1024
 
-### `<KEEP>` 制御トークンの仕組み（本ブランチでの追加）
+### `<KEEP>` 制御トークンの仕組み（スモークテストのブランチで追加済み）
 
 - **データ（2.0）**: `python src/add_keep_metric.py --dataset medeasi` で `source_metrics["keep"]` / `target_metrics["keep"]` に保持すべき数値の整形済み文字列（例 `"1995, 65"`、無ければ `"none"`）を追記する。**本ブランチのデータは付与済み**。タグと教師信号を整合させるため（FKGL タグが学習時に正解文の実際の値を使うのと同じ原則）、値はスプリットで使い分ける:
   - **train / val**: 原文の数値のうち**正解文が実際に保持している数値のみ**（Med-EASi の正解は数値あり事例の約4割で数値を落としており、原文の全数値をタグにすると教師信号が矛盾するため。1つも保持されていなければ `"none"` ＝保持制約なしの教師）
@@ -37,23 +37,23 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 標準の実行手順は [docs/direction.md](docs/direction.md)。この実験に固有の操作は次のとおり：
 
-- **モデルは非gated**（`Qwen/Qwen2.5-0.5B-Instruct`）なので HF トークンは不要。
+- **`meta-llama/Llama-3.2-1B-Instruct` は gated モデル**。事前に HF 上でライセンスを承認し、サーバー側で `export HF_TOKEN=<token>`（読み取り可トークン）を設定してから学習を回す。
 - データへの `keep` 付与は本ブランチでコミット済みだが、再生成する場合は学習の**前に** `python src/add_keep_metric.py --dataset medeasi` を実行すること。
-- **推論時は BERTScore をスキップする**。評価の BERTScore が GPU OOM を起こすことがあるため、環境変数 `SKIP_BERTSCORE=1` を付けて回す（`src/classes/Metrics.py` が参照）。
+- **推論時は BERTScore をスキップする**。評価の BERTScore が大語彙で GPU OOM を起こすため、環境変数 `SKIP_BERTSCORE=1` を付けて回す（`src/classes/Metrics.py` が参照）。
   ```bash
   SKIP_BERTSCORE=1 ./run_sft_inference.sh
   ```
 
 ### サーバー実行手順（この実験のコピペ用）
 
-[docs/direction.md](docs/direction.md) の共通手順に、この実験の具体名（ブランチ `exp/keep-medeasi-smoketest`）を当てはめたもの。上から順にコピペで実行できる。
+[docs/direction.md](docs/direction.md) の共通手順に、この実験の具体名（ブランチ `exp/keep-medeasi-1b`）を当てはめたもの。上から順にコピペで実行できる。
 
 **1.（Mac）コミットして GitHub へ push**
 
 ```bash
 cd /Users/wadaketsunin/research
-git add -A && git commit -m "exp: Med-EASi x KEEP スモークテスト"   # 未コミットの変更があれば
-git push -u origin exp/keep-medeasi-smoketest
+git add -A && git commit -m "exp: Med-EASi x KEEP 1B実走行"   # 未コミットの変更があれば
+git push -u origin exp/keep-medeasi-1b
 ```
 
 **2.（サーバー）ブランチを引いて tmux ＋ conda 環境を準備**
@@ -64,15 +64,16 @@ ssh wada_yuto@calc40
 
 ```bash
 cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS
-git fetch origin && git switch exp/keep-medeasi-smoketest
+git fetch origin && git switch exp/keep-medeasi-1b
 git pull                                  # 同一ブランチの更新を取り込む場合
 rm -rf output models                      # 前実験の生成物を掃除（回収済みが前提）
-tmux new -s exp-keep-medeasi-smoketest
+tmux new -s exp-keep-medeasi-1b
 ```
 
 ```bash
 # ここから tmux セッション内
 conda activate /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto
+export HF_TOKEN=<token>                   # gated モデル（Llama-3.2-1B）用。読み取り可トークン
 ```
 
 **3.（サーバー・tmux 内）学習 → 推論を実行**
@@ -87,22 +88,22 @@ SKIP_BERTSCORE=1 ./run_sft_inference.sh
 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は:
 
 ```bash
-tmux attach -t exp-keep-medeasi-smoketest
+tmux attach -t exp-keep-medeasi-1b
 ```
 
 **4.（Mac）結果を回収して後片付け**
 
 ```bash
-mkdir -p /Users/wadaketsunin/research/results/keep-medeasi-smoketest
+mkdir -p /Users/wadaketsunin/research/results/keep-medeasi-1b
 scp -r wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
-  /Users/wadaketsunin/research/results/keep-medeasi-smoketest/
+  /Users/wadaketsunin/research/results/keep-medeasi-1b/
 ```
 
 ```bash
 # （サーバー）終わったセッションを削除
-tmux kill-session -t exp-keep-medeasi-smoketest
+tmux kill-session -t exp-keep-medeasi-1b
 ```
 
 ※ モデル重み（`*.safetensors`）が不要なら scp の `models` 行を外し、評価サマリ（`output/sft_results/all_results.json`）とログだけ回収してもよい。
