@@ -47,7 +47,7 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
 - **実行環境**: 学習・推論・評価はすべて **研究室サーバー（CUDA GPU）** で回す。手元の Mac は CUDA 非搭載のため、**コード編集のみ**（学習は回さない）。
 - **コードの受け渡し**: サーバーへのコード反映は **GitHub 経由の `git clone` / `git pull`** で行う。Mac 側で `exp/<実験名>` ブランチを **編集・コミットして GitHub へ push**、サーバー側で取り込む。公開リポジトリなので、サーバーは **HTTPS で読み取りのみ**（認証情報を共有マシンに置かない）。
 - **ブランチ＝実験、clone は1個**: サーバーには clone を **1個だけ**置き、実験ごとに **`git fetch origin && git switch exp/<実験名>`**（同一ブランチ更新時は `git pull`）で **対象ブランチを引いて切り替える**。各ブランチが各実験に対応する。
-- **切り替え時の注意**: `output/`・`models/` は `.gitignore` 対象で **ブランチを切り替えても消えない**。前実験の生成物が残ると `run_sft_inference.sh` が別実験のモデルを拾う恐れがあるため、**回収済みの `output/`・`models/` は削除してから**新しい実験を回す。
+- **切り替え時の注意**: `output/`・`models/`・`logs/` は `.gitignore` 対象で **ブランチを切り替えても消えない**。前実験の生成物が残ると `run_sft_inference.sh` が別実験のモデルを拾う恐れがあり、`logs/` も前実験のログが混ざったまま scp されてしまうため、**回収済みの `output/`・`models/`・`logs/` は削除してから**新しい実験を回す。
 - **結果の回収**: モデル重み・出力・実行ログは git に載らないため、サーバー → Mac へ **scp で回収**する。Mac 側には `output/`・`models/`・`logs/` を置かず、サーバーの `output`・`models`・`logs`（標準出力の tee 保存先。`eval_loss` や評価数値が残る）を実験別に **`results/<実験名>/`**（実験別アーカイブ。`results/` は `.gitignore` 済み）へ集約し、実験間で上書きしないようにする。
 - **配置**: リポジトリ・HF キャッシュ・conda env は、サーバーの割当領域 **`/mnt/gpu/workspace/2025/yuto_wada`** 配下に**すべて置く**（共有ストレージを圧迫しない）。
 - **仮想環境**: `environment.yml` から **conda 仮想環境を構築** して実行する（conda-forge ベースで `cuda-toolkit`＋`pytorch` を env に同梱する研究室標準の流儀。定義は `taming-CATS/environment.yml`）。
@@ -88,8 +88,8 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
    git clone https://github.com/Necos0/research.git   # 初回のみ（公開リポジトリなので認証不要）
    cd research/taming-CATS
    git fetch origin && git switch exp/<実験名>          # 対象ブランチに切り替え（同一ブランチ更新時は git pull）
-   # 別実験から切り替えたら、前実験の生成物を掃除（回収済みが前提。推論が別モデルを拾うのを防ぐ）
-   rm -rf output models                                # 必要な結果は事前に scp で回収しておくこと
+   # 別実験から切り替えたら、前実験の生成物を掃除（回収済みが前提。推論が別モデルを拾う・ログが混ざるのを防ぐ）
+   rm -rf output models logs                           # 必要な結果は事前に scp で回収しておくこと
    tmux new -s exp-<実験名>                # 新規セッション作成（再接続時は: tmux attach -t exp-<実験名>）
    conda activate /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto   # HF_HOME / WANDB_MODE は env に登録済み
    # 依存を更新したら: conda env update -f environment.yml --prune

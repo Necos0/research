@@ -67,7 +67,7 @@ ssh wada_yuto@calc40
 cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS
 git fetch origin && git switch exp/fkgl-medeasi-1b-full
 git pull                                  # 同一ブランチの更新を取り込む場合
-rm -rf output models                      # 前実験の生成物を掃除（回収済みが前提）
+rm -rf output models logs                 # 前実験の生成物を掃除（回収済みが前提。logs も消さないと前実験のログが混ざる）
 tmux new -s exp-fkgl-medeasi-1b-full
 ```
 
