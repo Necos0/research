@@ -130,11 +130,11 @@ def average_predictions_across_runs(json_files):
 
     averaged_predictions = []
     for i in range(len(all_runs[0])):
-        averaged_item = {
-            "source_metrics": all_runs[0][i]["source_metrics"],
-            "reference_metrics": all_runs[0][i]["reference_metrics"],
-            "prediction_metrics": defaultdict(list)
-        }
+        # メトリクス以外のフィールド（source_text・global_id 等）は先頭 run の値を引き継ぐ。
+        # KEEP の「数値あり事例」フィルタが source_text を参照するため、ここで落とすと
+        # フィルタが常に空になり損失が数値なし事例（自明に1.0）で薄まる。
+        averaged_item = {k: v for k, v in all_runs[0][i].items() if k != "prediction_metrics"}
+        averaged_item["prediction_metrics"] = defaultdict(list)
         for run in all_runs:
             for key, val in run[i]["prediction_metrics"].items():
                 averaged_item["prediction_metrics"][key].append(val)
