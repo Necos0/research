@@ -115,7 +115,9 @@ def load_and_prepare_model(model_name, model_family, model_path, model_class, ma
             )
         model.resize_token_embeddings(len(tokenizer))
 
-    model.config.use_cache = False
+    # 推論では KV キャッシュを必ず使う（False は学習時の設定。生成で無効だと
+    # 毎ステップ全系列を再計算し、メモリと時間が系列長の二乗で膨らむ）
+    model.config.use_cache = True
     model.config.pad_token_id = tokenizer.pad_token_id
 
     return model, tokenizer
@@ -266,7 +268,8 @@ def run_inference(args, metric_mapping, model, tokenizer, test_dataset, batch_si
                 "attention_mask": attention_mask,
                 "max_new_tokens": max_new_tokens,
                 "pad_token_id": tokenizer.pad_token_id,
-                "eos_token_id": tokenizer.eos_token_id
+                "eos_token_id": tokenizer.eos_token_id,
+                "use_cache": True
             }
             
             # Only set max_length if we have a specific limit (not using model default)

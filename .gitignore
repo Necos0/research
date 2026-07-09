@@ -1,2 +1,3 @@
 # 実験別の結果アーカイブ（サーバーから scp で回収。git には載せない）
 results/
+.playwright-mcp/

@@ -22,7 +22,7 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 - **設定**:
   - モデル `meta-llama/Llama-3.2-1B-Instruct`（gated・HF トークン要）/ データ `medeasi`（ローカル `data/splits_flattened_full`＝フル未フィルタ・keep付き）/ 制御属性 `KEEP`
   - 学習: train 1499件・val 191件（全件）/ batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6 / 3エポック / max_length 512（512超プロンプトは train 中1件・keepタグなし事例のみで切り捨て影響なし）
-  - 推論: test 203件（全件）/ 1シード（seed=37）/ batch_size 16 / max_length 1024
+  - 推論: test 203件（全件）/ 1シード（seed=37）/ batch_size 8 / max_length 1024（batch_size は 32GB GPU の OOM 対策で 16→8。全プロンプトを max_length に固定パディングしているため greedy の生成結果はバッチサイズに依存しない）
 
 ### `<KEEP>` 制御トークンの仕組み（スモークテストのブランチで追加済み）
 
@@ -39,10 +39,10 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 - **`meta-llama/Llama-3.2-1B-Instruct` は gated モデル**。事前に HF 上でライセンスを承認し、サーバー側で `export HF_TOKEN=<token>`（読み取り可トークン）を設定してから学習を回す。
 - データへの `keep` 付与は本ブランチでコミット済みだが、再生成する場合は学習の**前に** `python src/add_keep_metric.py --dataset medeasi` を実行すること。
-- **推論時は BERTScore をスキップする**。評価の BERTScore が大語彙で GPU OOM を起こすため、環境変数 `SKIP_BERTSCORE=1` を付けて回す（`src/classes/Metrics.py` が参照）。
-  ```bash
-  SKIP_BERTSCORE=1 ./run_sft_inference.sh
-  ```
+- **推論時の GPU メモリ対策はスクリプトに組み込み済み**（env の付け忘れで OOM した反省から `run_sft_inference.sh` 内で設定する）。素の `./run_sft_inference.sh` でよい。
+  - `SKIP_BERTSCORE=1`: BERTScore は roberta-large を GPU にロードし OOM の主因になるためスキップ（backfill なし。この実験の比較指標では未使用）
+  - `SKIP_LENS=1`（推論プロセスのみ）: LENS は推論中に計算せず、後段 `sft_eval.py` の backfill で LLM 解放後にまとめて計算する（LENS 値は summary に残る）
+  - `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` と `batch_size 8` で生成時のピークを抑制
 
 ### サーバー実行手順（この実験のコピペ用）
 
@@ -82,7 +82,7 @@ export HF_TOKEN=<token>                   # gated モデル（Llama-3.2-1B）用
 nvidia-smi                                # 空き GPU を確認
 export CUDA_VISIBLE_DEVICES=0             # 空いている番号に書き換える
 ./run_sft_finetune.sh
-SKIP_BERTSCORE=1 ./run_sft_inference.sh
+./run_sft_inference.sh                    # OOM 対策（SKIP_BERTSCORE 等）はスクリプト内で設定済み
 ```
 
 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は:

@@ -46,10 +46,12 @@ class Metrics:
 
     @staticmethod
     def load_bertscore():
-        """Loads BERTScore model with unique experiment_id to avoid cache collisions."""
-        # Always create a new instance with unique experiment_id for parallel jobs
-        experiment_id = f"{os.getpid()}_{uuid.uuid4().hex[:8]}"
-        return evaluate.load("bertscore", experiment_id=experiment_id)
+        """Loads BERTScore model once and caches it (roberta-large の GPU 再ロードを防ぐ)."""
+        # experiment_id はプロセスごとに一意にして並列ジョブのキャッシュ衝突を回避
+        if Metrics.bertscore_model is None:
+            experiment_id = f"{os.getpid()}_{uuid.uuid4().hex[:8]}"
+            Metrics.bertscore_model = evaluate.load("bertscore", experiment_id=experiment_id)
+        return Metrics.bertscore_model
 
     @staticmethod
     def load_sari():
