@@ -82,9 +82,10 @@ export HF_TOKEN=<token>                   # gated モデル（Llama-3.2-1B）用
 ```bash
 nvidia-smi                                # 空き GPU を確認
 export CUDA_VISIBLE_DEVICES=0             # 空いている番号に書き換える
-./run_sft_finetune.sh
-./run_sft_inference.sh                    # OOM 対策（SKIP_BERTSCORE 等）はスクリプト内で設定済み
+./run_sft_finetune.sh && ./run_sft_inference.sh   # 学習→推論を連続実行（学習が失敗したら推論には進まない）
 ```
+
+推論のOOM対策（`SKIP_BERTSCORE` 等）は `run_sft_inference.sh` 内で設定済みなので、env プレフィックスは不要。
 
 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は:
 
