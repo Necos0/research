@@ -10,14 +10,14 @@ echo "Logging to $LOG_FILE"
 echo "Script started: $(date)"
 
 # =========================================================================
-# 実験: Med-EASi × <KEEP> 1B モデルでの実走行（ロードマップ2.2・全件テスト・1シード）
+# 実験: Med-EASi × <FKGL> 1B フルデータ版（KEEP実験と同一学習データでの比較用・全件テスト・1シード）
 export WANDB_MODE=disabled
 
 # --- GPU メモリ対策（32GB GPU で LLM 生成と評価モデルが同居するため）
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True  # 断片化による OOM を回避
 export SKIP_BERTSCORE=1   # BERTScore は roberta-large を毎回 GPU にロードして OOM の主因になるためスキップ（backfill なし・この実験では未使用）
 
-METRIC_NAME="KEEP"
+METRIC_NAME="FKGL"
 DATASET="medeasi"                       # ← ローカル folder 名
 MODEL_NAME="Llama-3.2-1B-Instruct"      # short name（学習で使ったモデル）
 USER_PROMPT_ID="token_explanation"

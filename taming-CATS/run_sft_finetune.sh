@@ -1,13 +1,15 @@
 #!/bin/bash
 
 # =========================================================================
-# 実験: Med-EASi × <KEEP> 1B モデルでの実走行（ロードマップ2.2）
-#   - 目的: <KEEP>（数値保持）制御トークンを、実運用サイズの 1B モデル・
-#           フルデータ全件で学習し、数値保持の制御効果を測る。
-#     設定は FKGL 1B 実走行（exp/fkgl-medeasi-1b）に合わせる
+# 実験: Med-EASi × <FKGL> 1B モデル・フルデータ版（KEEP実験との学習データ交絡の排除）
+#   - 目的: KEEP 1B 実走行（exp/keep-medeasi-1b）と同一のフルデータ（1892事例）で
+#           FKGL タグのモデルを学習し、「同一学習データでのタグ違い比較」を可能にする。
+#           既存の FKGL 1B（exp/fkgl-medeasi-1b）はフィルタ済み852件学習のため、
+#           KEEP との保持率・品質差に学習データ差が混ざっていた。
+#     設定は KEEP 1B / FKGL 1B と同一
 #     （全件・batch 4・grad_accum 4・lr 5e-6・3エポック・max_length 512）。
-#   - データはローカル data/splits_flattened_full/medeasi（フル・未フィルタ、keep付き）を
-#     全件使用。場所は python 呼び出しの --local_data_dir で指定する。
+#   - データはローカル data/splits_flattened_full/medeasi（フル・未フィルタ）を全件使用。
+#     METRIC_NAME=FKGL 以外は exp/keep-medeasi-1b と同じ。
 # =========================================================================
 
 export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
@@ -19,7 +21,7 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 echo "Logging to $LOG_FILE"
 
 MAX_LENGTH=512                      # 大語彙で巨大ロジット→OOM回避のため短めに
-                                    # （512超のプロンプトは train 1499件中1件・keepタグなし事例のみ。切り捨て影響なし）
+                                    # （KEEP版と同値。FKGL タグは数値1個でプロンプトはKEEP版より短く、切り捨てリスクはさらに低い）
 
 # --- model name（本走行の 1B モデル）
 #   ※ gated モデルのため、サーバー側で HF トークン（ライセンス承認済み）が必要
@@ -29,7 +31,7 @@ DATASETS=(
     "medeasi"                       # ← ローカル folder 名（splits_flattened_filtered/medeasi）
     )
 METRICS=(
-    "KEEP"
+    "FKGL"
     )
 
 for DATASET_NAME in "${DATASETS[@]}"; do
