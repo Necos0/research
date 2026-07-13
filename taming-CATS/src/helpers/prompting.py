@@ -111,22 +111,28 @@ def format_completion_with_special_tokens(tokenizer, completion, model_family="b
 
 
 def format_prompt_with_tokenizer(tokenizer, system_prompt, user_prompt, metric_name, target_metric_value):
-    control_token = f"<{metric_name}={target_metric_value}> "
+    control_token = f"<{metric_name}={target_metric_value}>"
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
-        {"role": "assistant", "content": control_token} # maybe switch back to assistant?
+        {"role": "assistant", "content": control_token}
     ]
 
+    # 制御トークンはモデルが書く簡約文の「接頭辞」でなければ条件付けとして効かない。
+    # add_generation_prompt=True だと最後の assistant ターンが <|eot_id|> で閉じられ、
+    # さらに assistant ヘッダが開き直されるため、制御トークンが簡約文と別ターンに分離する。
+    # continue_final_message=True は最後の assistant ターンを閉じずに残す（両者は排他）。
     formatted_prompt = tokenizer.apply_chat_template(
-        messages, 
-        tokenize=False, 
-        enable_thinking=False ,
-        # continue_final_message=True,
-        add_generation_prompt=True
+        messages,
+        tokenize=False,
+        enable_thinking=False,
+        continue_final_message=True
     )
 
     return formatted_prompt
 
 def format_completion_with_tokenizer(tokenizer, completion):
-    return f"{completion.strip()} {tokenizer.eos_token}"
+    # プロンプトは制御トークン（例 <FKGL=9.6>）で終わる。chat template が assistant の
+    # content を trim するため末尾の空白は残らない。ここで先頭に空白を補い
+    # "<FKGL=9.6> The risk ..." と繋ぐ。空白の有無でトークンIDが変わる（"By"=1383 / " By"=3296）。
+    return f" {completion.strip()}{tokenizer.eos_token}"

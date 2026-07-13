@@ -115,8 +115,12 @@ def load_and_prepare_model(args, model_family, model_name, model_class, peft_ena
 
 def tokenize_dataset(dataset, tokenizer, max_length):
     def tokenize(example):
-        prompt_ids = tokenizer(example["prompt"], add_special_tokens=True).input_ids
-        completion_ids = tokenizer(example["completion"], add_special_tokens=True).input_ids
+        # add_special_tokens=True は先頭に BOS(<|begin_of_text|>) を自動付与する。
+        # prompt は apply_chat_template が既に BOS を含むため二重付与になり、
+        # completion は系列の途中なのに BOS が挿入され、それが labels に入って
+        # 「答えの第一声は BOS」と学習してしまう。どちらも False が正しい。
+        prompt_ids = tokenizer(example["prompt"], add_special_tokens=False).input_ids
+        completion_ids = tokenizer(example["completion"], add_special_tokens=False).input_ids
 
         input_ids = prompt_ids + completion_ids
         attention_mask = [1] * len(input_ids)

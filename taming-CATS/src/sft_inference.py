@@ -198,7 +198,10 @@ def load_and_prepare_test_set(dataset_name, tokenizer, max_length, control_token
         tokenizer_kwargs = {
             "truncation": True if max_length > 0 else False,
             "padding": "max_length" if max_length > 0 else False,
-            "return_tensors": "pt"
+            "return_tensors": "pt",
+            # prompt は apply_chat_template が既に BOS を含む。学習側（sft_finetune.py）と
+            # 揃えて二重付与を防ぐ。
+            "add_special_tokens": False
         }
         if max_length > 0:
             tokenizer_kwargs["max_length"] = max_length
