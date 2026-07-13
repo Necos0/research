@@ -15,7 +15,8 @@ export WANDB_MODE=disabled
 
 # --- GPU メモリ対策（32GB GPU で LLM 生成と評価モデルが同居するため）
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True  # 断片化による OOM を回避
-export SKIP_BERTSCORE=1   # BERTScore は roberta-large を毎回 GPU にロードして OOM の主因になるためスキップ（backfill なし・この実験では未使用）
+# SKIP_BERTSCORE / SKIP_LENS は export しない（export すると後段の sft_eval.py まで
+# スキップされ、backfill が効かなくなる）。推論プロセスにのみ前置きで渡す。
 
 METRIC_NAME="FKGL"
 DATASET="medeasi"                       # ← ローカル folder 名
@@ -73,9 +74,10 @@ for SEED in "${SEEDS[@]}"; do
   fi
 
   # 推論が失敗したら即中断（出力ファイルが無いまま評価に進むのを防ぐ）
-  # SKIP_LENS: 推論中は LENS を計算せず（LLM と GPU を取り合うため）、後段の
-  # sft_eval.py の backfill でまとめて計算する（この推論プロセスのみに適用）
-  SKIP_LENS=1 python src/sft_inference.py "${ARGS[@]}" || {
+  # SKIP_LENS / SKIP_BERTSCORE: 推論中は LENS・BERTScore を計算せず（roberta-large 等の
+  # 評価モデルが生成中の LLM と GPU を取り合い OOM の主因になるため）、後段の
+  # sft_eval.py の backfill で LLM 解放後にまとめて計算する（この推論プロセスのみに適用）
+  SKIP_LENS=1 SKIP_BERTSCORE=1 python src/sft_inference.py "${ARGS[@]}" || {
     echo "ERROR: inference (seed $SEED) が失敗しました。評価はスキップします。"
     exit 1
   }

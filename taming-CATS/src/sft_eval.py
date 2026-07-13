@@ -122,9 +122,73 @@ def enrich_predictions_with_lens(predictions, batch_size=64):
     print(f"LENS backfill complete: {updated} predictions updated (batch_size={batch_size}).")
     return predictions
 
+def enrich_predictions_with_bertscore(predictions, batch_size=64):
+    """Backfill BERTScore（予測 vs 原文）と BERTScore_ref（予測 vs 正解）を計算する。
+
+    推論中は SKIP_BERTSCORE=1 で roberta-large のロードを避けている（生成中の LLM と
+    GPU を取り合って OOM になるため）。LLM が解放されたこの評価プロセスでまとめて計算する。
+    Metrics.compute_bertscore() は1件ずつ compute() を呼ぶうえ SKIP_BERTSCORE を見て
+    0.0 を返すため、ここでは evaluate のモデルを直接バッチで叩く。
+    """
+    # (予測文, 比較対象文) -> F1 のキャッシュ。同一ペアの再計算を避ける。
+    todo = {}  # cache_key -> None
+    plan = []  # (item, metrics_key, cache_key)
+
+    for item in predictions:
+        pm = item.get("prediction_metrics", {})
+        prediction_text = item.get("prediction")
+        if not prediction_text:
+            continue
+        for metrics_key, other_field in (("BERTScore", "source_text"),
+                                         ("BERTScore_ref", "reference_simplification")):
+            # 推論時にスキップされた場合は 0.0（未計算）で入っている
+            if pm.get(metrics_key):
+                continue
+            other_text = item.get(other_field)
+            if not other_text:
+                continue
+            cache_key = (prediction_text, other_text)
+            todo.setdefault(cache_key, None)
+            plan.append((item, metrics_key, cache_key))
+
+    if not plan:
+        print("BERTScore backfill: nothing to compute (already present).")
+        return predictions
+
+    keys = list(todo)
+    try:
+        bertscore_model = Metrics.load_bertscore()
+        for start in range(0, len(keys), batch_size):
+            batch = keys[start:start + batch_size]
+            results = bertscore_model.compute(
+                predictions=[k[0] for k in batch],
+                references=[k[1] for k in batch],
+                lang="en",
+                batch_size=min(batch_size, len(batch)),
+            )
+            for key, f1 in zip(batch, results["f1"]):
+                todo[key] = float(f1)
+    except Exception as exc:
+        # 評価全体を落とさない（BERTScore 以外の指標は算出済み）
+        print(f"BERTScore backfill skipped: {exc}")
+        return predictions
+
+    updated = 0
+    for item, metrics_key, cache_key in plan:
+        score = todo.get(cache_key)
+        if score is None:
+            continue
+        item.setdefault("prediction_metrics", {})[metrics_key] = score
+        updated += 1
+
+    print(f"BERTScore backfill complete: {updated} values updated "
+          f"({len(keys)} unique pairs, batch_size={batch_size}).")
+    return predictions
+
 def average_predictions_across_runs(json_files):
     """Loads multiple JSON files and averages prediction metrics per sample."""
-    all_runs = [enrich_predictions_with_lens(load_json(file)) for file in json_files]
+    all_runs = [enrich_predictions_with_bertscore(enrich_predictions_with_lens(load_json(file)))
+                for file in json_files]
 
     assert all(len(run) == len(all_runs[0]) for run in all_runs), "All files must have the same number of samples"
 

@@ -78,8 +78,9 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 - **`meta-llama/Llama-3.2-1B-Instruct` は gated モデル**。事前に HF 上でライセンスを承認し、サーバー側で `export HF_TOKEN=<token>`（読み取り可トークン）を設定してから学習を回す。
 - フルデータ版スプリット（FKGL 値含む）はコミット済みなので、データの前処理は不要。
 - **推論時の GPU メモリ対策はスクリプトに組み込み済み**（env の付け忘れで OOM した反省から `run_sft_inference.sh` 内で設定する）。素の `./run_sft_inference.sh` でよい。
-  - `SKIP_BERTSCORE=1`: BERTScore は roberta-large を GPU にロードし OOM の主因になるためスキップ（backfill なし。この実験の比較指標では未使用）
-  - `SKIP_LENS=1`（推論プロセスのみ）: LENS は推論中に計算せず、後段 `sft_eval.py` の backfill で LLM 解放後にまとめて計算する（LENS 値は summary に残る）
+  - `SKIP_BERTSCORE=1` / `SKIP_LENS=1`（**推論プロセスのみ**。`export` すると後段の評価まで止まるので前置きで渡す）: BERTScore（roberta-large）と LENS は評価モデルを GPU に載せるため、生成中の LLM と取り合って OOM の主因になる。推論中は計算せず、後段 `sft_eval.py` の backfill で **LLM 解放後にまとめてバッチ計算**する。値は `output_averaged.json` と summary（`output/sft_results/all_results.json`）に載る（`BERTScore`＝予測 vs 原文、`BERTScore_ref`＝予測 vs 正解。ブートストラップ信頼区間つき）。
+    - backfill は `enrich_predictions_with_bertscore()` / `enrich_predictions_with_lens()`（`src/sft_eval.py`）。同一ペアはキャッシュで重複計算を避け、`batch_size=64` で `compute()` を呼ぶ（1件ずつ呼ぶと 203件×2指標＝406回になる）。
+    - **注意**: 推論プロセスで計算をスキップするため、per-item の `output_*.json` には `BERTScore: 0.0` / `LENS: null` が残る。実値は `output_averaged.json` を見ること。
   - `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` と `batch_size 8` で生成時のピークを抑制
 
 ### サーバー実行手順（この実験のコピペ用）
