@@ -15,20 +15,28 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | `results/` | サーバーから scp で回収した実験別の結果（`.gitignore` 済み） |
 | `2604.01779v1.pdf` | 参照論文 |
 
-## 現在の実験：Med-EASi × `<FKGL>` 1B フルデータ版・**プロンプト構築バグ修正後の再実行**
+## 現在の実験：Med-EASi × `<KEEP>` 1B フルデータ版・**プロンプト構築バグ修正後の再実行**（ロードマップ3.5）
 
-- **ブランチ**: `exp/fkgl-medeasi-1b-full-v2`
-- **目的**: `exp/fkgl-medeasi-1b-full` の出力を全203件目視したところ、平易化が成立していなかった（予測の 202/203 が `The ` で始まる定型崩壊、原文コピー11件、事実の捏造・非文33件、数値保持 0.560）。原因は**制御トークンの配置バグとトークン化バグ**で、FKGL・KEEP の両ブランチが同じ共有コードを踏んでいた。本ブランチでそれを修正し、フルデータ版 FKGL を再学習・再推論して健全なベースラインを取り直す。**KEEP 側も同修正で再実行が必要**。両者の比較表（旧 `docs/comparison_fkgl_full_vs_keep.md`）は結論が支持できないため削除済みで、再実行後に作り直す。
-- **修正内容**（3点。詳細は下記「修正したバグ」節）:
-  1. `src/helpers/prompting.py` — 制御トークンを簡約文と同じ assistant ターンに置く（`continue_final_message=True`）
-  2. `src/sft_finetune.py` / `src/sft_inference.py` — `add_special_tokens=False`（BOS の二重付与・completion への混入を防ぐ）
-  3. `src/helpers/prompting.py` — 制御トークンと簡約文の間の空白を担保（トークン境界のズレ防止）
-- **設定**（`METRIC_NAME=FKGL` 以外は `exp/keep-medeasi-1b` と完全に同一。ハイパラは v1 から変更なし＝**差分はバグ修正のみ**）:
-  - モデル `meta-llama/Llama-3.2-1B-Instruct`（gated・HF トークン要）/ データ `medeasi`（ローカル `data/splits_flattened_full`＝フル未フィルタ）/ 制御属性 `FKGL`
+- **ブランチ**: `exp/keep-medeasi-1b-v2`（`exp/fkgl-medeasi-1b-full-v2` から分岐）
+- **目的**: 旧 KEEP 1B（`exp/keep-medeasi-1b`）は FKGL 側と同じ共有コードのプロンプト構築バグを踏んでおり、平易化が成立していなかった。修正済みコードで KEEP を再学習・再推論し、**FKGL v2 と直接比較できる健全な結果**を得る。比較表（3.6）はこの結果が出てから作り直す。
+- **差分は `METRIC_NAME=KEEP` のみ**。分岐元の FKGL v2 とハイパラ・データ・修正コードがすべて同一なので、タグ以外の交絡はない。
+- **設定**:
+  - モデル `meta-llama/Llama-3.2-1B-Instruct`（gated・HF トークン要）/ データ `medeasi`（ローカル `data/splits_flattened_full`＝フル未フィルタ）/ 制御属性 `KEEP`
   - 学習: train 1499件・val 191件（全件）/ batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6 / 3エポック / max_length 512
   - 推論: test 203件（全件）/ 1シード（seed=37）/ batch_size 8 / max_length 1024（batch_size は 32GB GPU の OOM 対策。全プロンプトを max_length に固定パディングしているため greedy の生成結果はバッチサイズに依存しない）
-- **評価での比較軸**: FKGL の制御精度（MAE）に加え、`prediction_metrics.keep`（数値保持率）が全事例で自動計算されるため、KEEP 1B の結果（`results/keep-medeasi-1b/`）と数値あり事例の保持率・SARI/LENS を同一 test 203件で直接比較できる。
-- **再実行後に必ず確認すること**: SARI/LENS が論文値と一致していても品質は保証されない（旧実行では捏造事例が SARI 67.6 を記録していた）。**出力を必ず目視し**、`The ` 始まりの比率が参照文並み（約1割）に戻っているかを崩壊の指標として確認する。
+- **バグ修正が KEEP でも効くことは検証済み**: KEEP のタグ値は float ではなく文字列（`4` / `400, 20` / `none`）なので、修正3（`continue_final_message` の文字列マッチ）が壊れないかを実際の tokenizer でレンダリングして確認した。3パターンとも制御トークンが簡約文の接頭辞になり（assistant ヘッダは1つ・`<|eot_id|>` の割り込みなし）、completion 先頭への BOS 混入もない。
+- **タグ値の設計（再掲）**: train/val は「正解文が実際に保持している数値のみ」、test は「原文の全数値」。データ側でこの通りになっていることも検証済み（train/val 100%一致）。
+- **比較の際に必ず見ること**（FKGL v2 の解析で判明）: FKGL v2 は定型崩壊こそ直ったが、**予測の 54.2%（110/203）が原文と完全一致**しており、その副作用で数値保持率が 0.915（参照文 0.617）まで上がっている。**原文をコピーするほど保持率は自動的に上がる**ため、`<KEEP>` の効果は保持率だけでは測れない。比較表には必ず **原文コピー率**を併記し、両者のコピー率が同水準であることを確認したうえで保持率を比べること。
+- **実行後に必ず確認すること**: SARI/LENS が論文値と一致していても品質は保証されない（旧実行では捏造事例が SARI 67.6 を記録していた）。**出力を必ず目視し**、`The ` 始まりの比率が参照文並み（約1割）に戻っているかを崩壊の指標として確認する。
+
+### 直前の実験：Med-EASi × `<FKGL>` 1B フルデータ版 v2（ロードマップ3.4・完了）
+
+`exp/fkgl-medeasi-1b-full-v2`。結果は `results/fkgl-medeasi-1b-full-v2/`。本 KEEP 実験の比較対象（ベースライン）。
+
+- **定型崩壊は解消**: `The ` 始まりが 202/203（99.5%）→ **22/203（10.8%）** と参照文（10.3%）並みに回復。制御トークンの出力漏れ 0件。
+- SARI **51.24** / LENS **56.79** / FKGL MAE **2.92**（v1 の SARI 40.66 より改善、論文水準）。BERTScore も backfill で復活（to_ref 0.905）。
+- **残る懸念**: 原文コピー 54.2%（参照文は 0%）・空出力6件・FKGL は原文 14.11 → 予測 12.74 とアンダーシュート（参照文 11.88）。early stopping が epoch 1.38 で止まっており under-fit 気味の可能性。
+- **これにより旧 3.2 の結論は覆る**: FKGL の数値保持率が 0.560 → **0.915** に上がったため、「KEEP 優位（0.560→0.674）」は成立しない。
 
 ### 修正したバグ（v1 = `exp/fkgl-medeasi-1b-full` の失敗原因）
 
@@ -62,7 +70,7 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 **未修正（意図的）**: JSONL 生成時と実行時で textstat のバージョンが異なり、プロンプトに書く目標 FKGL（旧版・例 9.6）と MAE の正解値（新版・例 9.05）が別スケールになっている。ただし実測でズレは絶対平均 0.31・MAE への影響は 3.33→3.38 と小さく、ここを変えると KEEP 側の既存結果と指標が非互換になるため**今回は触らない**（`environment.yml` の textstat 未 pin は再現性上の課題として残る）。
 
-### 参考：`<KEEP>` 制御トークンとフルデータ版スプリットの仕組み（keep系ブランチで追加済み・本実験ではデータのみ利用）
+### `<KEEP>` 制御トークンとフルデータ版スプリットの仕組み（本実験の中核）
 
 - **データ（2.0）**: `python src/add_keep_metric.py --dataset medeasi` で `source_metrics["keep"]` / `target_metrics["keep"]` に保持すべき数値の整形済み文字列（例 `"1995, 65"`、無ければ `"none"`）を追記する。**本ブランチのデータは付与済み**。タグと教師信号を整合させるため（FKGL タグが学習時に正解文の実際の値を使うのと同じ原則）、値はスプリットで使い分ける:
   - **train / val**: 原文の数値のうち**正解文が実際に保持している数値のみ**（Med-EASi の正解は数値あり事例の約4割で数値を落としており、原文の全数値をタグにすると教師信号が矛盾するため。1つも保持されていなければ `"none"` ＝保持制約なしの教師）
@@ -85,14 +93,14 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 ### サーバー実行手順（この実験のコピペ用）
 
-[docs/direction.md](docs/direction.md) の共通手順に、この実験の具体名（ブランチ `exp/fkgl-medeasi-1b-full-v2`）を当てはめたもの。上から順にコピペで実行できる。
+[docs/direction.md](docs/direction.md) の共通手順に、この実験の具体名（ブランチ `exp/keep-medeasi-1b-v2`）を当てはめたもの。上から順にコピペで実行できる。
 
 **1.（Mac）コミットして GitHub へ push**
 
 ```bash
 cd /Users/wadaketsunin/research
-git add -A && git commit -m "exp: Med-EASi x FKGL 1B フルデータ版（プロンプト構築バグ修正後の再実行）"   # 未コミットの変更があれば
-git push -u origin exp/fkgl-medeasi-1b-full-v2
+git add -A && git commit -m "exp: Med-EASi x KEEP 1B フルデータ版（プロンプト構築バグ修正後の再実行）"   # 未コミットの変更があれば
+git push -u origin exp/keep-medeasi-1b-v2
 ```
 
 **2.（サーバー）ブランチを引いて tmux ＋ conda 環境を準備**
@@ -103,10 +111,12 @@ ssh wada_yuto@calc40
 
 ```bash
 cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS
-git fetch origin && git switch exp/fkgl-medeasi-1b-full-v2
+git fetch origin && git switch exp/keep-medeasi-1b-v2
 git pull                                  # 同一ブランチの更新を取り込む場合
-rm -rf output models logs                 # 前実験の生成物を掃除（回収済みが前提。logs も消さないと前実験のログが混ざる）
-tmux new -s exp-fkgl-medeasi-1b-full-v2
+rm -rf output models logs                 # 前実験（FKGL v2）の生成物を掃除。**必須**：
+                                          #   消さないと run_sft_inference.sh の MODEL_DIR 自動選択が
+                                          #   FKGL のモデルを拾い、logs も混ざる（回収済みが前提）
+tmux new -s exp-keep-medeasi-1b-v2
 ```
 
 ```bash
@@ -128,22 +138,22 @@ export CUDA_VISIBLE_DEVICES=0             # 空いている番号に書き換え
 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は:
 
 ```bash
-tmux attach -t exp-fkgl-medeasi-1b-full-v2
+tmux attach -t exp-keep-medeasi-1b-v2
 ```
 
 **4.（Mac）結果を回収して後片付け**
 
 ```bash
-mkdir -p /Users/wadaketsunin/research/results/fkgl-medeasi-1b-full-v2
+mkdir -p /Users/wadaketsunin/research/results/keep-medeasi-1b-v2
 scp -r wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
-  /Users/wadaketsunin/research/results/fkgl-medeasi-1b-full-v2/
+  /Users/wadaketsunin/research/results/keep-medeasi-1b-v2/
 ```
 
 ```bash
 # （サーバー）終わったセッションを削除
-tmux kill-session -t exp-fkgl-medeasi-1b-full-v2
+tmux kill-session -t exp-keep-medeasi-1b-v2
 ```
 
 ※ モデル重み（`*.safetensors`）が不要なら scp の `models` 行を外し、評価サマリ（`output/sft_results/all_results.json`）とログだけ回収してもよい。

@@ -1,15 +1,14 @@
 #!/bin/bash
 
 # =========================================================================
-# 実験: Med-EASi × <FKGL> 1B モデル・フルデータ版（KEEP実験との学習データ交絡の排除）
-#   - 目的: KEEP 1B 実走行（exp/keep-medeasi-1b）と同一のフルデータ（1892事例）で
-#           FKGL タグのモデルを学習し、「同一学習データでのタグ違い比較」を可能にする。
-#           既存の FKGL 1B（exp/fkgl-medeasi-1b）はフィルタ済み852件学習のため、
-#           KEEP との保持率・品質差に学習データ差が混ざっていた。
-#     設定は KEEP 1B / FKGL 1B と同一
-#     （全件・batch 4・grad_accum 4・lr 5e-6・3エポック・max_length 512）。
+# 実験: Med-EASi × <KEEP> 1B モデル・フルデータ版（プロンプト構築バグ修正後の再実行）
+#   - 目的: 旧 KEEP 1B（exp/keep-medeasi-1b）は FKGL 側と同じプロンプト構築バグを
+#           踏んでおり、平易化が成立していなかった。修正済みコードで再学習し、
+#           FKGL v2（exp/fkgl-medeasi-1b-full-v2）と直接比較できる健全な結果を得る。
+#   - このブランチは exp/fkgl-medeasi-1b-full-v2 から分岐しており、
+#     **差分は METRIC_NAME=KEEP のみ**（ハイパラ・データ・修正コードは完全同一）。
+#     設定: 全件・batch 4・grad_accum 4・lr 5e-6・3エポック・max_length 512。
 #   - データはローカル data/splits_flattened_full/medeasi（フル・未フィルタ）を全件使用。
-#     METRIC_NAME=FKGL 以外は exp/keep-medeasi-1b と同じ。
 # =========================================================================
 
 export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
@@ -21,7 +20,7 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 echo "Logging to $LOG_FILE"
 
 MAX_LENGTH=512                      # 大語彙で巨大ロジット→OOM回避のため短めに
-                                    # （KEEP版と同値。FKGL タグは数値1個でプロンプトはKEEP版より短く、切り捨てリスクはさらに低い）
+                                    # （FKGL v2 と同値。比較の公平性のため変更しない）
 
 # --- model name（本走行の 1B モデル）
 #   ※ gated モデルのため、サーバー側で HF トークン（ライセンス承認済み）が必要
@@ -31,7 +30,7 @@ DATASETS=(
     "medeasi"                       # ← ローカル folder 名（splits_flattened_filtered/medeasi）
     )
 METRICS=(
-    "FKGL"
+    "KEEP"
     )
 
 for DATASET_NAME in "${DATASETS[@]}"; do
