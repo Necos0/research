@@ -93,55 +93,54 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 ### サーバー実行手順（この実験のコピペ用）
 
-[docs/direction.md](docs/direction.md) の共通手順に、この実験の具体名（ブランチ `exp/keep-medeasi-1b-v2`）を当てはめたもの。上から順にコピペで実行できる。
+**サーバー側は `run_experiment.sh` の1コマンドで完結する。**
+
+**0.（サーバー・初回だけ）HF トークンを置く**
+
+gated モデル（`meta-llama/Llama-3.2-1B-Instruct`）の取得に必要。一度置けば以降は不要。
+
+```bash
+ssh wada_yuto@calc40
+echo '<your_hf_token>' > ~/.hf_token && chmod 600 ~/.hf_token
+```
 
 **1.（Mac）コミットして GitHub へ push**
 
 ```bash
 cd /Users/wadaketsunin/research
-git add -A && git commit -m "exp: Med-EASi x KEEP 1B フルデータ版（プロンプト構築バグ修正後の再実行）"   # 未コミットの変更があれば
+git add -A && git commit -m "exp: <条件の説明>"   # 未コミットの変更があれば
 git push -u origin exp/keep-medeasi-1b-v2
 ```
 
-**2.（サーバー）ブランチを引いて tmux ＋ conda 環境を準備**
+**2.（サーバー）1コマンドで実行**
 
 ```bash
 ssh wada_yuto@calc40
+cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS && ./run_experiment.sh exp/keep-medeasi-1b-v2
 ```
+
+これだけで次を全部やる（第2引数で GPU 番号を明示することもできる: `./run_experiment.sh exp/keep-medeasi-1b-v2 1`）:
+
+1. ブランチを `fetch` / `switch` / `pull` し、**そのブランチ版の本スクリプトで実行し直す**
+2. **tmux セッションを自動で張る**（SSH が切れても継続。`Ctrl-b` → `d` で detach）
+3. conda env を有効化、`~/.hf_token` を読み込み、**空き GPU を自動選択**
+4. 前実験の `output/` `models/` `logs/` と **HF datasets キャッシュ**を掃除（削除前に確認を求める）
+5. **学習 → 推論**を連続実行（学習が失敗したら推論に進まない）
+6. Mac へ結果を回収する scp コマンドを表示
+
+**datasets キャッシュの削除は必須**。残すと `map` のフィンガープリントが変わらない場合に**修正前のプロンプトで学習してしまう**（FKGL v2 / KEEP v2 はこれで壊れた。詳細は下記「修正したバグ」節）。コード側でも `load_from_cache_file=False` にしてあるが、スクリプトでも二重に潰している。
+
+**学習開始直後に `--- prompt sanity OK: ...'<KEEP=none>'` が出ることを必ず確認する。** 出ない／assert で落ちる場合は、プロンプト構築が壊れている。
+
+進捗確認・再接続:
 
 ```bash
-cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS
-git fetch origin && git switch exp/keep-medeasi-1b-v2
-git pull                                  # 同一ブランチの更新を取り込む場合
-rm -rf output models logs                 # 前実験（FKGL v2）の生成物を掃除。**必須**：
-                                          #   消さないと run_sft_inference.sh の MODEL_DIR 自動選択が
-                                          #   FKGL のモデルを拾い、logs も混ざる（回収済みが前提）
-tmux new -s exp-keep-medeasi-1b-v2
+tmux attach -t exp-keep-medeasi-1b-v2      # セッション名は exp- + ブランチ名（exp/ を除く）
 ```
 
-```bash
-# ここから tmux セッション内
-conda activate /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto
-export HF_TOKEN=<token>                   # gated モデル（Llama-3.2-1B）用。読み取り可トークン
-```
+**3.（Mac）結果を回収**
 
-**3.（サーバー・tmux 内）学習 → 推論を実行**
-
-```bash
-nvidia-smi                                # 空き GPU を確認
-export CUDA_VISIBLE_DEVICES=0             # 空いている番号に書き換える
-./run_sft_finetune.sh && ./run_sft_inference.sh   # 学習→推論を連続実行（学習が失敗したら推論には進まない）
-```
-
-推論のOOM対策（`SKIP_BERTSCORE` 等）は `run_sft_inference.sh` 内で設定済みなので、env プレフィックスは不要。
-
-実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は:
-
-```bash
-tmux attach -t exp-keep-medeasi-1b-v2
-```
-
-**4.（Mac）結果を回収して後片付け**
+完了時にスクリプトが表示するコマンドをそのまま貼ればよい。
 
 ```bash
 mkdir -p /Users/wadaketsunin/research/results/keep-medeasi-1b-v2
@@ -149,11 +148,6 @@ scp -r wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/o
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
   /Users/wadaketsunin/research/results/keep-medeasi-1b-v2/
-```
-
-```bash
-# （サーバー）終わったセッションを削除
-tmux kill-session -t exp-keep-medeasi-1b-v2
 ```
 
 ※ モデル重み（`*.safetensors`）が不要なら scp の `models` 行を外し、評価サマリ（`output/sft_results/all_results.json`）とログだけ回収してもよい。
