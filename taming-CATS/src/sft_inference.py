@@ -221,8 +221,22 @@ def load_and_prepare_test_set(dataset_name, tokenizer, max_length, control_token
             "attention_mask": attention_mask.squeeze(0),  # Remove batch dimension
         }
 
-    test_dataset = test_dataset.map(process_instance, batched=False) # batching enabled
-    
+    # load_from_cache_file=False は必須。理由は sft_finetune.py の同じ箇所のコメントを参照
+    # （prompting.py だけを直しても map のフィンガープリントが変わらず、古いキャッシュで
+    #   プロンプトが組み立てられる。学習側がこれで壊れた）。
+    test_dataset = test_dataset.map(process_instance, batched=False, load_from_cache_file=False)
+
+    _sample = test_dataset[0]["prompt"]
+    assert _sample.count("<|start_header_id|>assistant<|end_header_id|>") == 1, (
+        "プロンプトに assistant ターンが2つある＝制御トークンが簡約文と別ターンに分離している。"
+        f"\n{_sample[-200:]}"
+    )
+    assert _sample.rstrip().endswith(">") and f"<{args.metric_name}=" in _sample.rsplit("assistant<|end_header_id|>", 1)[-1], (
+        "プロンプトが制御トークンで終わっていない＝簡約文の接頭辞として効かない。"
+        f"\n{_sample[-200:]}"
+    )
+    print(f"--- prompt sanity OK: ...{_sample[-60:]!r}")
+
     return test_dataset
 
 def run_inference(args, metric_mapping, model, tokenizer, test_dataset, batch_size=4, device="cuda", max_length=512, max_new_tokens=511, source_based_metric=False, compression_metric=False):
