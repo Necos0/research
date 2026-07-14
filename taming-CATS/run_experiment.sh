@@ -15,7 +15,7 @@
 #   4. 前実験の output/models/logs と **HF datasets キャッシュ** を掃除
 #      （キャッシュを残すと修正前のプロンプトで学習してしまう。実際に事故った）
 #   5. 学習 → 推論を連続実行（学習が失敗したら推論に進まない）
-#   6. Mac へ結果を回収する scp コマンドを表示
+#   6. Mac へ結果を回収する rsync コマンドを表示（モデル重みは除外）
 #
 # GPU はサーバー側で割り当てられるため、通常 CUDA_VISIBLE_DEVICES の指定は不要。
 # =========================================================================
@@ -151,12 +151,21 @@ EXP_NAME="${BRANCH#exp/}"
 echo
 echo "=== [6/6] 完了（所要 ${ELAPSED} 分）"
 echo
-echo "Mac 側で以下を実行して結果を回収してください:"
+echo "Mac 側で以下を実行して結果を回収してください（モデル重みは除外する）:"
 echo
 echo "  mkdir -p /Users/wadaketsunin/research/results/${EXP_NAME}"
-echo "  scp -r wada_yuto@calc40:${REPO}/output \\"
+echo "  rsync -av --exclude='*.safetensors' \\"
+echo "    wada_yuto@calc40:${REPO}/output \\"
 echo "    wada_yuto@calc40:${REPO}/models \\"
 echo "    wada_yuto@calc40:${REPO}/logs \\"
 echo "    /Users/wadaketsunin/research/results/${EXP_NAME}/"
+echo
+echo "  ※ 重み(*.safetensors) は 1実験あたり約4.9GB だが Mac に CUDA が無く使い道がない。"
+echo "     再現はブランチ（コード・データ・シード）で担保される。models/ の args.json /"
+echo "     config.json / tokenizer.json は残すので、実験条件の証跡とプロンプト再現には使える。"
+echo
+echo "  【重要】学習し直さずに推論だけやり直す可能性があるなら、"
+echo "          この実験の models/ をサーバーに残したままにしておくこと"
+echo "          （次の実験を回すと run_experiment.sh が消す）。"
 echo
 echo "回収後、このセッションを消す:  tmux kill-session -t ${SESSION}"
