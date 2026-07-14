@@ -12,7 +12,7 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | `docs/direction.md` | 研究方針・提案手法・実験の実行フロー（メインの索引） |
 | `docs/roadmap.md` | 中間発表までのロードマップ（進捗チェックリスト） |
 | `docs/results_fkgl_medeasi_smoketest.html` | スモークテストの結果レポート |
-| `results/` | サーバーから scp で回収した実験別の結果（`.gitignore` 済み） |
+| `results/` | サーバーから rsync で回収した実験別の結果（`.gitignore` 済み。モデル重みは除外する） |
 | `2604.01779v1.pdf` | 参照論文 |
 
 ## 現在の実験：Med-EASi × `<FKGL>` 1B フルデータ版・**再実行（キャッシュ事故のやり直し）**
@@ -141,10 +141,13 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
 
 ```bash
 mkdir -p /Users/wadaketsunin/research/results/fkgl-medeasi-1b-full-v2
-scp -r wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
+rsync -av --exclude='*.safetensors' \
+  wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
   /Users/wadaketsunin/research/results/fkgl-medeasi-1b-full-v2/
 ```
 
-※ モデル重み（`*.safetensors`）が不要なら scp の `models` 行を外し、評価サマリ（`output/sft_results/all_results.json`）とログだけ回収してもよい。
+**モデル重み（`*.safetensors`）は回収しない。** 1実験あたり約4.9GB とアーカイブの99%以上を占めるが、**Mac には CUDA が無く使い道がない**。再現性は「ブランチ＝実験」で担保される。`models/` の `args.json` / `config.json` / `tokenizer.json` は残すので、実験条件の証跡とローカルでのプロンプト再現には使える（除外により 4.9GB → 約20MB）。
+
+**例外**: 学習し直さずに**推論だけやり直す**可能性がある場合は、その実験の `models/` を**サーバーに残したままにする**（次の実験を回すと `run_experiment.sh` が消す）。

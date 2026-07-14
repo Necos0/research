@@ -48,7 +48,9 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
 - **コードの受け渡し**: サーバーへのコード反映は **GitHub 経由の `git clone` / `git pull`** で行う。Mac 側で `exp/<実験名>` ブランチを **編集・コミットして GitHub へ push**、サーバー側で取り込む。公開リポジトリなので、サーバーは **HTTPS で読み取りのみ**（認証情報を共有マシンに置かない）。
 - **ブランチ＝実験、clone は1個**: サーバーには clone を **1個だけ**置き、実験ごとに **`git fetch origin && git switch exp/<実験名>`**（同一ブランチ更新時は `git pull`）で **対象ブランチを引いて切り替える**。各ブランチが各実験に対応する。
 - **切り替え時の注意**: `output/`・`models/`・`logs/` は `.gitignore` 対象で **ブランチを切り替えても消えない**。前実験の生成物が残ると `run_sft_inference.sh` が別実験のモデルを拾う恐れがあり、`logs/` も前実験のログが混ざったまま scp されてしまうため、**回収済みの `output/`・`models/`・`logs/` は削除してから**新しい実験を回す。
-- **結果の回収**: モデル重み・出力・実行ログは git に載らないため、サーバー → Mac へ **scp で回収**する。Mac 側には `output/`・`models/`・`logs/` を置かず、サーバーの `output`・`models`・`logs`（標準出力の tee 保存先。`eval_loss` や評価数値が残る）を実験別に **`results/<実験名>/`**（実験別アーカイブ。`results/` は `.gitignore` 済み）へ集約し、実験間で上書きしないようにする。
+- **結果の回収**: 出力・実行ログは git に載らないため、サーバー → Mac へ **rsync で回収**する。Mac 側には `output/`・`models/`・`logs/` を置かず、実験別に **`results/<実験名>/`**（`results/` は `.gitignore` 済み）へ集約し、実験間で上書きしないようにする。
+- **モデル重み（`*.safetensors`）は回収しない**（`--exclude='*.safetensors'`）。1実験あたり約 4.9GB あるがアーカイブの99%以上を占める一方、**Mac には CUDA が無く使い道がない**。再現性は「ブランチ＝実験」（コード・データ・シードが git にある）で担保されるので、重みを持つ必要はない。`models/` の `args.json` / `config.json` / `tokenizer.json` は小さいので**残す**（実験条件の証跡になり、tokenizer はローカルでのプロンプト再現に実際に役立つ）。
+  - **例外**: 学習し直さずに**推論だけやり直す**可能性がある場合は、その実験の `models/` を**サーバーに残したままにする**（次の実験を回すと `run_experiment.sh` が消す）。重みを Mac に持ってきても、結局サーバーに戻さないと推論できない。
 - **配置**: リポジトリ・HF キャッシュ・conda env は、サーバーの割当領域 **`/mnt/gpu/workspace/2025/yuto_wada`** 配下に**すべて置く**（共有ストレージを圧迫しない）。
 - **仮想環境**: `environment.yml` から **conda 仮想環境を構築** して実行する（conda-forge ベースで `cuda-toolkit`＋`pytorch` を env に同梱する研究室標準の流儀。定義は `taming-CATS/environment.yml`）。
 - **バージョン管理**: 実験ごとに **ブランチを切って** 再現性を担保する。`main` は常に動く状態に保つ。
@@ -119,16 +121,17 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
    rm -rf output models logs "$HF_HOME/datasets"   # 掃除（回収済みが前提）
    ./run_sft_finetune.sh && ./run_sft_inference.sh
    ```
-6. **（Mac）結果を回収**（scp でサーバーから手元の `results/<実験名>/` へまとめる）
+6. **（Mac）結果を回収**（rsync でサーバーから手元の `results/<実験名>/` へまとめる。**モデル重みは除外**）
    ```bash
    mkdir -p /Users/wadaketsunin/research/results/<実験名>
-   scp -r wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
+   rsync -av --exclude='*.safetensors' \
+     wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
      wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
      wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
      /Users/wadaketsunin/research/results/<実験名>/
    ```
    - **Mac 側には `output/`・`models/`・`logs/` を置かず、実験ごとに `results/<実験名>/` に集約する**（`results/` は `.gitignore` 済み。実験間で上書きされない）。
-   - モデル重み（`*.safetensors`）は重いので、不要なら上の `models` 行を外し、評価サマリ（`output/sft_results/all_results.json`）や実行ログ（`logs/`）・図だけ回収してもよい。
+   - `--exclude='*.safetensors'` により、1実験あたりのアーカイブは **約4.9GB → 約20MB** になる。理由は上の「モデル重みは回収しない」を参照。
 
 ### 共通の前提修正（作業ブランチに1度だけ）
 
