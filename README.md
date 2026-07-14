@@ -128,8 +128,12 @@ git push -u origin exp/keep-medeasi-1b-v2
 
 ```bash
 ssh wada_yuto@calc40
-cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS && ./run_experiment.sh exp/keep-medeasi-1b-v2
+cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
+  && git fetch origin && git switch exp/keep-medeasi-1b-v2 && git pull --ff-only \
+  && ./run_experiment.sh exp/keep-medeasi-1b-v2
 ```
+
+先頭の `git fetch/switch/pull` は必ず付ける。サーバーのローカルブランチが古いと `run_experiment.sh` 自体がまだ無く `No such file or directory` になるため（スクリプトはブランチを切り替える側なので、自分自身を先に持ってこられない）。
 
 これだけで次を全部やる（特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/keep-medeasi-1b-v2 1`）:
 
