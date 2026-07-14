@@ -128,11 +128,17 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
   && ./run_experiment.sh exp/fkgl-medeasi-1b-full-v2
 ```
 
-先頭の `git fetch/switch/merge` は必ず付ける。サーバーのローカルブランチが古いと `run_experiment.sh` 自体がまだ無く `No such file or directory` になるため（スクリプトはブランチを切り替える側なので、自分自身を先に持ってこられない）。
+**ブランチの切り替えはスクリプトの外でやる**（先頭の `git fetch/switch/merge`）。`run_experiment.sh` は自分では switch せず、**引数のブランチ名と実際のチェックアウトが一致しているかを検証するだけ**。次のいずれかなら**学習を始める前に止まり**、直すコマンドを表示する:
 
-`git pull` ではなく **`git merge --ff-only origin/<branch>`** を使うこと。`git pull --ff-only` は upstream（追跡情報）が未設定のローカルブランチだと `exit 1` で落ちる。`run_experiment.sh` の中でも同じ理由で `git merge --ff-only` にしてある（`set -e` で走るため、ここで落ちるとスクリプトごと死ぬ）。
+- 指定したブランチに居ない
+- ローカルが `origin/<branch>` より古い（＝修正前のコードで学習してしまう）
+- 作業ツリーに未コミットの変更がある（＝動くコードとブランチの内容が食い違う）
 
-ブランチ取得 → tmux 自動作成 → conda 有効化 → 掃除（`output/` `models/` `logs/` ＋ **HF datasets キャッシュ**）→ 学習 → 推論 → 回収コマンド表示、までを全部やる。詳細は [docs/direction.md](docs/direction.md)。
+「古いブランチのコードで学習しながら、ログには新しいブランチ名が残る」という静かな事故を防ぐため。
+
+`git pull` ではなく **`git merge --ff-only origin/<branch>`** を使うこと。`git pull --ff-only` は upstream（追跡情報）が未設定のローカルブランチだと `exit 1` で落ちる。
+
+以降、tmux 自動作成 → conda 有効化 → 掃除（`output/` `models/` `logs/` ＋ **HF datasets キャッシュ**）→ 学習 → 推論 → 回収コマンド表示、までを全部やる。詳細は [docs/direction.md](docs/direction.md)。
 
 - **学習開始直後に `--- prompt sanity OK: ...'<FKGL=...>'` が出ることを必ず確認する。** 出ない／assert で落ちる場合はプロンプト構築が壊れている。
 - 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は `tmux attach -t exp-fkgl-medeasi-1b-full-v2`。
