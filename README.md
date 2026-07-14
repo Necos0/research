@@ -129,11 +129,13 @@ git push -u origin exp/keep-medeasi-1b-v2
 ```bash
 ssh wada_yuto@calc40
 cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
-  && git fetch origin && git switch exp/keep-medeasi-1b-v2 && git pull --ff-only \
+  && git fetch origin && git switch exp/keep-medeasi-1b-v2 && git merge --ff-only origin/exp/keep-medeasi-1b-v2 \
   && ./run_experiment.sh exp/keep-medeasi-1b-v2
 ```
 
-先頭の `git fetch/switch/pull` は必ず付ける。サーバーのローカルブランチが古いと `run_experiment.sh` 自体がまだ無く `No such file or directory` になるため（スクリプトはブランチを切り替える側なので、自分自身を先に持ってこられない）。
+先頭の `git fetch/switch/merge` は必ず付ける。サーバーのローカルブランチが古いと `run_experiment.sh` 自体がまだ無く `No such file or directory` になるため（スクリプトはブランチを切り替える側なので、自分自身を先に持ってこられない）。
+
+`git pull` ではなく **`git merge --ff-only origin/<branch>`** を使うこと。`git pull --ff-only` は upstream（追跡情報）が未設定のローカルブランチだと `exit 1` で落ちる。`run_experiment.sh` の中でも同じ理由で `git merge --ff-only` にしてある（`set -e` で走るため、ここで落ちるとスクリプトごと死ぬ）。
 
 これだけで次を全部やる（特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/keep-medeasi-1b-v2 1`）:
 

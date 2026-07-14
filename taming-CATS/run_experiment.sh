@@ -37,11 +37,22 @@ cd "$REPO"
 
 # --- STAGE 1: ブランチを引く -------------------------------------------------
 # 引いた後は「そのブランチ版の」本スクリプトで実行し直す（自己更新）。
+#
+# ★この if ブロックの構造には意味がある。触るときは注意すること。
+#   git switch はディスク上の本スクリプト自身を書き換える。bash はスクリプトを
+#   一度に全部読まず「ファイル位置を覚えながら」読み進めるため、書き換え後に
+#   読み進めると古いオフセットから新しい中身を読んで構文エラーになる。
+#   ここが安全なのは、(1) switch と exec を同じ if ブロック（compound command）に
+#   入れており、bash がブロック全体をパースしてから実行するため exec の行が
+#   すでにメモリ上にあること、(2) 書き換え直後に exec してそれ以上読み進めないこと、
+#   の2点による。switch を if の外に出したり exec の後に処理を足すと壊れる。
 if [ "${_STAGE:-0}" -lt 1 ]; then
     echo "=== [1/6] ブランチを取得: $BRANCH"
     git fetch origin
-    git switch "$BRANCH"
-    git pull --ff-only
+    git switch "$BRANCH"                  # ローカルに無ければ origin から自動作成される
+    # `git pull --ff-only` は upstream(tracking) が未設定のブランチだと exit 1 で落ちる
+    # （set -e なのでスクリプトごと死ぬ）。origin を明示して tracking 設定に依存させない。
+    git merge --ff-only "origin/$BRANCH"
     export _STAGE=1
     exec "$REPO/run_experiment.sh" "$@"
 fi
