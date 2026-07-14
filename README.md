@@ -133,9 +133,15 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
   && ./run_experiment.sh exp/keep-medeasi-1b-v2
 ```
 
-先頭の `git fetch/switch/merge` は必ず付ける。サーバーのローカルブランチが古いと `run_experiment.sh` 自体がまだ無く `No such file or directory` になるため（スクリプトはブランチを切り替える側なので、自分自身を先に持ってこられない）。
+**ブランチの切り替えはスクリプトの外でやる**（先頭の `git fetch/switch/merge`）。`run_experiment.sh` は自分では switch せず、**引数のブランチ名と実際のチェックアウトが一致しているかを検証するだけ**。次のいずれかなら**学習を始める前に止まり**、直すコマンドを表示する:
 
-`git pull` ではなく **`git merge --ff-only origin/<branch>`** を使うこと。`git pull --ff-only` は upstream（追跡情報）が未設定のローカルブランチだと `exit 1` で落ちる。`run_experiment.sh` の中でも同じ理由で `git merge --ff-only` にしてある（`set -e` で走るため、ここで落ちるとスクリプトごと死ぬ）。
+- 指定したブランチに居ない
+- ローカルが `origin/<branch>` より古い（＝修正前のコードで学習してしまう）
+- 作業ツリーに未コミットの変更がある（＝動くコードとブランチの内容が食い違う）
+
+「古いブランチのコードで学習しながら、ログには新しいブランチ名が残る」という静かな事故を防ぐため。
+
+`git pull` ではなく **`git merge --ff-only origin/<branch>`** を使うこと。`git pull --ff-only` は upstream（追跡情報）が未設定のローカルブランチだと `exit 1` で落ちる。
 
 これだけで次を全部やる（特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/keep-medeasi-1b-v2 1`）:
 
