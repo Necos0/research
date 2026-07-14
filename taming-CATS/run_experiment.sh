@@ -5,20 +5,19 @@
 #   ./run_experiment.sh <ブランチ名> [GPU番号]
 #
 # 例:
-#   ./run_experiment.sh exp/keep-medeasi-1b-v2        # GPU は自動選択
-#   ./run_experiment.sh exp/fkgl-medeasi-1b-full-v2 1 # GPU 1 を明示
+#   ./run_experiment.sh exp/keep-medeasi-1b-v2        # 通常はこれだけ
+#   ./run_experiment.sh exp/fkgl-medeasi-1b-full-v2 1 # GPU 1 に固定したい場合のみ
 #
 # やること（この順で全部）:
 #   1. ブランチを fetch/switch/pull し、そのブランチ版の本スクリプトで実行し直す
 #   2. tmux セッションを自動で張り、その中で以降を実行（SSH が切れても継続）
-#   3. conda env を有効化・HF_TOKEN を確認・空き GPU を選択
+#   3. conda env を有効化（HF_TOKEN / HF_HOME / WANDB_MODE は env に登録済みなので手動 export 不要）
 #   4. 前実験の output/models/logs と **HF datasets キャッシュ** を掃除
 #      （キャッシュを残すと修正前のプロンプトで学習してしまう。実際に事故った）
 #   5. 学習 → 推論を連続実行（学習が失敗したら推論に進まない）
 #   6. Mac へ結果を回収する scp コマンドを表示
 #
-# 事前に一度だけ: HF トークンを置いておく（gated モデル用）
-#   echo '<your_hf_token>' > ~/.hf_token && chmod 600 ~/.hf_token
+# GPU はサーバー側で割り当てられるため、通常 CUDA_VISIBLE_DEVICES の指定は不要。
 # =========================================================================
 set -euo pipefail
 
@@ -88,30 +87,22 @@ conda activate "$CONDA_ENV"
 set -u
 echo "  conda env : ${CONDA_PREFIX:-?}"
 
-# HF トークン（gated モデル: meta-llama/Llama-3.2-1B-Instruct）
-if [ -z "${HF_TOKEN:-}" ] && [ -f "$HOME/.hf_token" ]; then
-    HF_TOKEN="$(tr -d '[:space:]' < "$HOME/.hf_token")"
-    export HF_TOKEN
-fi
-if [ -z "${HF_TOKEN:-}" ]; then
-    echo "ERROR: HF_TOKEN が未設定です（gated モデルの取得に必要）。"
-    echo "  echo '<your_hf_token>' > ~/.hf_token && chmod 600 ~/.hf_token"
-    exit 1
-fi
-echo "  HF_TOKEN  : 設定済み"
-
-# GPU（未指定なら使用メモリが最小のものを選ぶ）
-if [ "$GPU_ARG" = "auto" ]; then
-    GPU="$(nvidia-smi --query-gpu=index,memory.used --format=csv,noheader,nounits \
-           | sort -t, -k2 -n | head -1 | cut -d, -f1 | tr -d ' ')"
-    echo "  GPU       : $GPU （空きが最大のものを自動選択）"
+# HF_TOKEN / HF_HOME / WANDB_MODE は conda env の activate 時に設定される（env に登録済み）。
+# ここでは確認だけして、手で export はしない。
+if [ -n "${HF_TOKEN:-}" ]; then
+    echo "  HF_TOKEN  : 設定済み（env 由来）"
 else
-    GPU="$GPU_ARG"
-    echo "  GPU       : $GPU （指定）"
+    echo "  HF_TOKEN  : 未設定。gated モデル（Llama-3.2-1B）の取得に失敗する可能性があります。"
 fi
-export CUDA_VISIBLE_DEVICES="$GPU"
-nvidia-smi --query-gpu=index,name,memory.used,memory.total --format=csv,noheader \
-    | sed 's/^/    /'
+
+# GPU は通常サーバー側で割り当てられるため CUDA_VISIBLE_DEVICES は設定しない。
+# 特定の GPU に固定したい場合だけ第2引数で指定する。
+if [ "$GPU_ARG" != "auto" ]; then
+    export CUDA_VISIBLE_DEVICES="$GPU_ARG"
+    echo "  GPU       : $GPU_ARG （第2引数で指定）"
+else
+    echo "  GPU       : サーバーの割り当てに従う（CUDA_VISIBLE_DEVICES は設定しない）"
+fi
 
 # --- STAGE 4: 掃除 -----------------------------------------------------------
 echo "=== [4/6] 前実験の生成物と datasets キャッシュを掃除"
@@ -142,7 +133,7 @@ fi
 find "$REPO/data" \( -name "cache-*.arrow" -o -type d -name "cache-*" \) -exec rm -rf {} + 2>/dev/null || true
 
 # --- STAGE 5: 学習 → 推論 ----------------------------------------------------
-echo "=== [5/6] 学習を開始（ブランチ: $BRANCH / GPU: $GPU）"
+echo "=== [5/6] 学習を開始（ブランチ: $BRANCH / CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-未指定}）"
 echo "    ※ 開始直後に 'prompt sanity OK: ...<TAG=...>' が出ることを確認してください。"
 echo "       出なければプロンプト構築が壊れています（assert で落ちます）。"
 echo

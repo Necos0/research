@@ -15,28 +15,28 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | `results/` | サーバーから scp で回収した実験別の結果（`.gitignore` 済み） |
 | `2604.01779v1.pdf` | 参照論文 |
 
-## 現在の実験：Med-EASi × `<KEEP>` 1B フルデータ版・**プロンプト構築バグ修正後の再実行**（ロードマップ3.5）
+## 現在の実験：Med-EASi × `<KEEP>` 1B フルデータ版・**再実行（キャッシュ事故のやり直し）**（ロードマップ3.5）
+
+> **⚠️ `results/keep-medeasi-1b-v2/` の結果は無効。** datasets キャッシュ事故（下記「修正したバグ 4」）により、**修正前（7/9）のプロンプトで学習していた**。症状は **62.1%（126/203）が空出力**（`<KEEP=none>` では 76.9%）、SARI 35.5・BERTScore 0.375 と全面崩壊。**比較対象の `results/fkgl-medeasi-1b-full-v2/` も同じ事故で無効。両方とも再実行が必要。**
 
 - **ブランチ**: `exp/keep-medeasi-1b-v2`（`exp/fkgl-medeasi-1b-full-v2` から分岐）
-- **目的**: 旧 KEEP 1B（`exp/keep-medeasi-1b`）は FKGL 側と同じ共有コードのプロンプト構築バグを踏んでおり、平易化が成立していなかった。修正済みコードで KEEP を再学習・再推論し、**FKGL v2 と直接比較できる健全な結果**を得る。比較表（3.6）はこの結果が出てから作り直す。
+- **目的**: 修正済みコードで KEEP を再学習・再推論し、**FKGL v2 と直接比較できる健全な結果**を得る。比較表（3.6）はこの結果が出てから作る。
 - **差分は `METRIC_NAME=KEEP` のみ**。分岐元の FKGL v2 とハイパラ・データ・修正コードがすべて同一なので、タグ以外の交絡はない。
 - **設定**:
-  - モデル `meta-llama/Llama-3.2-1B-Instruct`（gated・HF トークン要）/ データ `medeasi`（ローカル `data/splits_flattened_full`＝フル未フィルタ）/ 制御属性 `KEEP`
+  - モデル `meta-llama/Llama-3.2-1B-Instruct`（gated。`HF_TOKEN` は conda env が設定するので手動 export は不要）/ データ `medeasi`（ローカル `data/splits_flattened_full`＝フル未フィルタ）/ 制御属性 `KEEP`
   - 学習: train 1499件・val 191件（全件）/ batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6 / 3エポック / max_length 512
   - 推論: test 203件（全件）/ 1シード（seed=37）/ batch_size 8 / max_length 1024（batch_size は 32GB GPU の OOM 対策。全プロンプトを max_length に固定パディングしているため greedy の生成結果はバッチサイズに依存しない）
 - **バグ修正が KEEP でも効くことは検証済み**: KEEP のタグ値は float ではなく文字列（`4` / `400, 20` / `none`）なので、修正3（`continue_final_message` の文字列マッチ）が壊れないかを実際の tokenizer でレンダリングして確認した。3パターンとも制御トークンが簡約文の接頭辞になり（assistant ヘッダは1つ・`<|eot_id|>` の割り込みなし）、completion 先頭への BOS 混入もない。
 - **タグ値の設計（再掲）**: train/val は「正解文が実際に保持している数値のみ」、test は「原文の全数値」。データ側でこの通りになっていることも検証済み（train/val 100%一致）。
-- **比較の際に必ず見ること**（FKGL v2 の解析で判明）: FKGL v2 は定型崩壊こそ直ったが、**予測の 54.2%（110/203）が原文と完全一致**しており、その副作用で数値保持率が 0.915（参照文 0.617）まで上がっている。**原文をコピーするほど保持率は自動的に上がる**ため、`<KEEP>` の効果は保持率だけでは測れない。比較表には必ず **原文コピー率**を併記し、両者のコピー率が同水準であることを確認したうえで保持率を比べること。
-- **実行後に必ず確認すること**: SARI/LENS が論文値と一致していても品質は保証されない（旧実行では捏造事例が SARI 67.6 を記録していた）。**出力を必ず目視し**、`The ` 始まりの比率が参照文並み（約1割）に戻っているかを崩壊の指標として確認する。
-
-### 直前の実験：Med-EASi × `<FKGL>` 1B フルデータ版 v2（ロードマップ3.4・完了）
-
-`exp/fkgl-medeasi-1b-full-v2`。結果は `results/fkgl-medeasi-1b-full-v2/`。本 KEEP 実験の比較対象（ベースライン）。
-
-- **定型崩壊は解消**: `The ` 始まりが 202/203（99.5%）→ **22/203（10.8%）** と参照文（10.3%）並みに回復。制御トークンの出力漏れ 0件。
-- SARI **51.24** / LENS **56.79** / FKGL MAE **2.92**（v1 の SARI 40.66 より改善、論文水準）。BERTScore も backfill で復活（to_ref 0.905）。
-- **残る懸念**: 原文コピー 54.2%（参照文は 0%）・空出力6件・FKGL は原文 14.11 → 予測 12.74 とアンダーシュート（参照文 11.88）。early stopping が epoch 1.38 で止まっており under-fit 気味の可能性。
-- **これにより旧 3.2 の結論は覆る**: FKGL の数値保持率が 0.560 → **0.915** に上がったため、「KEEP 優位（0.560→0.674）」は成立しない。
+- **実行後に必ず確認すること**:
+  1. 学習開始直後に **`--- prompt sanity OK: ...'<KEEP=none>'`** が出ること（出なければプロンプト構築が壊れている）。
+  2. 学習ログの DEBUG に出るプロンプトの **`Today Date` が実行日と一致**すること（古ければキャッシュを踏んでいる）。
+  3. 出力を**目視**し、**空出力がほぼ0**・`The ` 始まりが参照文並み（約1割）・原文コピーが過大でないこと。SARI/LENS が論文値と一致していても品質は保証されない。
+- **評価時の注意（分析で判明）**:
+  - **数値保持率は単独では `<KEEP>` の効果を示さない**。原文をコピーするほど保持率は自動的に上がるため、必ず **原文コピー率・空出力数とセット**で報告する。
+  - 数値あり47件のうち、**識別的なのは22件だけ**（参照文が数値を落とす事例）。残り25件は参照文も全保持で誰でも 1.000 になり、混ぜると差が薄まる。**22件を主軸に見る**。
+  - 保持率は「マクロ平均（現行）」「**ミクロ＝何個中何個**」「**完全保持事例率**」を出す。現行コードはマクロのみ。
+  - **`losses.MAE` は KEEP では壊れている**: 参照文を目標として扱うため、保持率100%を達成すると MAE が 0.383 と**悪化**する（成功を罰する指標）。KEEP では使わない。
 
 ### 修正したバグ（v1 = `exp/fkgl-medeasi-1b-full` の失敗原因）
 
@@ -68,7 +68,27 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 `control_token` は `f"<{metric}={value}> "` と末尾に空白を持つが、chat template は assistant の content を `| trim` する。この状態で `continue_final_message=True` にすると、transformers は「最終メッセージ content の**最後の出現位置**」で文字列を切り詰めるため、レンダリング済み文字列に `<FKGL=9.6> `（空白付き）が見つからず、**代わりに user メッセージの EXPLANATION 内にある同じ文字列にマッチして、そこでプロンプトを切断する**（assistant ターンごと消える）。例外は出ない。よって末尾の空白は除去必須で、代わりに `format_completion_with_tokenizer` で簡約文の先頭に空白を補う。空白の有無でトークン ID は変わる（`"By"`=1383 / `" By"`=3296）ため繋ぎ目は正確に合わせる。
 
-**未修正（意図的）**: JSONL 生成時と実行時で textstat のバージョンが異なり、プロンプトに書く目標 FKGL（旧版・例 9.6）と MAE の正解値（新版・例 9.05）が別スケールになっている。ただし実測でズレは絶対平均 0.31・MAE への影響は 3.33→3.38 と小さく、ここを変えると KEEP 側の既存結果と指標が非互換になるため**今回は触らない**（`environment.yml` の textstat 未 pin は再現性上の課題として残る）。
+**4. datasets の `map` キャッシュが 1・3 の修正を無効化していた（v2 が壊れた原因）**
+
+`sft_finetune.py` の `dataset.map(process_instance)` は**マップ関数のフィンガープリント**でキャッシュする。プロンプトを実際に組み立てているのは `helpers/prompting.py` の関数だが、`map` に渡す `process_instance` 自身のバイトコードは変わらないため、**`prompting.py` を直してもフィンガープリントが変わらず、過去実行のキャッシュがヒットする**。
+
+その結果、FKGL v2 / KEEP v2 はどちらも **7/9（修正前）のプロンプトで学習**していた。学習ログの DEBUG に証拠が残る:
+
+```
+Today Date: 09 Jul 2026        ← 実行日は 7/13, 7/14
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>   ← 修正1 が効いていない
+```
+
+一方 `tokenize` は関数本体を書き換えた（`add_special_tokens=False`）のでフィンガープリントが変わり再実行された。よって**修正2 だけが効き、修正1・3 は効かない**という中途半端な状態になった。推論側はプロンプトを組み直すため、**学習と推論でプロンプト構造が食い違う**。
+
+- KEEP v2: **62.1%（126/203）が空出力**。モデルは「制御トークンの直後は `<|eot_id|>`」と学習しており、推論で「続きを書け」と言われて即 EOS を吐いた（`<KEEP=none>` では 76.9%）。
+- FKGL v2: 原文コピー 54.2%。`The ` 崩壊が直って見えたのも同じ食い違いの産物で、健全ではない。
+
+**この事故は `eval_loss` でも SARI でも検知できなかった**（壊れたデータで学習し、同じ壊れたデータで検証していたため辻褄が合っていた）。対策として全 `.map()` に `load_from_cache_file=False` を付け、さらに**組み立てたプロンプトが「assistant ターン1つ」かつ「制御トークンで終わる」ことを assert で検証**するガードを学習・推論の両方に入れた。`run_experiment.sh` は HF datasets キャッシュも削除する。
+
+**教訓**: バグを直したあとは、**モデルが実際に食べたプロンプト（学習ログの DEBUG）を必ず目視する**。指標だけ見ても検知できない。
+
+**未修正（意図的）**: JSONL 生成時と実行時で textstat のバージョンが異なり、プロンプトに書く目標 FKGL（旧版・例 9.6）と MAE の正解値（新版・例 9.05）が別スケールになっている。ただし実測でズレは絶対平均 0.31・MAE への影響は 3.33→3.38 と小さく、ここを変えると既存結果と指標が非互換になるため**今回は触らない**（`environment.yml` の textstat 未 pin は再現性上の課題として残る）。
 
 ### `<KEEP>` 制御トークンとフルデータ版スプリットの仕組み（本実験の中核）
 
@@ -83,7 +103,8 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 標準の実行手順は [docs/direction.md](docs/direction.md)。この実験に固有の操作は次のとおり：
 
-- **`meta-llama/Llama-3.2-1B-Instruct` は gated モデル**。事前に HF 上でライセンスを承認し、サーバー側で `export HF_TOKEN=<token>`（読み取り可トークン）を設定してから学習を回す。
+- **`meta-llama/Llama-3.2-1B-Instruct` は gated モデル**だが、`HF_TOKEN` は **conda env の activate 時に設定される**ので手動の `export` は不要。
+- **`CUDA_VISIBLE_DEVICES` の指定も不要**（GPU はサーバー側で割り当てられる）。
 - フルデータ版スプリット（FKGL 値含む）はコミット済みなので、データの前処理は不要。
 - **推論時の GPU メモリ対策はスクリプトに組み込み済み**（env の付け忘れで OOM した反省から `run_sft_inference.sh` 内で設定する）。素の `./run_sft_inference.sh` でよい。
   - `SKIP_BERTSCORE=1` / `SKIP_LENS=1`（**推論プロセスのみ**。`export` すると後段の評価まで止まるので前置きで渡す）: BERTScore（roberta-large）と LENS は評価モデルを GPU に載せるため、生成中の LLM と取り合って OOM の主因になる。推論中は計算せず、後段 `sft_eval.py` の backfill で **LLM 解放後にまとめてバッチ計算**する。値は `output_averaged.json` と summary（`output/sft_results/all_results.json`）に載る（`BERTScore`＝予測 vs 原文、`BERTScore_ref`＝予測 vs 正解。ブートストラップ信頼区間つき）。
@@ -93,16 +114,7 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 ### サーバー実行手順（この実験のコピペ用）
 
-**サーバー側は `run_experiment.sh` の1コマンドで完結する。**
-
-**0.（サーバー・初回だけ）HF トークンを置く**
-
-gated モデル（`meta-llama/Llama-3.2-1B-Instruct`）の取得に必要。一度置けば以降は不要。
-
-```bash
-ssh wada_yuto@calc40
-echo '<your_hf_token>' > ~/.hf_token && chmod 600 ~/.hf_token
-```
+**サーバー側は `run_experiment.sh` の1コマンドで完結する。** 手で `export` するものは無い（`HF_TOKEN` / `HF_HOME` / `WANDB_MODE` は conda env の activate 時に設定済み。GPU もサーバーが割り当てるので `CUDA_VISIBLE_DEVICES` は不要）。
 
 **1.（Mac）コミットして GitHub へ push**
 
@@ -119,11 +131,11 @@ ssh wada_yuto@calc40
 cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS && ./run_experiment.sh exp/keep-medeasi-1b-v2
 ```
 
-これだけで次を全部やる（第2引数で GPU 番号を明示することもできる: `./run_experiment.sh exp/keep-medeasi-1b-v2 1`）:
+これだけで次を全部やる（特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/keep-medeasi-1b-v2 1`）:
 
 1. ブランチを `fetch` / `switch` / `pull` し、**そのブランチ版の本スクリプトで実行し直す**
 2. **tmux セッションを自動で張る**（SSH が切れても継続。`Ctrl-b` → `d` で detach）
-3. conda env を有効化、`~/.hf_token` を読み込み、**空き GPU を自動選択**
+3. conda env を有効化（`HF_TOKEN` 等は env が設定するので手動 export は不要）
 4. 前実験の `output/` `models/` `logs/` と **HF datasets キャッシュ**を掃除（削除前に確認を求める）
 5. **学習 → 推論**を連続実行（学習が失敗したら推論に進まない）
 6. Mac へ結果を回収する scp コマンドを表示
