@@ -88,11 +88,12 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
    ```bash
    ssh wada_yuto@calc40
    cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
-     && git fetch origin && git switch exp/<実験名> && git pull --ff-only \
+     && git fetch origin && git switch exp/<実験名> && git merge --ff-only origin/exp/<実験名> \
      && ./run_experiment.sh exp/<実験名>
    ```
 
-   - **先頭の `git fetch/switch/pull` は必ず付ける。** サーバーのローカルブランチが古いと `run_experiment.sh` 自体がまだ存在せず `No such file or directory` になる（スクリプトはブランチを切り替える側なので、自分自身を先に持ってこられない）。この3つを前置すれば、どんな状態からでも動く。
+   - **先頭の `git fetch/switch/merge` は必ず付ける。** サーバーのローカルブランチが古いと `run_experiment.sh` 自体がまだ存在せず `No such file or directory` になる（スクリプトはブランチを切り替える側なので、自分自身を先に持ってこられない）。これを前置すれば、どんな状態からでも動く。
+   - **`git pull` ではなく `git merge --ff-only origin/<branch>` を使う。** `git pull --ff-only` は upstream（追跡情報）が設定されていないローカルブランチだと `exit 1` で落ちる。`origin/<branch>` を明示すれば追跡設定に依存しない。`run_experiment.sh` の中でも同じ理由で `git merge --ff-only` を使っている（`set -e` で走るため、ここで落ちるとスクリプトごと死ぬ）。
    - 初回だけ clone が必要: `cd /mnt/gpu/workspace/2025/yuto_wada && git clone https://github.com/Necos0/research.git`（公開リポジトリなので認証不要）
    - clone は割当領域に **1個だけ**。実験ごとに**ブランチを切り替える**（各ブランチ＝各実験）。
    - 特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/<実験名> 1`
