@@ -73,11 +73,14 @@ if [ "${_STAGE:-0}" -lt 2 ]; then
         exit 1
     fi
 
-    # 作業ツリーが汚れていると、git のコミットと実際に動くコードが食い違う
-    if [ -n "$(git status --porcelain)" ]; then
-        echo "ERROR: 作業ツリーに未コミットの変更があります。実際に動くコードが"
+    # 追跡ファイルが書き換わっていると、git のコミットと実際に動くコードが食い違う。
+    # --untracked-files=no: 未追跡ファイル（.ipynb_checkpoints/ 等のゴミ）は実行される
+    # コードを変えないので無視する。ここで見たいのは「追跡ファイルの改変・削除」だけ。
+    DIRTY="$(git status --porcelain --untracked-files=no)"
+    if [ -n "$DIRTY" ]; then
+        echo "ERROR: 追跡ファイルに未コミットの変更があります。実際に動くコードが"
         echo "       ブランチの内容と食い違うため、何を実験したのか後から追えません。"
-        git status --short | sed 's/^/    /'
+        echo "$DIRTY" | sed 's/^/    /'
         echo "  変更を捨てる: git restore . ／ 残すなら別ブランチにコミットしてください。"
         exit 1
     fi
@@ -158,7 +161,12 @@ if [ -d output ] || [ -d models ]; then
         *) echo "中止しました（何も削除していません）。"; exit 1 ;;
     esac
 fi
-rm -rf output models logs
+rm -rf output models
+# logs/ は【ディレクトリごと消さない】。logs/.gitkeep は git が追跡しているファイルなので、
+# rm -rf logs すると作業ツリーが汚れ、次回 STAGE1 の検証ゲートが必ず落ちる（実際に落ちた）。
+# 中身のログだけ消して .gitkeep は残す。
+mkdir -p logs
+find logs -mindepth 1 ! -name '.gitkeep' -delete
 
 # datasets のキャッシュ。これを残すと map のフィンガープリントが変わらない場合に
 # **修正前のプロンプトで学習してしまう**（FKGL v2 / KEEP v2 がこれで壊れた）。
