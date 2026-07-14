@@ -139,7 +139,7 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
 
 これだけで次を全部やる（特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/keep-medeasi-1b-v2 1`）:
 
-1. ブランチを `fetch` / `switch` / `pull` し、**そのブランチ版の本スクリプトで実行し直す**
+1. **チェックアウトを検証**（指定ブランチに居るか・origin と一致しているか・作業ツリーがクリーンか）。違えば**学習を始める前に止まる**
 2. **tmux セッションを自動で張る**（SSH が切れても継続。`Ctrl-b` → `d` で detach）
 3. conda env を有効化（`HF_TOKEN` 等は env が設定するので手動 export は不要）
 4. 前実験の `output/` `models/` `logs/` と **HF datasets キャッシュ**を掃除（削除前に確認を求める）

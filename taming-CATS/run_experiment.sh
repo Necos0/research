@@ -2,14 +2,20 @@
 # =========================================================================
 # サーバーでの実験を1コマンドで回す。
 #
-#   ./run_experiment.sh <ブランチ名> [GPU番号]
+# ブランチの切り替えは【このスクリプトの外で】行う。必ず次の形で呼ぶこと:
+#
+#   git fetch origin && git switch <ブランチ名> && git merge --ff-only origin/<ブランチ名> \
+#     && ./run_experiment.sh <ブランチ名> [GPU番号]
 #
 # 例:
-#   ./run_experiment.sh exp/keep-medeasi-1b-v2        # 通常はこれだけ
-#   ./run_experiment.sh exp/fkgl-medeasi-1b-full-v2 1 # GPU 1 に固定したい場合のみ
+#   ... && ./run_experiment.sh exp/keep-medeasi-1b-v2        # 通常はこれだけ
+#   ... && ./run_experiment.sh exp/fkgl-medeasi-1b-full-v2 1 # GPU 1 に固定したい場合のみ
+#
+# 引数のブランチ名は「何を実験するつもりか」の宣言として使い、実際のチェックアウトと
+# 一致しているかを STAGE 1 で検証する。違えば学習を始める前に止まる。
 #
 # やること（この順で全部）:
-#   1. ブランチを fetch/switch/pull し、そのブランチ版の本スクリプトで実行し直す
+#   1. チェックアウトを検証（ブランチ一致・origin と同一・作業ツリーがクリーン）
 #   2. tmux セッションを自動で張り、その中で以降を実行（SSH が切れても継続）
 #   3. conda env を有効化（HF_TOKEN / HF_HOME / WANDB_MODE は env に登録済みなので手動 export 不要）
 #   4. 前実験の output/models/logs と **HF datasets キャッシュ** を掃除
@@ -35,26 +41,48 @@ fi
 
 cd "$REPO"
 
-# --- STAGE 1: ブランチを引く -------------------------------------------------
-# 引いた後は「そのブランチ版の」本スクリプトで実行し直す（自己更新）。
+# --- STAGE 1: チェックアウトを検証する ---------------------------------------
+# ブランチの切り替えは【スクリプトの外で】行う。以前はここで git switch して自分自身を
+# exec し直していたが、呼び出し側で必ず fetch/switch/merge してから叩く運用にしたため
+# 冗長であり、かつ「実行中のスクリプト自身をディスク上で書き換える」という危うい機構
+# （bash はファイル位置を覚えながら読み進めるので、書き換わると古いオフセットから
+#  新しい中身を読んで壊れうる）を抱え続ける理由がない。
 #
-# ★この if ブロックの構造には意味がある。触るときは注意すること。
-#   git switch はディスク上の本スクリプト自身を書き換える。bash はスクリプトを
-#   一度に全部読まず「ファイル位置を覚えながら」読み進めるため、書き換え後に
-#   読み進めると古いオフセットから新しい中身を読んで構文エラーになる。
-#   ここが安全なのは、(1) switch と exec を同じ if ブロック（compound command）に
-#   入れており、bash がブロック全体をパースしてから実行するため exec の行が
-#   すでにメモリ上にあること、(2) 書き換え直後に exec してそれ以上読み進めないこと、
-#   の2点による。switch を if の外に出したり exec の後に処理を足すと壊れる。
-if [ "${_STAGE:-0}" -lt 1 ]; then
-    echo "=== [1/6] ブランチを取得: $BRANCH"
-    git fetch origin
-    git switch "$BRANCH"                  # ローカルに無ければ origin から自動作成される
-    # `git pull --ff-only` は upstream(tracking) が未設定のブランチだと exit 1 で落ちる
-    # （set -e なのでスクリプトごと死ぬ）。origin を明示して tracking 設定に依存させない。
-    git merge --ff-only "origin/$BRANCH"
-    export _STAGE=1
-    exec "$REPO/run_experiment.sh" "$@"
+# ただし単に消すと別の危険が生まれる。呼び出し側で switch を忘れたまま
+# `./run_experiment.sh exp/foo` を叩くと、古い exp/bar のチェックアウトで学習しながら
+# ログには exp/foo と記録される——このプロジェクトを2度焼いた「静かに間違ったものが
+# 動く」事故そのものになる。そこで switch する代わりに【検証して、違えば止める】。
+if [ "${_STAGE:-0}" -lt 2 ]; then
+    echo "=== [1/6] チェックアウトを検証: $BRANCH"
+    git fetch origin --quiet
+
+    CUR="$(git rev-parse --abbrev-ref HEAD)"
+    if [ "$CUR" != "$BRANCH" ]; then
+        echo "ERROR: 現在のブランチは '$CUR' で、指定された '$BRANCH' ではありません。"
+        echo "  次を実行してから、もう一度叩いてください:"
+        echo "    git switch $BRANCH && git merge --ff-only origin/$BRANCH"
+        exit 1
+    fi
+
+    # origin と一致しているか（ローカルが古いと修正前のコードで学習してしまう）
+    if [ "$(git rev-parse HEAD)" != "$(git rev-parse "origin/$BRANCH")" ]; then
+        echo "ERROR: ローカルの $BRANCH が origin/$BRANCH と一致していません。"
+        echo "  $(git rev-parse --short HEAD) (ローカル) vs $(git rev-parse --short "origin/$BRANCH") (origin)"
+        echo "  次を実行してから、もう一度叩いてください:"
+        echo "    git merge --ff-only origin/$BRANCH"
+        exit 1
+    fi
+
+    # 作業ツリーが汚れていると、git のコミットと実際に動くコードが食い違う
+    if [ -n "$(git status --porcelain)" ]; then
+        echo "ERROR: 作業ツリーに未コミットの変更があります。実際に動くコードが"
+        echo "       ブランチの内容と食い違うため、何を実験したのか後から追えません。"
+        git status --short | sed 's/^/    /'
+        echo "  変更を捨てる: git restore . ／ 残すなら別ブランチにコミットしてください。"
+        exit 1
+    fi
+
+    echo "  OK: $BRANCH @ $(git rev-parse --short HEAD)（origin と一致・作業ツリーはクリーン）"
 fi
 
 # --- STAGE 2: tmux の中に入る ------------------------------------------------
