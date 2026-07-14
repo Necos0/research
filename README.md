@@ -15,14 +15,17 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | `results/` | サーバーから scp で回収した実験別の結果（`.gitignore` 済み） |
 | `2604.01779v1.pdf` | 参照論文 |
 
-## 現在の実験：Med-EASi × `<FKGL>` 1B フルデータ版・**プロンプト構築バグ修正後の再実行**
+## 現在の実験：Med-EASi × `<FKGL>` 1B フルデータ版・**再実行（キャッシュ事故のやり直し）**
+
+> **⚠️ `results/fkgl-medeasi-1b-full-v2/` の結果は無効。** datasets キャッシュ事故（下記「修正したバグ 4」）により、**修正前（7/9）のプロンプトで学習していた**。`The ` 始まりが 10.8% に見えたのは修正が効いたからではなく、学習と推論でプロンプト構造が食い違った結果。原文コピー 54.2%・数値保持 0.915 も信用できない。**キャッシュ修正後に再実行が必要。**
 
 - **ブランチ**: `exp/fkgl-medeasi-1b-full-v2`
-- **目的**: `exp/fkgl-medeasi-1b-full` の出力を全203件目視したところ、平易化が成立していなかった（予測の 202/203 が `The ` で始まる定型崩壊、原文コピー11件、事実の捏造・非文33件、数値保持 0.560）。原因は**制御トークンの配置バグとトークン化バグ**で、FKGL・KEEP の両ブランチが同じ共有コードを踏んでいた。本ブランチでそれを修正し、フルデータ版 FKGL を再学習・再推論して健全なベースラインを取り直す。**KEEP 側も同修正で再実行が必要**。両者の比較表（旧 `docs/comparison_fkgl_full_vs_keep.md`）は結論が支持できないため削除済みで、再実行後に作り直す。
-- **修正内容**（3点。詳細は下記「修正したバグ」節）:
+- **目的**: フルデータ版 FKGL の健全なベースラインを取り直す。KEEP（`exp/keep-medeasi-1b-v2`）と同一データ・同一設定で、差分は `METRIC_NAME` のみ。
+- **修正内容**（4点。詳細は下記「修正したバグ」節）:
   1. `src/helpers/prompting.py` — 制御トークンを簡約文と同じ assistant ターンに置く（`continue_final_message=True`）
   2. `src/sft_finetune.py` / `src/sft_inference.py` — `add_special_tokens=False`（BOS の二重付与・completion への混入を防ぐ）
   3. `src/helpers/prompting.py` — 制御トークンと簡約文の間の空白を担保（トークン境界のズレ防止）
+  4. **`sft_finetune.py` / `sft_inference.py` の全 `.map()` に `load_from_cache_file=False`** ＋ プロンプト検証 assert（1〜3 を無効化していたキャッシュ事故の対策。**これが無いと 1・3 が効かない**）
 - **設定**（`METRIC_NAME=FKGL` 以外は `exp/keep-medeasi-1b` と完全に同一。ハイパラは v1 から変更なし＝**差分はバグ修正のみ**）:
   - モデル `meta-llama/Llama-3.2-1B-Instruct`（gated・HF トークン要）/ データ `medeasi`（ローカル `data/splits_flattened_full`＝フル未フィルタ）/ 制御属性 `FKGL`
   - 学習: train 1499件・val 191件（全件）/ batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6 / 3エポック / max_length 512
@@ -60,6 +63,26 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 `control_token` は `f"<{metric}={value}> "` と末尾に空白を持つが、chat template は assistant の content を `| trim` する。この状態で `continue_final_message=True` にすると、transformers は「最終メッセージ content の**最後の出現位置**」で文字列を切り詰めるため、レンダリング済み文字列に `<FKGL=9.6> `（空白付き）が見つからず、**代わりに user メッセージの EXPLANATION 内にある同じ文字列にマッチして、そこでプロンプトを切断する**（assistant ターンごと消える）。例外は出ない。よって末尾の空白は除去必須で、代わりに `format_completion_with_tokenizer` で簡約文の先頭に空白を補う。空白の有無でトークン ID は変わる（`"By"`=1383 / `" By"`=3296）ため繋ぎ目は正確に合わせる。
 
+**4. datasets の `map` キャッシュが 1・3 の修正を無効化していた（v2 が壊れた原因）**
+
+`sft_finetune.py` の `dataset.map(process_instance)` は**マップ関数のフィンガープリント**でキャッシュする。プロンプトを実際に組み立てているのは `helpers/prompting.py` の関数だが、`map` に渡す `process_instance` 自身のバイトコードは変わらないため、**`prompting.py` を直してもフィンガープリントが変わらず、過去実行のキャッシュがヒットする**。
+
+その結果、FKGL v2 / KEEP v2 はどちらも **7/9（修正前）のプロンプトで学習**していた。学習ログの DEBUG に証拠が残る:
+
+```
+Today Date: 09 Jul 2026        ← 実行日は 7/13, 7/14
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>   ← 修正1 が効いていない
+```
+
+一方 `tokenize` は関数本体を書き換えた（`add_special_tokens=False`）のでフィンガープリントが変わり再実行された。よって**修正2 だけが効き、修正1・3 は効かない**という中途半端な状態になった。推論側はプロンプトを組み直すため、**学習と推論でプロンプト構造が食い違う**。
+
+- KEEP v2: **62.1%（126/203）が空出力**。モデルは「制御トークンの直後は `<|eot_id|>`」と学習しており、推論で「続きを書け」と言われて即 EOS を吐いた（`<KEEP=none>` では 76.9%）。
+- FKGL v2: 原文コピー 54.2%。`The ` 崩壊が直って見えたのも同じ食い違いの産物で、健全ではない。
+
+**この事故は `eval_loss` でも SARI でも検知できなかった**（壊れたデータで学習し、同じ壊れたデータで検証していたため辻褄が合っていた）。対策として全 `.map()` に `load_from_cache_file=False` を付け、さらに**組み立てたプロンプトが「assistant ターン1つ」かつ「制御トークンで終わる」ことを assert で検証**するガードを学習・推論の両方に入れた。`run_experiment.sh` は HF datasets キャッシュも削除する。
+
+**教訓**: バグを直したあとは、**モデルが実際に食べたプロンプト（学習ログの DEBUG）を必ず目視する**。指標だけ見ても検知できない。
+
 **未修正（意図的）**: JSONL 生成時と実行時で textstat のバージョンが異なり、プロンプトに書く目標 FKGL（旧版・例 9.6）と MAE の正解値（新版・例 9.05）が別スケールになっている。ただし実測でズレは絶対平均 0.31・MAE への影響は 3.33→3.38 と小さく、ここを変えると KEEP 側の既存結果と指標が非互換になるため**今回は触らない**（`environment.yml` の textstat 未 pin は再現性上の課題として残る）。
 
 ### 参考：`<KEEP>` 制御トークンとフルデータ版スプリットの仕組み（keep系ブランチで追加済み・本実験ではデータのみ利用）
@@ -75,7 +98,8 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 標準の実行手順は [docs/direction.md](docs/direction.md)。この実験に固有の操作は次のとおり：
 
-- **`meta-llama/Llama-3.2-1B-Instruct` は gated モデル**。事前に HF 上でライセンスを承認し、サーバー側で `export HF_TOKEN=<token>`（読み取り可トークン）を設定してから学習を回す。
+- **`meta-llama/Llama-3.2-1B-Instruct` は gated モデル**だが、`HF_TOKEN` は **conda env の activate 時に設定される**ので手動の `export` は不要。
+- **`CUDA_VISIBLE_DEVICES` の指定も不要**（GPU はサーバー側で割り当てられる）。
 - フルデータ版スプリット（FKGL 値含む）はコミット済みなので、データの前処理は不要。
 - **推論時の GPU メモリ対策はスクリプトに組み込み済み**（env の付け忘れで OOM した反省から `run_sft_inference.sh` 内で設定する）。素の `./run_sft_inference.sh` でよい。
   - `SKIP_BERTSCORE=1` / `SKIP_LENS=1`（**推論プロセスのみ**。`export` すると後段の評価まで止まるので前置きで渡す）: BERTScore（roberta-large）と LENS は評価モデルを GPU に載せるため、生成中の LLM と取り合って OOM の主因になる。推論中は計算せず、後段 `sft_eval.py` の backfill で **LLM 解放後にまとめてバッチ計算**する。値は `output_averaged.json` と summary（`output/sft_results/all_results.json`）に載る（`BERTScore`＝予測 vs 原文、`BERTScore_ref`＝予測 vs 正解。ブートストラップ信頼区間つき）。
@@ -85,53 +109,31 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 ### サーバー実行手順（この実験のコピペ用）
 
-[docs/direction.md](docs/direction.md) の共通手順に、この実験の具体名（ブランチ `exp/fkgl-medeasi-1b-full-v2`）を当てはめたもの。上から順にコピペで実行できる。
+**サーバー側は `run_experiment.sh` の1コマンドで完結する。** 手で `export` するものは無い（`HF_TOKEN` / `HF_HOME` / `WANDB_MODE` は conda env の activate 時に設定済み。GPU もサーバーが割り当てるので `CUDA_VISIBLE_DEVICES` は不要）。
 
 **1.（Mac）コミットして GitHub へ push**
 
 ```bash
 cd /Users/wadaketsunin/research
-git add -A && git commit -m "exp: Med-EASi x FKGL 1B フルデータ版（プロンプト構築バグ修正後の再実行）"   # 未コミットの変更があれば
+git add -A && git commit -m "exp: <条件の説明>"   # 未コミットの変更があれば
 git push -u origin exp/fkgl-medeasi-1b-full-v2
 ```
 
-**2.（サーバー）ブランチを引いて tmux ＋ conda 環境を準備**
+**2.（サーバー）1コマンドで実行**
 
 ```bash
 ssh wada_yuto@calc40
+cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS && ./run_experiment.sh exp/fkgl-medeasi-1b-full-v2
 ```
 
-```bash
-cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS
-git fetch origin && git switch exp/fkgl-medeasi-1b-full-v2
-git pull                                  # 同一ブランチの更新を取り込む場合
-rm -rf output models logs                 # 前実験の生成物を掃除（回収済みが前提。logs も消さないと前実験のログが混ざる）
-tmux new -s exp-fkgl-medeasi-1b-full-v2
-```
+ブランチ取得 → tmux 自動作成 → conda 有効化 → 掃除（`output/` `models/` `logs/` ＋ **HF datasets キャッシュ**）→ 学習 → 推論 → 回収コマンド表示、までを全部やる。詳細は [docs/direction.md](docs/direction.md)。
 
-```bash
-# ここから tmux セッション内
-conda activate /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto
-export HF_TOKEN=<token>                   # gated モデル（Llama-3.2-1B）用。読み取り可トークン
-```
+- **学習開始直後に `--- prompt sanity OK: ...'<FKGL=...>'` が出ることを必ず確認する。** 出ない／assert で落ちる場合はプロンプト構築が壊れている。
+- 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は `tmux attach -t exp-fkgl-medeasi-1b-full-v2`。
 
-**3.（サーバー・tmux 内）学習 → 推論を実行**
+**3.（Mac）結果を回収**
 
-```bash
-nvidia-smi                                # 空き GPU を確認
-export CUDA_VISIBLE_DEVICES=0             # 空いている番号に書き換える
-./run_sft_finetune.sh && ./run_sft_inference.sh   # 学習→推論を連続実行（学習が失敗したら推論には進まない）
-```
-
-推論のOOM対策（`SKIP_BERTSCORE` 等）は `run_sft_inference.sh` 内で設定済みなので、env プレフィックスは不要。
-
-実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は:
-
-```bash
-tmux attach -t exp-fkgl-medeasi-1b-full-v2
-```
-
-**4.（Mac）結果を回収して後片付け**
+完了時にスクリプトが表示するコマンドをそのまま貼ればよい。
 
 ```bash
 mkdir -p /Users/wadaketsunin/research/results/fkgl-medeasi-1b-full-v2
@@ -139,11 +141,6 @@ scp -r wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/o
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
   /Users/wadaketsunin/research/results/fkgl-medeasi-1b-full-v2/
-```
-
-```bash
-# （サーバー）終わったセッションを削除
-tmux kill-session -t exp-fkgl-medeasi-1b-full-v2
 ```
 
 ※ モデル重み（`*.safetensors`）が不要なら scp の `models` 行を外し、評価サマリ（`output/sft_results/all_results.json`）とログだけ回収してもよい。

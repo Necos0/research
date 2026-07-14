@@ -151,7 +151,7 @@ def tokenize_dataset(dataset, tokenizer, max_length):
             "attention_mask": attention_mask
         }
 
-    return dataset.map(tokenize, batched=False)
+    return dataset.map(tokenize, batched=False, load_from_cache_file=False)
 
 def show_examples(dataset, n=3, show_tokens=False):
     indices = random.sample(range(len(dataset)), min(n, len(dataset)))
@@ -243,8 +243,28 @@ def load_and_prepare_dataset(dataset_name, tokenizer, args, source_based_metric=
     train_dataset = train_dataset.shuffle(seed=args.seed)
     val_dataset = val_dataset.shuffle(seed=args.seed)
 
-    train_dataset = train_dataset.map(process_instance)
-    val_dataset = val_dataset.map(process_instance)
+    # load_from_cache_file=False は必須。datasets の map はマップ関数のフィンガープリントで
+    # キャッシュするが、process_instance 自身のバイトコードは変わらず、実際にプロンプトを
+    # 組み立てる helpers/prompting.py だけを直しても**フィンガープリントが変わらない**。
+    # そのため過去実行のキャッシュがヒットし、修正前のプロンプトで学習してしまう
+    # （実際に FKGL v2 / KEEP v2 はこれで壊れた。tokenize 側は関数本体を書き換えたので
+    #   再実行され、結果「BOS修正だけ効き、プロンプト構造の修正は効かない」状態になった）。
+    train_dataset = train_dataset.map(process_instance, load_from_cache_file=False)
+    val_dataset = val_dataset.map(process_instance, load_from_cache_file=False)
+
+    # 上のキャッシュ事故は「学習は成功したように見えるが中身が別物」という形で表面化した。
+    # 二度と静かに通さないため、組み立てたプロンプトが期待の形かをここで検証する。
+    _sample = train_dataset[0]["prompt"]
+    _ctrl = f"<{args.metric_name}="
+    assert _sample.count("<|start_header_id|>assistant<|end_header_id|>") == 1, (
+        "プロンプトに assistant ターンが2つある＝制御トークンが簡約文と別ターンに分離している。"
+        f"\n{_sample[-200:]}"
+    )
+    assert _sample.rstrip().endswith(">") and _ctrl in _sample.rsplit("assistant<|end_header_id|>", 1)[-1], (
+        "プロンプトが制御トークンで終わっていない＝簡約文の接頭辞として効かない。"
+        f"\n{_sample[-200:]}"
+    )
+    print(f"--- prompt sanity OK: ...{_sample[-60:]!r}")
 
     print("\n\n *** Before tokenization ***")
     print(">>> train:")

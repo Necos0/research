@@ -79,31 +79,43 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
    ```bash
    git push -u origin exp/<実験名>
    ```
-4. **（サーバー）SSH → 対象ブランチを引く → tmux → conda 仮想環境を有効化**
-   - clone は割当領域に **1個だけ**。実験ごとに **対象ブランチを `git switch` で切り替える**（各ブランチ＝各実験）。
-   - 学習は長時間かかるため、SSH が切れてもジョブが止まらないよう **tmux セッション内で回す**。conda activate や実行はすべて tmux の中で行う。
+4. **（サーバー）SSH → `run_experiment.sh` を1コマンド実行**
+
+   ブランチ取得・tmux 作成・conda 有効化・掃除・学習・推論を**すべてこのスクリプトがやる**。手で `export` するものは無い（`HF_TOKEN` / `HF_HOME` / `WANDB_MODE` は **conda env の activate 時に設定済み**）。GPU も**サーバー側で割り当てられる**ので `CUDA_VISIBLE_DEVICES` の指定は不要。
+
    ```bash
    ssh wada_yuto@calc40
-   cd /mnt/gpu/workspace/2025/yuto_wada
-   git clone https://github.com/Necos0/research.git   # 初回のみ（公開リポジトリなので認証不要）
-   cd research/taming-CATS
-   git fetch origin && git switch exp/<実験名>          # 対象ブランチに切り替え（同一ブランチ更新時は git pull）
-   # 別実験から切り替えたら、前実験の生成物を掃除（回収済みが前提。推論が別モデルを拾う・ログが混ざるのを防ぐ）
-   rm -rf output models logs                           # 必要な結果は事前に scp で回収しておくこと
-   tmux new -s exp-<実験名>                # 新規セッション作成（再接続時は: tmux attach -t exp-<実験名>）
-   conda activate /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto   # HF_HOME / WANDB_MODE は env に登録済み
-   # 依存を更新したら: conda env update -f environment.yml --prune
-   # env を抜けるとき: conda deactivate
+   cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS && ./run_experiment.sh exp/<実験名>
    ```
-5. **（サーバー・tmux 内）実験を回す**（env を activate 済みなら HF_HOME / WANDB_MODE は設定済み）
+
+   - 初回だけ clone が必要: `cd /mnt/gpu/workspace/2025/yuto_wada && git clone https://github.com/Necos0/research.git`（公開リポジトリなので認証不要）
+   - clone は割当領域に **1個だけ**。実験ごとに**ブランチを切り替える**（各ブランチ＝各実験）。切り替えはスクリプトがやる。
+   - 特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/<実験名> 1`
+   - 依存を更新したら: `conda env update -f environment.yml --prune`
+
+   スクリプトが自動でやること:
+
+   | 段階 | 内容 |
+   | --- | --- |
+   | 1 | `git fetch` / `switch` / `pull` し、**そのブランチ版のスクリプトで実行し直す**（自己更新） |
+   | 2 | **tmux セッションを自動作成**（`exp-<ブランチ名>`）。SSH が切れてもジョブは継続 |
+   | 3 | conda env を有効化 |
+   | 4 | 前実験の `output/` `models/` `logs/` と **HF datasets キャッシュ**を掃除（削除前に確認を求める） |
+   | 5 | **学習 → 推論**を連続実行（学習が失敗したら推論に進まない） |
+   | 6 | Mac へ結果を回収する scp コマンドを表示 |
+
+   - **datasets キャッシュの削除は必須**。残すと `map` のフィンガープリントが変わらない場合に**修正前のプロンプトで学習してしまう**（実際に FKGL v2 / KEEP v2 がこれで壊れた）。コード側でも `load_from_cache_file=False` にしてあるが、二重に潰している。
+   - **学習開始直後に `--- prompt sanity OK: ...'<TAG=...>'` が出ることを必ず確認する。** 出ない／assert で落ちる場合はプロンプト構築が壊れている。
+   - 実行が始まったら **`Ctrl-b` → `d` で detach** し、SSH を切ってよい。
+   - 進捗確認は再 SSH して `tmux attach -t exp-<ブランチ名>`。一覧は `tmux ls`、終わったら `tmux kill-session -t exp-<ブランチ名>`。
+
+5. **（手動で回したい場合のみ）**
    ```bash
-   nvidia-smi                             # 空き GPU を確認
-   export CUDA_VISIBLE_DEVICES=0          # 空いている番号を指定（実行するシェルごとに指定）
-   ./run_sft_finetune.sh                  # → models/ に保存
-   ./run_sft_inference.sh                 # → output/ に保存（末尾で評価も自動実行）
+   tmux new -s exp-<実験名>
+   conda activate /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto
+   rm -rf output models logs "$HF_HOME/datasets"   # 掃除（回収済みが前提）
+   ./run_sft_finetune.sh && ./run_sft_inference.sh
    ```
-   - 実行を開始したら **`Ctrl-b` → `d` で detach** し、SSH を切ってよい（ジョブは tmux 内で継続）。
-   - 進捗確認は再 SSH して `tmux attach -t exp-<実験名>`。セッション一覧は `tmux ls`、終わった後は `tmux kill-session -t exp-<実験名>`。
 6. **（Mac）結果を回収**（scp でサーバーから手元の `results/<実験名>/` へまとめる）
    ```bash
    mkdir -p /Users/wadaketsunin/research/results/<実験名>
