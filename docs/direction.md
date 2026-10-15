@@ -60,13 +60,46 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
    →（サーバー）git clone/pull → conda env → 実験実行 → scp で結果を回収
 ```
 
+### 実行担当: Claude Code（2026-10-15 〜）
+
+**実験の実行は今後すべて Claude Code が担う**（ユーザーの指示）。下の「手順」の (Mac)・(サーバー) の両方を、Claude が Bash から直接行う。
+
+- **SSH は鍵認証で設定済み**。`~/.ssh/config` の `Host calc40` が `~/.ssh/id_ed25519`（パスフレーズなし）を使うため、`ssh calc40 '<コマンド>'` でパスワードなしに非対話実行できる。疎通確認は `ssh -o BatchMode=yes calc40 true`。
+  - calc40 のホスト鍵は 2026-10-15 に変わっていた（再インストール等と推定）。新しい鍵 `ED25519 SHA256:SSMn+h+A/DwY0WKw3OZ8md5nJ0SAEsuBhVsikaOYrU8` を登録済み。**これ以外の鍵で警告が出たら、`known_hosts` を勝手に書き換えずユーザーに報告する。**
+- **Claude が行うこと**: ブランチ作成・編集・コミット → push → サーバーでの `fetch/switch/merge` → `run_experiment.sh` の起動 → 進捗確認 → rsync で `results/<実験名>/` へ回収 → 出力の目視・一次分析 → `docs/roadmap.md` の更新。
+- **実行前にユーザーの了承を取ること**（取り消しにくい・外部に出る操作）:
+  - GitHub への push
+  - サーバー上の `output/`・`models/`・`logs/`・HF キャッシュの削除（`run_experiment.sh` の掃除確認 `[y/N]` に答えることを含む）
+  - 学習ジョブの起動・停止、tmux セッションの削除
+  - 実験条件（ハイパラ・データ）を決める判断。方針はユーザーが決め、Claude は提案と実装を行う
+- **`run_experiment.sh` の起動方法（Claude から）**: スクリプトは TTY が無いと自前の tmux（`exec tmux new-session`）を張れないため、**Claude 側で detached の tmux を作ってその中で起動する**（tmux 内では `$TMUX` が立つのでスクリプトは tmux 作成をスキップする）。セッション名はスクリプトの命名規則 `exp-<実験名>` に合わせる。
+  ```bash
+  ssh calc40 'cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
+    && git fetch origin && git switch exp/<実験名> && git merge --ff-only origin/exp/<実験名> \
+    && tmux new-session -d -s exp-<実験名> "./run_experiment.sh exp/<実験名>; echo; echo --- 終了; read"'
+  ssh calc40 'tmux capture-pane -p -t exp-<実験名> | tail -40'      # 画面の確認
+  ssh calc40 'tmux send-keys -t exp-<実験名> y Enter'               # 掃除の確認に答える（ユーザー了承後のみ）
+  ```
+  - Claude の1コマンドは最大10分で打ち切られるため、**学習を ssh の前景で回してはいけない**（必ず tmux の中で回す）。
+  - 起動直後に `--- prompt sanity OK: ...` が出ていることを `capture-pane` で確認する。
+- **完了の監視（学習は約30分かかる）**: 接続が切れてもジョブは止まらない。ジョブは calc40 上の tmux が持っており、Claude の ssh は起動したらすぐ抜ける（SSH を張りっぱなしにしない）。
+  - **Claude Code のセッションが続いている間**: Bash の `run_in_background` で、終了を待つループを裏で回す。終了すると Claude が自動で呼び戻されるので、そのまま回収・分析に進む。ループの1回ごとの ssh は短い。途中で ssh が切れても次の周回でつなぎ直すので問題ない。
+    ```bash
+    until ssh -o BatchMode=yes -o ConnectTimeout=10 calc40 \
+          'tmux has-session -t exp-<実験名> 2>/dev/null || exit 0; tmux capture-pane -p -t exp-<実験名> | grep -q -- "--- 終了"'; do sleep 120; done
+    ```
+    セッションが消えていた場合（異常終了など）もループを抜けるので、抜けたら必ずログで成否を確かめる。
+  - **Claude Code のセッション自体が終わった場合**（端末を閉じた等）: ジョブはサーバー上で走り続ける。次の会話で `ssh calc40 'tmux ls'` と `capture-pane` で状態を確かめ、終わっていれば回収から再開する。どの実験を回しているかは `docs/roadmap.md` に書いておく。
+- **「パイプラインが通った」と「結果が正しい」は別**。E1・E2 の教訓どおり、回収後は学習ログの DEBUG のプロンプトと出力そのものを必ず目視し、結論はユーザーに委ねる。
+
 ### 手順
 
 研究室サーバーは `wada_yuto@calc40`。リポジトリ・キャッシュ・env はすべて割当領域 `/mnt/gpu/workspace/2025/yuto_wada` 配下に置く。
 
 1. **（Mac）実験用ブランチを作成**
    ```bash
-   git switch -c exp/<実験名>        # 例: exp/fkgl-medeasi-repro
+   git switch -c exp/<実験名>        # 例: exp/fkgl-medeasi-repro（元にする実験ブランチから切る）
+   git merge main                    # 共通文書（CLAUDE.md・direction.md・roadmap.md）を取り込む
    ```
 2. **（Mac）設定・コードを編集してコミット**（履歴を残すだけ。サーバーへは push しない）
    - 主な変更対象は `run_sft_finetune.sh` / `run_sft_inference.sh` の変数（`MODEL_NAME` / `DATASETS` / `METRICS` 等）。必要なら `src/`。
