@@ -98,7 +98,8 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
 
 1. **（Mac）実験用ブランチを作成**
    ```bash
-   git switch -c exp/<実験名>        # 例: exp/fkgl-medeasi-repro
+   git switch -c exp/<実験名>        # 例: exp/fkgl-medeasi-repro（元にする実験ブランチから切る）
+   git merge main                    # 共通文書（CLAUDE.md・direction.md・roadmap.md）を取り込む
    ```
 2. **（Mac）設定・コードを編集してコミット**（履歴を残すだけ。サーバーへは push しない）
    - 主な変更対象は `run_sft_finetune.sh` / `run_sft_inference.sh` の変数（`MODEL_NAME` / `DATASETS` / `METRICS` 等）。必要なら `src/`。
