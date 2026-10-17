@@ -1,0 +1,117 @@
+Logging to logs/inference_20261017_191557.log
+Script started: Sat Oct 17 07:15:57 PM JST 2026
+Using MODEL_DIR=KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20261017
+normal  : 203 rows, tag changed in 0 -> output/counterfactual_data/normal/medeasi
+none    : 203 rows, tag changed in 47 -> output/counterfactual_data/none/medeasi
+partial : 203 rows, tag changed in 25 -> output/counterfactual_data/partial/medeasi
+fake    : 203 rows, tag changed in 203 -> output/counterfactual_data/fake/medeasi
+
+##### [cf_normal] MODEL_PATH=models/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20261017 → output/sft_inference/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20261017/cf_normal
+Running inference 1 with seed 37...
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[nltk_data] Downloading package punkt to /home/wada_yuto/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
+[nltk_data] Downloading package punkt_tab to
+[nltk_data]     /home/wada_yuto/nltk_data...
+[nltk_data]   Package punkt_tab is already up-to-date!
+[INFO] Loaded model_name from models/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20261017/args.json: meta-llama/Llama-3.2-1B-Instruct
+Loading from models/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20261017...
+Inference args:
+Namespace(use_vllm=False, seed=37, model_path='models/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20261017', model_name='meta-llama/Llama-3.2-1B-Instruct', dataset_name='medeasi', local_data_dir='output/counterfactual_data/normal', model_class='auto', model_family='base', max_length=1024, batch_size=8, slice_test=-1, output_file='output/sft_inference/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20261017/cf_normal/output_1.json', device='cuda', peft_path=None, temperature=0.0, control_tokens='data/prompts/control_tokens.json', system_prompts='data/prompts/system_prompts.json', user_prompts='data/prompts/user_prompts.json', metric_mapping='data/metric_mapping.json', metric_name='KEEP', user_prompt_id='token_explanation')
+
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 1499 examples [00:00, 33078.32 examples/s]
+Generating test split: 0 examples [00:00, ? examples/s]Generating test split: 0 examples [00:00, ? examples/s]
+Traceback (most recent call last):
+  File "/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/datasets/builder.py", line 1870, in _prepare_split_single
+    writer.write_table(table)
+  File "/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/datasets/arrow_writer.py", line 622, in write_table
+    pa_table = table_cast(pa_table, self._schema)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/datasets/table.py", line 2292, in table_cast
+    return cast_table_to_schema(table, schema)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/datasets/table.py", line 2240, in cast_table_to_schema
+    raise CastError(
+datasets.table.CastError: Couldn't cast
+global_id: string
+source_text: string
+source_metrics: struct<FRE: double, ARI: double, FKGL: double, Dale-Chall: double, char_count: int64, alphanum_count (... 64 chars omitted)
+  child 0, FRE: double
+  child 1, ARI: double
+  child 2, FKGL: double
+  child 3, Dale-Chall: double
+  child 4, char_count: int64
+  child 5, alphanum_count: int64
+  child 6, word_count: int64
+  child 7, sentence_count: int64
+  child 8, keep: string
+metadata: struct<dataset: string, experiment_split: string, domain: string, language: string, annotation: stri (... 18 chars omitted)
+  child 0, dataset: string
+  child 1, experiment_split: string
+  child 2, domain: string
+  child 3, language: string
+  child 4, annotation: string
+  child 5, level: string
+simplification_text: string
+target_metrics: struct<FRE: double, ARI: double, FKGL: double, Dale-Chall: double, char_count: int64, alphanum_count (... 194 chars omitted)
+  child 0, FRE: double
+  child 1, ARI: double
+  child 2, FKGL: double
+  child 3, Dale-Chall: double
+  child 4, char_count: int64
+  child 5, alphanum_count: int64
+  child 6, word_count: int64
+  child 7, sentence_count: int64
+  child 8, char_compression_rate: double
+  child 9, word_compression_rate: double
+  child 10, sentence_compression_rate: double
+  child 11, BLEU: double
+  child 12, BERTScore: double
+  child 13, keep: string
+simplification_version: int64
+grade_level: int64
+simplification_dimensions: struct<linguistic: struct<lexical: bool, syntactic: bool>>
+  child 0, linguistic: struct<lexical: bool, syntactic: bool>
+      child 0, lexical: bool
+      child 1, syntactic: bool
+counterfactual_condition: string
+to
+{'global_id': Value(dtype='string', id=None), 'source_text': Value(dtype='string', id=None), 'source_metrics': {'FRE': Value(dtype='float64', id=None), 'ARI': Value(dtype='float64', id=None), 'FKGL': Value(dtype='float64', id=None), 'Dale-Chall': Value(dtype='float64', id=None), 'char_count': Value(dtype='int64', id=None), 'alphanum_count': Value(dtype='int64', id=None), 'word_count': Value(dtype='int64', id=None), 'sentence_count': Value(dtype='int64', id=None), 'keep': Value(dtype='string', id=None)}, 'metadata': {'dataset': Value(dtype='string', id=None), 'experiment_split': Value(dtype='string', id=None), 'domain': Value(dtype='string', id=None), 'language': Value(dtype='string', id=None), 'annotation': Value(dtype='string', id=None), 'level': Value(dtype='string', id=None)}, 'simplification_text': Value(dtype='string', id=None), 'target_metrics': {'FRE': Value(dtype='float64', id=None), 'ARI': Value(dtype='float64', id=None), 'FKGL': Value(dtype='float64', id=None), 'Dale-Chall': Value(dtype='float64', id=None), 'char_count': Value(dtype='int64', id=None), 'alphanum_count': Value(dtype='int64', id=None), 'word_count': Value(dtype='int64', id=None), 'sentence_count': Value(dtype='int64', id=None), 'char_compression_rate': Value(dtype='float64', id=None), 'word_compression_rate': Value(dtype='float64', id=None), 'sentence_compression_rate': Value(dtype='float64', id=None), 'BLEU': Value(dtype='float64', id=None), 'BERTScore': Value(dtype='float64', id=None), 'keep': Value(dtype='string', id=None)}, 'simplification_version': Value(dtype='int64', id=None), 'grade_level': Value(dtype='int64', id=None), 'simplification_dimensions': {'linguistic': {'lexical': Value(dtype='bool', id=None), 'syntactic': Value(dtype='bool', id=None)}}}
+because column names don't match
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/sft_inference.py", line 593, in <module>
+    main()
+  File "/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/sft_inference.py", line 545, in main
+    test_dataset = load_and_prepare_test_set(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/sft_inference.py", line 137, in load_and_prepare_test_set
+    test_dataset = load_dataset_from_hf(dataset_name, split="test", slice=slice_test, local_data_dir=args.local_data_dir)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/helpers/hugging_face.py", line 11, in load_dataset_from_hf
+    dataset = load_dataset(
+              ^^^^^^^^^^^^^
+  File "/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/datasets/load.py", line 2151, in load_dataset
+    builder_instance.download_and_prepare(
+  File "/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/datasets/builder.py", line 924, in download_and_prepare
+    self._download_and_prepare(
+  File "/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/datasets/builder.py", line 1000, in _download_and_prepare
+    self._prepare_split(split_generator, **prepare_split_kwargs)
+  File "/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/datasets/builder.py", line 1741, in _prepare_split
+    for job_id, done, content in self._prepare_split_single(
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/datasets/builder.py", line 1872, in _prepare_split_single
+    raise DatasetGenerationCastError.from_cast_error(
+datasets.exceptions.DatasetGenerationCastError: An error occurred while generating the dataset
+
+All the data files must have the same columns, but at some point there are 1 new columns ({'counterfactual_condition'})
+
+This happened while the json dataset builder was generating data using
+
+/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output/counterfactual_data/normal/medeasi/test.jsonl
+
+Please either edit the data files to have matching columns, or separate them into different configurations (see docs at https://hf.co/docs/hub/datasets-manual-configuration#multiple-configurations)
+ERROR: inference [cf_normal] (seed 37) が失敗しました。評価はスキップします。
