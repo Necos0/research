@@ -10,7 +10,7 @@ echo "Logging to $LOG_FILE"
 echo "Script started: $(date)"
 
 # =========================================================================
-# 実験: Med-EASi × <FKGL> 1B フルデータ版・エポック別評価（各エポック末のチェックポイントを全件テスト・1シード）
+# 実験: Med-EASi × <FKGL> 1B 易化事例のみで学習・エポック別評価（各エポック末のチェックポイントを全件テスト・1シード）
 export WANDB_MODE=disabled
 
 # --- GPU メモリ対策（32GB GPU で LLM 生成と評価モデルが同居するため）
@@ -22,7 +22,7 @@ METRIC_NAME="FKGL"
 DATASET="medeasi"                       # ← ローカル folder 名
 MODEL_NAME="Llama-3.2-1B-Instruct"      # short name（学習で使ったモデル）
 USER_PROMPT_ID="token_explanation"
-LOCAL_DATA_DIR="data/splits_flattened_full"   # 学習時と同じデータを指定すること（test は全条件で同じ 203 件）
+LOCAL_DATA_DIR="data/splits_flattened_full_fkgldown"   # 学習時と同じデータを指定すること（test はフル版と同じ 203 件）
 # true: models/<MODEL_DIR>/checkpoint-*（学習の --save_each_epoch で残した各エポック末の重み）を全部評価する。
 # false: 従来どおり models/<MODEL_DIR> 直下の最終（早期終了ならベスト）重みだけを評価する。
 EVAL_EACH_CHECKPOINT=true

@@ -15,18 +15,19 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | `results/` | サーバーから rsync で回収した実験別の結果（`.gitignore` 済み。モデル重みは除外する） |
 | `2604.01779v1.pdf` | 参照論文 |
 
-## 現在の実験：Med-EASi × `<FKGL>` 1B フルデータ版・**エポック別評価**（コピー崩壊の切り分け①：学習量）
+## 現在の実験：Med-EASi × `<FKGL>` 1B・**易化事例のみで学習**・エポック別評価（コピー崩壊の切り分け②：データ）
 
-- **ブランチ**: `exp/fkgl-full-v2-epochs`（`exp/fkgl-medeasi-1b-full-v2` から分岐）
-- **目的**: フル版 v2 は出力の 49.8% が原文の完全コピーだった。採用された重みは早期終了（patience 4 × 10 step ＝ 0.43 エポック分の猶予）による **0.96 エポック時点**のもので、1エポックも学習していない。**学習を進めればコピーが減るのか**を、早期終了と eval_loss によるベスト選択を外して確かめる。
-- **設定**（v2 との差分は `--save_each_epoch` のみ。データ・ハイパラ・シードは同一）:
-  - モデル `meta-llama/Llama-3.2-1B-Instruct` / データ `medeasi`（`data/splits_flattened_full`）/ 制御属性 `FKGL`
-  - 学習: train 1499件・val 191件 / batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6（cosine, warmup 30）/ **3エポックを最後まで**（早期終了なし）/ max_length 512 / seed 42
-  - 保存: 各エポック末の重みを `checkpoint-<step>/` として全部残す（`save_only_model`。約2.5GB × 3）
-  - 推論: **各エポック末の重みそれぞれ**で test 203件（全件）/ 1シード（seed=37）/ greedy / batch_size 8 / max_length 1024 → `output/sft_inference/<model>/epoch{1,2,3}/`
-- **評価**: SARI・LENS・FKGL MAE に加え、`src/copy_stats.py` で **原文コピー率**（完全一致・類似度0.9以上）を、全体／参照が易化している事例／していない事例／フィルタ版 test 98件 に分けて出す（`copy_stats.txt`）。
-- **整合性チェック**: エポック1の重みは v2 の採用重み（0.96 エポック）とほぼ同じ地点なので、コピー率が v2 の 49.8% に近いはず。大きく違えば何かがおかしい。
-- **読み方**: エポックが進むほどコピーが減るなら、学習不足が原因。減らないなら、データかプロンプトの形が原因（→ `exp/fkgl-full-v2-fkgldown` と比較）。
+- **ブランチ**: `exp/fkgl-full-v2-fkgldown`（`exp/fkgl-full-v2-epochs` から分岐。差分はデータのみ）
+- **目的**: フル版 v2 は出力の 49.8% が原文の完全コピーだった。フル版 train の **34.2%（512/1499件）は参照文の FKGL が原文から下がっておらず**（上昇 27.6%・同じ 6.6%。Med-EASi の elaboration＝説明の追加による）、「易しくしない」ことを教えている。**これを学習から除くとコピーが減るか**を確かめる。FKGL だけに焦点を当てるため、可読性フィルタ（3指標すべて低下）ではなく **FKGL のみ**で判定する。
+- **データ**: `data/splits_flattened_full_fkgldown/medeasi`（`python src/build_fkgldown_split.py` で生成・コミット済み）
+  - train 1499→**987**件・val 191→**129**件（参照 FKGL < 原文 FKGL の事例のみ）
+  - **test はフル版と同じ 203 件**（易化されていない参照を含む）。全条件で同じテストにして比較し、`copy_stats.py` で「参照が易化している事例／していない事例」に分けて見る
+- **設定**（`exp/fkgl-full-v2-epochs` とデータ以外同一）:
+  - モデル `meta-llama/Llama-3.2-1B-Instruct` / 制御属性 `FKGL`
+  - 学習: batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6（cosine, warmup 30）/ **3エポックを最後まで**（早期終了なし、`--save_each_epoch`）/ max_length 512 / seed 42
+  - 推論: 各エポック末の重みそれぞれで test 203件 / 1シード（seed=37）/ greedy / batch_size 8 / max_length 1024 → `output/sft_inference/<model>/epoch{1,2,3}/`
+- **注意**: train が 2/3 になるので、1エポックあたりの更新回数も約 2/3（94→62 step）。エポックでそろえた比較と、更新回数でそろえた比較（本実験のエポック3 ≒ epochs 実験のエポック2）の両方で読む。
+- **読み方**: `exp/fkgl-full-v2-epochs` の同じエポックよりコピーが大きく減るなら、易化されていない学習事例が原因。
 
 ### 修正したバグ（v1 = `exp/fkgl-medeasi-1b-full` の失敗原因）
 
@@ -111,7 +112,7 @@ Today Date: 09 Jul 2026        ← 実行日は 7/13, 7/14
 ```bash
 cd /Users/wadaketsunin/research
 git add -A && git commit -m "exp: <条件の説明>"   # 未コミットの変更があれば
-git push -u origin exp/fkgl-full-v2-epochs
+git push -u origin exp/fkgl-full-v2-fkgldown
 ```
 
 **2.（サーバー）1コマンドで実行**
@@ -119,8 +120,8 @@ git push -u origin exp/fkgl-full-v2-epochs
 ```bash
 ssh wada_yuto@calc40
 cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
-  && git fetch origin && git switch exp/fkgl-full-v2-epochs && git merge --ff-only origin/exp/fkgl-full-v2-epochs \
-  && ./run_experiment.sh exp/fkgl-full-v2-epochs
+  && git fetch origin && git switch exp/fkgl-full-v2-fkgldown && git merge --ff-only origin/exp/fkgl-full-v2-fkgldown \
+  && ./run_experiment.sh exp/fkgl-full-v2-fkgldown
 ```
 
 **ブランチの切り替えはスクリプトの外でやる**（先頭の `git fetch/switch/merge`）。`run_experiment.sh` は自分では switch せず、**引数のブランチ名と実際のチェックアウトが一致しているかを検証するだけ**。次のいずれかなら**学習を始める前に止まり**、直すコマンドを表示する:
@@ -136,19 +137,19 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
 以降、tmux 自動作成 → conda 有効化 → 掃除（`output/` `models/` `logs/` ＋ **HF datasets キャッシュ**）→ 学習 → 推論 → 回収コマンド表示、までを全部やる。詳細は [docs/direction.md](docs/direction.md)。
 
 - **学習開始直後に `--- prompt sanity OK: ...'<FKGL=...>'` が出ることを必ず確認する。** 出ない／assert で落ちる場合はプロンプト構築が壊れている。
-- 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は `tmux attach -t exp-fkgl-full-v2-epochs`。
+- 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は `tmux attach -t exp-fkgl-full-v2-fkgldown`。
 
 **3.（Mac）結果を回収**
 
 完了時にスクリプトが表示するコマンドをそのまま貼ればよい。
 
 ```bash
-mkdir -p /Users/wadaketsunin/research/results/fkgl-full-v2-epochs
+mkdir -p /Users/wadaketsunin/research/results/fkgl-full-v2-fkgldown
 rsync -av --exclude='*.safetensors' \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
-  /Users/wadaketsunin/research/results/fkgl-full-v2-epochs/
+  /Users/wadaketsunin/research/results/fkgl-full-v2-fkgldown/
 ```
 
 **モデル重み（`*.safetensors`）は回収しない。** 1実験あたり約4.9GB とアーカイブの99%以上を占めるが、**Mac には CUDA が無く使い道がない**。再現性は「ブランチ＝実験」で担保される。`models/` の `args.json` / `config.json` / `tokenizer.json` は残すので、実験条件の証跡とローカルでのプロンプト再現には使える（除外により 4.9GB → 約20MB）。

@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # =========================================================================
-# 実験: Med-EASi × <FKGL> 1B フルデータ版・エポック別評価（コピー崩壊の切り分け①：学習量）
-#   - 目的: フル版 v2（exp/fkgl-medeasi-1b-full-v2）は早期終了（patience 4×10 step）で
-#           0.96 エポックの重みが採用され、出力の 49.8% が原文コピーだった。
-#           「1エポックも学習していないこと」がコピーの原因かを確かめるため、
-#           早期終了を切って 3 エポック学習し切り、各エポック末の重みを全部評価する。
-#   - v2 との差分は --save_each_epoch のみ（データ・ハイパラ・シードは同一）。
-#     早期終了・eval_loss によるベスト選択は行わない（--patience は無視される）。
-#     エポック1の重みは v2 の採用重み（0.96 エポック）とほぼ同じ地点なので、整合性チェックになる。
+# 実験: Med-EASi × <FKGL> 1B・易化事例のみで学習・エポック別評価（コピー崩壊の切り分け②：データ）
+#   - 目的: フル版 train の 34.2% は参照文の FKGL が原文から下がっておらず、
+#           「易しくしない」ことを教えている。これを除くとコピーが減るかを確かめる。
+#   - データ: data/splits_flattened_full_fkgldown（src/build_fkgldown_split.py で生成）
+#           train 1499→987・val 191→129（参照 FKGL < 原文 FKGL の事例のみ）。test はフル版と同じ 203 件。
+#   - exp/fkgl-full-v2-epochs との差分はデータのみ（--save_each_epoch で 3 エポック学習し切り、
+#     各エポック末の重みを全部評価する点も同じ）。エポック数をそろえて比較できる。
+#     ※ train が少ないので 1 エポックあたりの更新回数は約 2/3（94→62 step）になる点に注意。
 # =========================================================================
 
 export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
@@ -45,7 +45,7 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --model_family "base" \
             --model_name "$MODEL_NAME" \
             --dataset_name "$DATASET_NAME" \
-            --local_data_dir "data/splits_flattened_full" \
+            --local_data_dir "data/splits_flattened_full_fkgldown" \
             --slice_train "-1" \
             --slice_val "-1" \
             --batch_size "4" \

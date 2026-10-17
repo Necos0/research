@@ -1,0 +1,5 @@
+Input: data/splits_flattened_full/medeasi
+Rule: train/val keep only target FKGL < source FKGL; test copied unchanged
+train: 1499 -> 987 rows (removed 512)
+val: 191 -> 129 rows (removed 62)
+test: 203 -> 203 rows (removed 0)
