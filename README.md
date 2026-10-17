@@ -17,7 +17,10 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 ## 現在の実験：Med-EASi × `<KEEP>` 1B フルデータ版・**エポック別評価**（FKGL との比較用）
 
-- **ブランチ**: `exp/keep-full-v2-epochs`（`exp/keep-full-v2-epochs` から分岐し、`exp/fkgl-full-v2-epochs` のコード一式を取り込み）
+> **シード違いの再現実験**: `exp/keep-full-v2-epochs` の学習シードを **43** にしたもの（他は同一。シードは学習データの読み順に効く。Trainer にも `seed` を渡すよう修正、42 なら従来と同一）。結果は `results/keep-full-v2-epochs-seed43/`。
+
+
+- **ブランチ**: `exp/keep-full-v2-epochs`（`exp/keep-medeasi-1b-v2` から分岐し、`exp/fkgl-full-v2-epochs` のコード一式を取り込み）
 - **目的**: FKGL のエポック別評価で、コピー崩壊の主因は**学習量**（eval_loss の早期終了が 1 エポック未満の重みを採用）と判明した（フル版でエポック1→2にするとコピー 47%→17%）。KEEP も同じ条件で回し、**FKGL（`results/fkgl-full-v2-epochs/`）とエポックをそろえて**数値保持率・コピー率・品質を比較する（ロードマップ③-7）。
 - **差分**: KEEP v2 との差分は `--save_each_epoch` のみ。`exp/fkgl-full-v2-epochs` との差分は `METRIC_NAME=KEEP` のみ（データ・ハイパラ・シード・コードは同一）。
 - **設定**:
@@ -113,7 +116,7 @@ Today Date: 09 Jul 2026        ← 実行日は 7/13, 7/14
 ```bash
 cd /Users/wadaketsunin/research
 git add -A && git commit -m "exp: <条件の説明>"   # 未コミットの変更があれば
-git push -u origin exp/keep-full-v2-epochs
+git push -u origin exp/keep-full-v2-epochs-seed43
 ```
 
 **2.（サーバー）1コマンドで実行**
@@ -121,8 +124,8 @@ git push -u origin exp/keep-full-v2-epochs
 ```bash
 ssh wada_yuto@calc40
 cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
-  && git fetch origin && git switch exp/keep-full-v2-epochs && git merge --ff-only origin/exp/keep-full-v2-epochs \
-  && ./run_experiment.sh exp/keep-full-v2-epochs
+  && git fetch origin && git switch exp/keep-full-v2-epochs-seed43 && git merge --ff-only origin/exp/keep-full-v2-epochs-seed43 \
+  && ./run_experiment.sh exp/keep-full-v2-epochs-seed43
 ```
 
 **ブランチの切り替えはスクリプトの外でやる**（先頭の `git fetch/switch/merge`）。`run_experiment.sh` は自分では switch せず、**引数のブランチ名と実際のチェックアウトが一致しているかを検証するだけ**。次のいずれかなら**学習を始める前に止まり**、直すコマンドを表示する:
@@ -135,7 +138,7 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
 
 `git pull` ではなく **`git merge --ff-only origin/<branch>`** を使うこと。`git pull --ff-only` は upstream（追跡情報）が未設定のローカルブランチだと `exit 1` で落ちる。
 
-これだけで次を全部やる（特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/keep-full-v2-epochs 1`）:
+これだけで次を全部やる（特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/keep-full-v2-epochs-seed43 1`）:
 
 1. **チェックアウトを検証**（指定ブランチに居るか・origin と一致しているか・作業ツリーがクリーンか）。違えば**学習を始める前に止まる**
 2. **tmux セッションを自動で張る**（SSH が切れても継続。`Ctrl-b` → `d` で detach）
@@ -151,7 +154,7 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
 進捗確認・再接続:
 
 ```bash
-tmux attach -t exp-keep-full-v2-epochs      # セッション名は exp- + ブランチ名（exp/ を除く）
+tmux attach -t exp-keep-full-v2-epochs-seed43      # セッション名は exp- + ブランチ名（exp/ を除く）
 ```
 
 **3.（Mac）結果を回収（モデル重みは除外する）**
@@ -159,12 +162,12 @@ tmux attach -t exp-keep-full-v2-epochs      # セッション名は exp- + ブ�
 完了時にスクリプトが表示するコマンドをそのまま貼ればよい。
 
 ```bash
-mkdir -p /Users/wadaketsunin/research/results/keep-full-v2-epochs
+mkdir -p /Users/wadaketsunin/research/results/keep-full-v2-epochs-seed43
 rsync -av --exclude='*.safetensors' \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
-  /Users/wadaketsunin/research/results/keep-full-v2-epochs/
+  /Users/wadaketsunin/research/results/keep-full-v2-epochs-seed43/
 ```
 
 **モデル重み（`*.safetensors`）は回収しない。** 1実験あたり約4.9GB とアーカイブの99%以上を占めるが、**Mac には CUDA が無く使い道がない**。再現性は「ブランチ＝実験」で担保される。`models/` の `args.json` / `config.json` / `tokenizer.json` は残すので、実験条件の証跡とローカルでのプロンプト再現には使える（除外により 4.9GB → 約20MB）。

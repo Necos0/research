@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # =========================================================================
+# 【シード違い】exp/keep-full-v2-epochs の学習シードを 43 にした再現実験（他は同一）。
 # 実験: Med-EASi × <KEEP> 1B フルデータ版・エポック別評価
 #   - 目的: FKGL のエポック別評価（exp/fkgl-full-v2-epochs）で、コピー崩壊の主因は
 #           学習量（eval_loss の早期終了が 1 エポック未満の重みを採用）と判明した。
@@ -58,6 +59,7 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --epochs "3" \
             --patience "4" \
             --save_each_epoch \
+            --seed "43" \
             --max_length "$MAX_LENGTH"\
             --wandb_project_name "ATS_with_control_tokens" \
             --wandb_entity "shtosti"\
