@@ -1,0 +1,84 @@
+{
+    "Llama-3.2-1B-Instruct": {
+        "medeasi": {
+            "FKGL": {
+                "losses": {
+                    "MSE": 23.059622266176607,
+                    "MAE": 3.166328311446525,
+                    "std_error": 4.604318417087422,
+                    "var_error": 21.199748085930416,
+                    "num_samples": 203,
+                    "numeric_sources_only": false
+                },
+                "mean_metrics": {
+                    "BLEU_to_source": {
+                        "mean": 76.47648176767049,
+                        "ci_lower": 71.98871029321305,
+                        "ci_upper": 80.97252932417562,
+                        "ci_range_minus": 4.487771474457446,
+                        "ci_range_plus": 4.4960475565051325,
+                        "formatted": "BLEU_to_source: 76.48 (+4.50 -4.49)"
+                    },
+                    "BLEU_to_ref": {
+                        "mean": 36.003281484048166,
+                        "ci_lower": 32.052651982093984,
+                        "ci_upper": 39.92982535860045,
+                        "ci_range_minus": 3.9506295019541824,
+                        "ci_range_plus": 3.926543874552287,
+                        "formatted": "BLEU_to_ref: 36.00 (+3.93 -3.95)"
+                    },
+                    "BERTScore_to_source": {
+                        "mean": 0.9758913663807761,
+                        "ci_lower": 0.9708630175719708,
+                        "ci_upper": 0.9806331338773808,
+                        "ci_range_minus": 0.005028348808805316,
+                        "ci_range_plus": 0.00474176749660471,
+                        "formatted": "BERTScore_to_source: 0.98 (+0.00 -0.01)"
+                    },
+                    "BERTScore_to_ref": {
+                        "mean": 0.9312071242355948,
+                        "ci_lower": 0.924717153175711,
+                        "ci_upper": 0.9373436144053054,
+                        "ci_range_minus": 0.006489971059883803,
+                        "ci_range_plus": 0.006136490169710629,
+                        "formatted": "BERTScore_to_ref: 0.93 (+0.01 -0.01)"
+                    },
+                    "COMET": {
+                        "mean": 0.0,
+                        "ci_lower": 0.0,
+                        "ci_upper": 0.0,
+                        "ci_range_minus": 0.0,
+                        "ci_range_plus": 0.0,
+                        "formatted": "COMET: 0.00 (+0.00 -0.00)"
+                    },
+                    "SARI": {
+                        "mean": 50.61049290733368,
+                        "ci_lower": 48.57160680131794,
+                        "ci_upper": 52.774090165553574,
+                        "ci_range_minus": 2.038886106015738,
+                        "ci_range_plus": 2.1635972582198946,
+                        "formatted": "SARI: 50.61 (+2.16 -2.04)"
+                    },
+                    "LENS": {
+                        "mean": 57.9200497724576,
+                        "ci_lower": 55.8427828307585,
+                        "ci_upper": 59.87979637801637,
+                        "ci_range_minus": 2.0772669416991008,
+                        "ci_range_plus": 1.9597466055587702,
+                        "formatted": "LENS: 57.92 (+1.96 -2.08)"
+                    }
+                },
+                "mean_ctrl": {
+                    "reference": 11.87859140182019,
+                    "prediction": 13.242363442978903,
+                    "source": 14.10776822619671
+                },
+                "median_ctrl": {
+                    "reference": 11.3,
+                    "prediction": 12.62714285714286,
+                    "source": 13.063333333333333
+                }
+            }
+        }
+    }
+}

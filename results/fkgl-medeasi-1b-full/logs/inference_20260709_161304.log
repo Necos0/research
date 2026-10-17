@@ -1,0 +1,27 @@
+Logging to logs/inference_20260709_161304.log
+Script started: Thu Jul  9 04:13:04 PM JST 2026
+Using MODEL_DIR=KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709
+Running inference 1 with seed 37...
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[nltk_data] Downloading package punkt to /home/wada_yuto/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
+[nltk_data] Downloading package punkt_tab to
+[nltk_data]     /home/wada_yuto/nltk_data...
+[nltk_data]   Package punkt_tab is already up-to-date!
+[INFO] Loaded model_name from models/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709/args.json: meta-llama/Llama-3.2-1B-Instruct
+Loading from models/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709...
+Inference args:
+Namespace(use_vllm=False, seed=37, model_path='models/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709', model_name='meta-llama/Llama-3.2-1B-Instruct', dataset_name='medeasi', local_data_dir='data/splits_flattened_full', model_class='auto', model_family='base', max_length=1024, batch_size=8, slice_test=-1, output_file='output/sft_inference/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709/output_1.json', device='cuda', peft_path=None, temperature=0.0, control_tokens='data/prompts/control_tokens.json', system_prompts='data/prompts/system_prompts.json', user_prompts='data/prompts/user_prompts.json', metric_mapping='data/metric_mapping.json', metric_name='KEEP', user_prompt_id='token_explanation')
+
+test:	 Inspect the dataset format:
+ {'global_id': ['medeasi_000483'], 'source_text': ['They are at high risk of developing diabetes.'], 'source_metrics': [{'FRE': 46.44, 'ARI': 4.9, 'FKGL': 8.8, 'Dale-Chall': 9.95, 'char_count': 45, 'alphanum_count': 37, 'word_count': 9, 'sentence_count': 1, 'keep': 'none'}], 'metadata': [{'dataset': 'medeasi', 'experiment_split': '', 'domain': 'medical', 'language': 'en', 'annotation': 'human', 'level': 'sentence'}], 'simplification_text': ['They are at risk of developing diabetes.'], 'target_metrics': [{'FRE': 38.99, 'ARI': 5.0, 'FKGL': 9.6, 'Dale-Chall': 10.75, 'char_count': 40, 'alphanum_count': 33, 'word_count': 8, 'sentence_count': 1, 'char_compression_rate': 0.89, 'word_compression_rate': 0.89, 'sentence_compression_rate': 1.0, 'BLEU': 61.019504321125766, 'BERTScore': 0.9894299507141113, 'keep': 'none'}], 'simplification_version': [1], 'grade_level': [-1], 'simplification_dimensions': [{'linguistic': {'lexical': False, 'syntactic': False}}]}
+Using greedy decoding (temperature=0.0, do_sample=False)
+Running inference on test set:   0%|          | 0/26 [00:00<?, ?it/s]/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/transformers/generation/configuration_utils.py:628: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.6` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/transformers/generation/configuration_utils.py:633: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.9` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.
+  warnings.warn(
+Both `max_new_tokens` (=1023) and `max_length`(=2047) seem to have been set. `max_new_tokens` will take precedence. Please refer to the documentation for more information. (https://huggingface.co/docs/transformers/main/en/main_classes/text_generation)
+Running inference on test set:   4%|▍         | 1/26 [00:02<01:12,  2.91s/it]Both `max_new_tokens` (=1023) and `max_length`(=2047) seem to have been set. `max_new_tokens` will take precedence. Please refer to the documentation for more information. (https://huggingface.co/docs/transformers/main/en/main_classes/text_generation)
+Running inference on test set:   8%|▊         | 2/26 [00:03<00:41,  1.73s/it]Both `max_new_tokens` (=1023) and `max_length`(=2047) seem to have been set. `max_new_tokens` will take precedence. Please refer to the documentation for more information. (https://huggingface.co/docs/transformers/main/en/main_classes/text_generation)
+Running inference on test set:  12%|█▏        | 3/26 [00:04<00:33,  1.46s/it]Both `max_new_tokens` (=1023) and `max_length`(=2047) seem to have been set. `max_new_tokens` will take precedence. Please refer to the documentation for more information. (https://huggingface.co/docs/transformers/main/en/main_classes/text_generation)

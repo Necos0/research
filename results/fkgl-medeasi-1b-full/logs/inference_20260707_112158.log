@@ -1,0 +1,326 @@
+Logging to logs/inference_20260707_112158.log
+Script started: Tue Jul  7 11:21:58 AM JST 2026
+Using MODEL_DIR=KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707
+Running inference 1 with seed 37...
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[nltk_data] Downloading package punkt to /home/wada_yuto/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
+[nltk_data] Downloading package punkt_tab to
+[nltk_data]     /home/wada_yuto/nltk_data...
+[nltk_data]   Package punkt_tab is already up-to-date!
+[INFO] Loaded model_name from models/KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707/args.json: Qwen/Qwen2.5-0.5B-Instruct
+Loading from models/KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707...
+Inference args:
+Namespace(use_vllm=False, seed=37, model_path='models/KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707', model_name='Qwen/Qwen2.5-0.5B-Instruct', dataset_name='medeasi', local_data_dir='data/splits_flattened_full', model_class='auto', model_family='base', max_length=1024, batch_size=8, slice_test=16, output_file='output/sft_inference/KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707/output_1.json', device='cuda', peft_path=None, temperature=0.0, control_tokens='data/prompts/control_tokens.json', system_prompts='data/prompts/system_prompts.json', user_prompts='data/prompts/user_prompts.json', metric_mapping='data/metric_mapping.json', metric_name='KEEP', user_prompt_id='token_explanation')
+
+test:	 Inspect the dataset format:
+ {'global_id': ['medeasi_000483'], 'source_text': ['They are at high risk of developing diabetes.'], 'source_metrics': [{'FRE': 46.44, 'ARI': 4.9, 'FKGL': 8.8, 'Dale-Chall': 9.95, 'char_count': 45, 'alphanum_count': 37, 'word_count': 9, 'sentence_count': 1, 'keep': 'none'}], 'metadata': [{'dataset': 'medeasi', 'experiment_split': '', 'domain': 'medical', 'language': 'en', 'annotation': 'human', 'level': 'sentence'}], 'simplification_text': ['They are at risk of developing diabetes.'], 'target_metrics': [{'FRE': 38.99, 'ARI': 5.0, 'FKGL': 9.6, 'Dale-Chall': 10.75, 'char_count': 40, 'alphanum_count': 33, 'word_count': 8, 'sentence_count': 1, 'char_compression_rate': 0.89, 'word_compression_rate': 0.89, 'sentence_compression_rate': 1.0, 'BLEU': 61.019504321125766, 'BERTScore': 0.9894299507141113, 'keep': 'none'}], 'simplification_version': [1], 'grade_level': [-1], 'simplification_dimensions': [{'linguistic': {'lexical': False, 'syntactic': False}}]}
+Using greedy decoding (temperature=0.0, do_sample=False)
+Running inference on test set:   0%|          | 0/2 [00:00<?, ?it/s]/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/transformers/generation/configuration_utils.py:628: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.7` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/transformers/generation/configuration_utils.py:633: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.8` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.
+  warnings.warn(
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/transformers/generation/configuration_utils.py:650: UserWarning: `do_sample` is set to `False`. However, `top_k` is set to `20` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_k`.
+  warnings.warn(
+Both `max_new_tokens` (=1023) and `max_length`(=2047) seem to have been set. `max_new_tokens` will take precedence. Please refer to the documentation for more information. (https://huggingface.co/docs/transformers/main/en/main_classes/text_generation)
+
+--- Processing batch:
+
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s][AFetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 12096.05it/s]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/core/saving.py:165: UserWarning: Found keys that are not in the model state dict but in the checkpoint: ['encoder.model.embeddings.position_ids']
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+You are using a CUDA device ('NVIDIA GeForce RTX 5090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Using LENS with topk=3
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 15.09it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 14.99it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+They are at high risk of developing diabetes....
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 39.52it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 39.05it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Human cases today are very rare and most often contracted from domestic cats....
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 47.04it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 46.41it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+The diagnosis of abdominal migraines is controversial....
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 54.06it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 53.08it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+By 1835, all six daughters had died of varying causes, two when very young, two as children, the oth...
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 46.41it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.76it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+This is a wave-like motion that is caused by movement of the pus inside the abscess....
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 41.30it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 40.80it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Barium x-rays of the small bowel, sometimes barium enema, magnetic resonance (MR) enterography, uppe...
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 42.68it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 42.08it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Pyelonephritis is treated more aggressively than a simple bladder infection using either a longer co...
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 48.86it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 48.17it/s]
+Running inference on test set:  50%|█████     | 1/2 [00:10<00:10, 10.51s/it]/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/transformers/generation/configuration_utils.py:628: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.7` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/transformers/generation/configuration_utils.py:633: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.8` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.
+  warnings.warn(
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/transformers/generation/configuration_utils.py:650: UserWarning: `do_sample` is set to `False`. However, `top_k` is set to `20` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_k`.
+  warnings.warn(
+Both `max_new_tokens` (=1023) and `max_length`(=2047) seem to have been set. `max_new_tokens` will take precedence. Please refer to the documentation for more information. (https://huggingface.co/docs/transformers/main/en/main_classes/text_generation)
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Bleeding can occur internally, where blood leaks from blood vessels inside the body, or externally, ...
+
+--- Processing batch:
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 54.25it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 53.33it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+The most common causative organisms of occult bacteremia are Streptococcus pneumoniae and Haemophilu...
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 52.47it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 51.63it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+The same disease, such as some forms of cancer, may be caused by an inherited genetic condition in s...
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 48.27it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 47.58it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+There are approximately 2,600 cases of bacterial meningitis per year in the United States, with an a...
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.21it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.58it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+After she suffered from bronchopneumonia as a child, her parents were advised it would aid her recov...
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 65.51it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 64.23it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Sinus infections are usually diagnosed clinically....
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.30it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.67it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Augustana currently has approximately sixty academic programs including nine pre-professional and ei...
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.11it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.46it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Urinary outflow obstruction causes hesitancy, dribbling, or urinary retention; UTIs may develop....
+
+Evaluating: 0it [00:00, ?it/s][A
+Evaluating:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 56.58it/s][APredicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 55.64it/s]
+Running inference on test set: 100%|██████████| 2/2 [00:18<00:00,  9.10s/it]Running inference on test set: 100%|██████████| 2/2 [00:18<00:00,  9.31s/it]
+Epoprostenol (synthetic prostacyclin) is given via continuous infusion that requires a semi-permanen...
+Predictions saved to output/sft_inference/KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707/output_1.json
+Inference 1 completed.
+Running evaluation script...
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[nltk_data] Downloading package punkt to /home/wada_yuto/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
+[nltk_data] Downloading package punkt_tab to
+[nltk_data]     /home/wada_yuto/nltk_data...
+[nltk_data]   Package punkt_tab is already up-to-date!
+/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/sft_eval.py:339: RankWarning: Polyfit may be poorly conditioned
+  coeffs = np.polyfit(x_m, y_m, deg)
+/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/helpers/utils.py:4: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  corr_coeff, p_value = pearsonr(x, y)
+/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/sft_eval.py:339: RankWarning: Polyfit may be poorly conditioned
+  coeffs = np.polyfit(x_m, y_m, deg)
+/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/sft_eval.py:339: RankWarning: Polyfit may be poorly conditioned
+  coeffs = np.polyfit(x_m, y_m, deg)
+/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/sft_eval.py:339: RankWarning: Polyfit may be poorly conditioned
+  coeffs = np.polyfit(x_m, y_m, deg)
+/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/sft_eval.py:339: RankWarning: Polyfit may be poorly conditioned
+  coeffs = np.polyfit(x_m, y_m, deg)
+/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/sft_eval.py:339: RankWarning: Polyfit may be poorly conditioned
+  coeffs = np.polyfit(x_m, y_m, deg)
+/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/sft_eval.py:339: RankWarning: Polyfit may be poorly conditioned
+  coeffs = np.polyfit(x_m, y_m, deg)
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/numpy/lib/_polynomial_impl.py:676: RuntimeWarning: invalid value encountered in divide
+  lhs /= scale
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+--- Running evaluation...
+Input files:	 ['output/sft_inference/KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707/output_1.json']
+Metric:	 KEEP
+LENS backfill complete: 0 predictions updated (batch_size=64).
+--- keep losses:
+Mean Squared Error (MSE): 0.015625
+Mean Absolute Error (MAE): 0.03125
+Standard Deviation of Errors: 0.12103072956898178
+Variance of Errors: 0.0146484375
+
+Saved loss values to stats.json
+Updated averaged predictions file with per-sample losses: output/sft_inference/KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707/output_averaged.json
+Scatter plot saved to output/sft_inference/KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707/keep_scatter_plot.png
+Legend saved to output/sft_inference/KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707/keep_scatter_legend.png
+Control attribute vs metrics plot saved as keep_ctrl_attr_vs_metrics.png
+Error-vs-metrics plots saved.
+STD of error by reference bin saved as keep_error_std_by_ref_bin.png
+Plots saved to output/sft_inference/KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707
+
+All plots saved to output/sft_inference/KEEP-medeasi-token_explanation-Qwen2.5-0.5B-Instruct-20260707
+
+--- Mean metrics:
+BLEU_to_source: BLEU_to_source: 91.74 (+6.38 -7.08)
+BLEU_to_ref: BLEU_to_ref: 47.88 (+17.02 -17.29)
+BERTScore_to_source: BERTScore_to_source: 0.00 (+0.00 -0.00)
+BERTScore_to_ref: BERTScore_to_ref: 0.00 (+0.00 -0.00)
+COMET: COMET: 0.00 (+0.00 -0.00)
+SARI: SARI: 51.50 (+7.14 -6.84)
+LENS: LENS: 58.59 (+4.94 -5.66)
+
+Saved evaluation summary to output/sft_results/all_results.json
+
+--- Evaluation complete.
+Script completed: Tue Jul  7 11:22:34 AM JST 2026

@@ -1,0 +1,9 @@
+{
+    "metric": "FKGL",
+    "MSE": 15.199602709566028,
+    "MAE": 2.6963853891834915,
+    "std_error": 3.8735131994559144,
+    "var_error": 15.004104506359196,
+    "num_samples": 203,
+    "numeric_sources_only": false
+}
