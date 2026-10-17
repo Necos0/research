@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # =========================================================================
+# 【シード違い】exp/notag-full-v2-epochs の学習シードを 44 にした再現実験（他は同一）。
 # 実験: Med-EASi × 制御トークンなし（NOTAG）1B フルデータ版・エポック別評価（対照条件）
 #   - 目的: KEEP は FKGL より数値を保持するが、数値あり事例で原文に近い（保守的）。
 #           「数値の情報を与えたから保持できた」のか「KEEP タグは易しさを指示しないので
@@ -60,6 +61,7 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --epochs "3" \
             --patience "4" \
             --save_each_epoch \
+            --seed "44" \
             --max_length "$MAX_LENGTH"\
             --wandb_project_name "ATS_with_control_tokens" \
             --wandb_entity "shtosti"\
