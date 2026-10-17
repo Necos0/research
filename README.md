@@ -15,23 +15,18 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | `results/` | サーバーから rsync で回収した実験別の結果（`.gitignore` 済み。モデル重みは除外する） |
 | `2604.01779v1.pdf` | 参照論文 |
 
-## 現在の実験：Med-EASi × `<FKGL>` 1B フルデータ版・**再実行（キャッシュ事故のやり直し）**
+## 現在の実験：Med-EASi × `<FKGL>` 1B フルデータ版・**エポック別評価**（コピー崩壊の切り分け①：学習量）
 
-> **⚠️ `results/fkgl-medeasi-1b-full-v2/` の結果は無効。** datasets キャッシュ事故（下記「修正したバグ 4」）により、**修正前（7/9）のプロンプトで学習していた**。`The ` 始まりが 10.8% に見えたのは修正が効いたからではなく、学習と推論でプロンプト構造が食い違った結果。原文コピー 54.2%・数値保持 0.915 も信用できない。**キャッシュ修正後に再実行が必要。**
-
-- **ブランチ**: `exp/fkgl-medeasi-1b-full-v2`
-- **目的**: フルデータ版 FKGL の健全なベースラインを取り直す。KEEP（`exp/keep-medeasi-1b-v2`）と同一データ・同一設定で、差分は `METRIC_NAME` のみ。
-- **修正内容**（4点。詳細は下記「修正したバグ」節）:
-  1. `src/helpers/prompting.py` — 制御トークンを簡約文と同じ assistant ターンに置く（`continue_final_message=True`）
-  2. `src/sft_finetune.py` / `src/sft_inference.py` — `add_special_tokens=False`（BOS の二重付与・completion への混入を防ぐ）
-  3. `src/helpers/prompting.py` — 制御トークンと簡約文の間の空白を担保（トークン境界のズレ防止）
-  4. **`sft_finetune.py` / `sft_inference.py` の全 `.map()` に `load_from_cache_file=False`** ＋ プロンプト検証 assert（1〜3 を無効化していたキャッシュ事故の対策。**これが無いと 1・3 が効かない**）
-- **設定**（`METRIC_NAME=FKGL` 以外は `exp/keep-medeasi-1b` と完全に同一。ハイパラは v1 から変更なし＝**差分はバグ修正のみ**）:
-  - モデル `meta-llama/Llama-3.2-1B-Instruct`（gated・HF トークン要）/ データ `medeasi`（ローカル `data/splits_flattened_full`＝フル未フィルタ）/ 制御属性 `FKGL`
-  - 学習: train 1499件・val 191件（全件）/ batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6 / 3エポック / max_length 512
-  - 推論: test 203件（全件）/ 1シード（seed=37）/ batch_size 8 / max_length 1024（batch_size は 32GB GPU の OOM 対策。全プロンプトを max_length に固定パディングしているため greedy の生成結果はバッチサイズに依存しない）
-- **評価での比較軸**: FKGL の制御精度（MAE）に加え、`prediction_metrics.keep`（数値保持率）が全事例で自動計算されるため、KEEP 1B の結果（`results/keep-medeasi-1b/`）と数値あり事例の保持率・SARI/LENS を同一 test 203件で直接比較できる。
-- **再実行後に必ず確認すること**: SARI/LENS が論文値と一致していても品質は保証されない（旧実行では捏造事例が SARI 67.6 を記録していた）。**出力を必ず目視し**、`The ` 始まりの比率が参照文並み（約1割）に戻っているかを崩壊の指標として確認する。
+- **ブランチ**: `exp/fkgl-full-v2-epochs`（`exp/fkgl-medeasi-1b-full-v2` から分岐）
+- **目的**: フル版 v2 は出力の 49.8% が原文の完全コピーだった。採用された重みは早期終了（patience 4 × 10 step ＝ 0.43 エポック分の猶予）による **0.96 エポック時点**のもので、1エポックも学習していない。**学習を進めればコピーが減るのか**を、早期終了と eval_loss によるベスト選択を外して確かめる。
+- **設定**（v2 との差分は `--save_each_epoch` のみ。データ・ハイパラ・シードは同一）:
+  - モデル `meta-llama/Llama-3.2-1B-Instruct` / データ `medeasi`（`data/splits_flattened_full`）/ 制御属性 `FKGL`
+  - 学習: train 1499件・val 191件 / batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6（cosine, warmup 30）/ **3エポックを最後まで**（早期終了なし）/ max_length 512 / seed 42
+  - 保存: 各エポック末の重みを `checkpoint-<step>/` として全部残す（`save_only_model`。約2.5GB × 3）
+  - 推論: **各エポック末の重みそれぞれ**で test 203件（全件）/ 1シード（seed=37）/ greedy / batch_size 8 / max_length 1024 → `output/sft_inference/<model>/epoch{1,2,3}/`
+- **評価**: SARI・LENS・FKGL MAE に加え、`src/copy_stats.py` で **原文コピー率**（完全一致・類似度0.9以上）を、全体／参照が易化している事例／していない事例／フィルタ版 test 98件 に分けて出す（`copy_stats.txt`）。
+- **整合性チェック**: エポック1の重みは v2 の採用重み（0.96 エポック）とほぼ同じ地点なので、コピー率が v2 の 49.8% に近いはず。大きく違えば何かがおかしい。
+- **読み方**: エポックが進むほどコピーが減るなら、学習不足が原因。減らないなら、データかプロンプトの形が原因（→ `exp/fkgl-full-v2-fkgldown` と比較）。
 
 ### 修正したバグ（v1 = `exp/fkgl-medeasi-1b-full` の失敗原因）
 
@@ -116,7 +111,7 @@ Today Date: 09 Jul 2026        ← 実行日は 7/13, 7/14
 ```bash
 cd /Users/wadaketsunin/research
 git add -A && git commit -m "exp: <条件の説明>"   # 未コミットの変更があれば
-git push -u origin exp/fkgl-medeasi-1b-full-v2
+git push -u origin exp/fkgl-full-v2-epochs
 ```
 
 **2.（サーバー）1コマンドで実行**
@@ -124,8 +119,8 @@ git push -u origin exp/fkgl-medeasi-1b-full-v2
 ```bash
 ssh wada_yuto@calc40
 cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
-  && git fetch origin && git switch exp/fkgl-medeasi-1b-full-v2 && git merge --ff-only origin/exp/fkgl-medeasi-1b-full-v2 \
-  && ./run_experiment.sh exp/fkgl-medeasi-1b-full-v2
+  && git fetch origin && git switch exp/fkgl-full-v2-epochs && git merge --ff-only origin/exp/fkgl-full-v2-epochs \
+  && ./run_experiment.sh exp/fkgl-full-v2-epochs
 ```
 
 **ブランチの切り替えはスクリプトの外でやる**（先頭の `git fetch/switch/merge`）。`run_experiment.sh` は自分では switch せず、**引数のブランチ名と実際のチェックアウトが一致しているかを検証するだけ**。次のいずれかなら**学習を始める前に止まり**、直すコマンドを表示する:
@@ -141,19 +136,19 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
 以降、tmux 自動作成 → conda 有効化 → 掃除（`output/` `models/` `logs/` ＋ **HF datasets キャッシュ**）→ 学習 → 推論 → 回収コマンド表示、までを全部やる。詳細は [docs/direction.md](docs/direction.md)。
 
 - **学習開始直後に `--- prompt sanity OK: ...'<FKGL=...>'` が出ることを必ず確認する。** 出ない／assert で落ちる場合はプロンプト構築が壊れている。
-- 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は `tmux attach -t exp-fkgl-medeasi-1b-full-v2`。
+- 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は `tmux attach -t exp-fkgl-full-v2-epochs`。
 
 **3.（Mac）結果を回収**
 
 完了時にスクリプトが表示するコマンドをそのまま貼ればよい。
 
 ```bash
-mkdir -p /Users/wadaketsunin/research/results/fkgl-medeasi-1b-full-v2
+mkdir -p /Users/wadaketsunin/research/results/fkgl-full-v2-epochs
 rsync -av --exclude='*.safetensors' \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
-  /Users/wadaketsunin/research/results/fkgl-medeasi-1b-full-v2/
+  /Users/wadaketsunin/research/results/fkgl-full-v2-epochs/
 ```
 
 **モデル重み（`*.safetensors`）は回収しない。** 1実験あたり約4.9GB とアーカイブの99%以上を占めるが、**Mac には CUDA が無く使い道がない**。再現性は「ブランチ＝実験」で担保される。`models/` の `args.json` / `config.json` / `tokenizer.json` は残すので、実験条件の証跡とローカルでのプロンプト再現には使える（除外により 4.9GB → 約20MB）。

@@ -1,15 +1,14 @@
 #!/bin/bash
 
 # =========================================================================
-# 実験: Med-EASi × <FKGL> 1B モデル・フルデータ版（KEEP実験との学習データ交絡の排除）
-#   - 目的: KEEP 1B 実走行（exp/keep-medeasi-1b）と同一のフルデータ（1892事例）で
-#           FKGL タグのモデルを学習し、「同一学習データでのタグ違い比較」を可能にする。
-#           既存の FKGL 1B（exp/fkgl-medeasi-1b）はフィルタ済み852件学習のため、
-#           KEEP との保持率・品質差に学習データ差が混ざっていた。
-#     設定は KEEP 1B / FKGL 1B と同一
-#     （全件・batch 4・grad_accum 4・lr 5e-6・3エポック・max_length 512）。
-#   - データはローカル data/splits_flattened_full/medeasi（フル・未フィルタ）を全件使用。
-#     METRIC_NAME=FKGL 以外は exp/keep-medeasi-1b と同じ。
+# 実験: Med-EASi × <FKGL> 1B フルデータ版・エポック別評価（コピー崩壊の切り分け①：学習量）
+#   - 目的: フル版 v2（exp/fkgl-medeasi-1b-full-v2）は早期終了（patience 4×10 step）で
+#           0.96 エポックの重みが採用され、出力の 49.8% が原文コピーだった。
+#           「1エポックも学習していないこと」がコピーの原因かを確かめるため、
+#           早期終了を切って 3 エポック学習し切り、各エポック末の重みを全部評価する。
+#   - v2 との差分は --save_each_epoch のみ（データ・ハイパラ・シードは同一）。
+#     早期終了・eval_loss によるベスト選択は行わない（--patience は無視される）。
+#     エポック1の重みは v2 の採用重み（0.96 エポック）とほぼ同じ地点なので、整合性チェックになる。
 # =========================================================================
 
 export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
@@ -59,6 +58,7 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --logging_steps "10" \
             --epochs "3" \
             --patience "4" \
+            --save_each_epoch \
             --max_length "$MAX_LENGTH"\
             --wandb_project_name "ATS_with_control_tokens" \
             --wandb_entity "shtosti"\
