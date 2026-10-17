@@ -17,6 +17,8 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 ## 現在の実験：Med-EASi × **制御トークンなし（NOTAG）** 1B フルデータ版・エポック別評価（対照条件・ロードマップ③-9）
 
+> **シード違いの再現実験**: `exp/notag-full-v2-epochs` の学習シードを **43** にしたもの（他は同一）。結果は `results/notag-full-v2-epochs-seed43/`。
+
 - **ブランチ**: `exp/notag-full-v2-epochs`（`exp/keep-full-v2-epochs` から分岐）。シード違いは `-seed43` / `-seed44`
 - **目的**: KEEP は FKGL より数値を保持する（エポック3・3シード平均で完全保持 44.7 対 37.3/47）が、数値あり事例で原文に近い（類似度 0.91 対 0.81）。これが「数値の情報を与えたから」なのか、「KEEP タグは易しさを指示しないので、そもそも平易化が控えめになるだけ」なのかを切り分けるため、**制御トークンを一切使わない**条件を学習する。
 - **プロンプト**: `INSTRUCTION: Simplify the following text. / SOURCE TEXT: 原文` のみ（`data/prompts/user_prompts.json` の `NOTAG`）。出力側にもタグを置かず、空の assistant ターンから簡約文を書かせる（`helpers/prompting.py` の `NO_TAG_METRIC`）。プロンプトの形の検証は `assert_prompt_shape()` に共通化した。
@@ -106,7 +108,7 @@ Today Date: 09 Jul 2026        ← 実行日は 7/13, 7/14
 ```bash
 cd /Users/wadaketsunin/research
 git add -A && git commit -m "exp: <条件の説明>"   # 未コミットの変更があれば
-git push -u origin exp/notag-full-v2-epochs
+git push -u origin exp/notag-full-v2-epochs-seed43
 ```
 
 **2.（サーバー）1コマンドで実行**
@@ -114,8 +116,8 @@ git push -u origin exp/notag-full-v2-epochs
 ```bash
 ssh wada_yuto@calc40
 cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
-  && git fetch origin && git switch exp/notag-full-v2-epochs && git merge --ff-only origin/exp/notag-full-v2-epochs \
-  && ./run_experiment.sh exp/notag-full-v2-epochs
+  && git fetch origin && git switch exp/notag-full-v2-epochs-seed43 && git merge --ff-only origin/exp/notag-full-v2-epochs-seed43 \
+  && ./run_experiment.sh exp/notag-full-v2-epochs-seed43
 ```
 
 **ブランチの切り替えはスクリプトの外でやる**（先頭の `git fetch/switch/merge`）。`run_experiment.sh` は自分では switch せず、**引数のブランチ名と実際のチェックアウトが一致しているかを検証するだけ**。次のいずれかなら**学習を始める前に止まり**、直すコマンドを表示する:
@@ -128,7 +130,7 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
 
 `git pull` ではなく **`git merge --ff-only origin/<branch>`** を使うこと。`git pull --ff-only` は upstream（追跡情報）が未設定のローカルブランチだと `exit 1` で落ちる。
 
-これだけで次を全部やる（特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/notag-full-v2-epochs 1`）:
+これだけで次を全部やる（特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/notag-full-v2-epochs-seed43 1`）:
 
 1. **チェックアウトを検証**（指定ブランチに居るか・origin と一致しているか・作業ツリーがクリーンか）。違えば**学習を始める前に止まる**
 2. **tmux セッションを自動で張る**（SSH が切れても継続。`Ctrl-b` → `d` で detach）
@@ -144,7 +146,7 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
 進捗確認・再接続:
 
 ```bash
-tmux attach -t exp-notag-full-v2-epochs      # セッション名は exp- + ブランチ名（exp/ を除く）
+tmux attach -t exp-notag-full-v2-epochs-seed43      # セッション名は exp- + ブランチ名（exp/ を除く）
 ```
 
 **3.（Mac）結果を回収（モデル重みは除外する）**
@@ -152,12 +154,12 @@ tmux attach -t exp-notag-full-v2-epochs      # セッション名は exp- + ブ�
 完了時にスクリプトが表示するコマンドをそのまま貼ればよい。
 
 ```bash
-mkdir -p /Users/wadaketsunin/research/results/notag-full-v2-epochs
+mkdir -p /Users/wadaketsunin/research/results/notag-full-v2-epochs-seed43
 rsync -av --exclude='*.safetensors' \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
-  /Users/wadaketsunin/research/results/notag-full-v2-epochs/
+  /Users/wadaketsunin/research/results/notag-full-v2-epochs-seed43/
 ```
 
 **モデル重み（`*.safetensors`）は回収しない。** 1実験あたり約4.9GB とアーカイブの99%以上を占めるが、**Mac には CUDA が無く使い道がない**。再現性は「ブランチ＝実験」で担保される。`models/` の `args.json` / `config.json` / `tokenizer.json` は残すので、実験条件の証跡とローカルでのプロンプト再現には使える（除外により 4.9GB → 約20MB）。
