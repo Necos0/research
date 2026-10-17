@@ -10,6 +10,7 @@
 - fake   : 全事例に、原文にない数値（DISTRACTORS の先頭から原文に無いもの）を1つ加える
 
 load_dataset_from_hf は train/val/test の3ファイルを読むので、train/val はフル版をそのまま写す。
+列を足すと3ファイルの列がそろわず datasets の読み込みが失敗するので、タグの値以外は変えない。
 出力先は gitignore 済みの output/ 配下（run_experiment.sh の掃除で消える。このスクリプトで再生成できる）。
 
 使い方: python src/build_counterfactual_tests.py [出力ルート]
@@ -64,7 +65,6 @@ def main():
                 changed += value != row["source_metrics"]["keep"]
                 row["source_metrics"]["keep"] = value
                 row["target_metrics"]["keep"] = value
-                row["counterfactual_condition"] = cond
                 f.write(json.dumps(row, ensure_ascii=False) + "\n")
         print(f"{cond:8s}: {len(rows)} rows, tag changed in {changed} -> {dst}")
 
