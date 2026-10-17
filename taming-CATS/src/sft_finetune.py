@@ -322,6 +322,7 @@ def train_model(model, tokenizer, train_dataset, val_dataset, args, output_dir, 
         logging_steps=args.logging_steps,
         push_to_hub=False,
         report_to=["wandb"],
+        seed=args.seed,   # Trainer の既定は 42 固定。--seed を学習順序にも効かせる（42 なら従来と同一）
         eval_strategy="steps",
         eval_steps=args.logging_steps,
         **save_kwargs,

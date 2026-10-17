@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # =========================================================================
+# 【シード違い】exp/fkgl-full-v2-epochs の学習シードを 43 にした再現実験（他は同一）。
 # 実験: Med-EASi × <FKGL> 1B フルデータ版・エポック別評価（コピー崩壊の切り分け①：学習量）
 #   - 目的: フル版 v2（exp/fkgl-medeasi-1b-full-v2）は早期終了（patience 4×10 step）で
 #           0.96 エポックの重みが採用され、出力の 49.8% が原文コピーだった。
@@ -59,6 +60,7 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --epochs "3" \
             --patience "4" \
             --save_each_epoch \
+            --seed "43" \
             --max_length "$MAX_LENGTH"\
             --wandb_project_name "ATS_with_control_tokens" \
             --wandb_entity "shtosti"\

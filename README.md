@@ -17,6 +17,9 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 ## 現在の実験：Med-EASi × `<FKGL>` 1B フルデータ版・**エポック別評価**（コピー崩壊の切り分け①：学習量）
 
+> **シード違いの再現実験**: `exp/fkgl-full-v2-epochs` の学習シードを **43** にしたもの（他は同一。シードは学習データの読み順に効く。Trainer にも `seed` を渡すよう修正、42 なら従来と同一）。結果は `results/fkgl-full-v2-epochs-seed43/`。
+
+
 - **ブランチ**: `exp/fkgl-full-v2-epochs`（`exp/fkgl-medeasi-1b-full-v2` から分岐）
 - **目的**: フル版 v2 は出力の 49.8% が原文の完全コピーだった。採用された重みは早期終了（patience 4 × 10 step ＝ 0.43 エポック分の猶予）による **0.96 エポック時点**のもので、1エポックも学習していない。**学習を進めればコピーが減るのか**を、早期終了と eval_loss によるベスト選択を外して確かめる。
 - **設定**（v2 との差分は `--save_each_epoch` のみ。データ・ハイパラ・シードは同一）:
@@ -111,7 +114,7 @@ Today Date: 09 Jul 2026        ← 実行日は 7/13, 7/14
 ```bash
 cd /Users/wadaketsunin/research
 git add -A && git commit -m "exp: <条件の説明>"   # 未コミットの変更があれば
-git push -u origin exp/fkgl-full-v2-epochs
+git push -u origin exp/fkgl-full-v2-epochs-seed43
 ```
 
 **2.（サーバー）1コマンドで実行**
@@ -119,8 +122,8 @@ git push -u origin exp/fkgl-full-v2-epochs
 ```bash
 ssh wada_yuto@calc40
 cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
-  && git fetch origin && git switch exp/fkgl-full-v2-epochs && git merge --ff-only origin/exp/fkgl-full-v2-epochs \
-  && ./run_experiment.sh exp/fkgl-full-v2-epochs
+  && git fetch origin && git switch exp/fkgl-full-v2-epochs-seed43 && git merge --ff-only origin/exp/fkgl-full-v2-epochs-seed43 \
+  && ./run_experiment.sh exp/fkgl-full-v2-epochs-seed43
 ```
 
 **ブランチの切り替えはスクリプトの外でやる**（先頭の `git fetch/switch/merge`）。`run_experiment.sh` は自分では switch せず、**引数のブランチ名と実際のチェックアウトが一致しているかを検証するだけ**。次のいずれかなら**学習を始める前に止まり**、直すコマンドを表示する:
@@ -136,19 +139,19 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
 以降、tmux 自動作成 → conda 有効化 → 掃除（`output/` `models/` `logs/` ＋ **HF datasets キャッシュ**）→ 学習 → 推論 → 回収コマンド表示、までを全部やる。詳細は [docs/direction.md](docs/direction.md)。
 
 - **学習開始直後に `--- prompt sanity OK: ...'<FKGL=...>'` が出ることを必ず確認する。** 出ない／assert で落ちる場合はプロンプト構築が壊れている。
-- 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は `tmux attach -t exp-fkgl-full-v2-epochs`。
+- 実行が始まったら `Ctrl-b` → `d` で detach して SSH を切ってよい。進捗確認は `tmux attach -t exp-fkgl-full-v2-epochs-seed43`。
 
 **3.（Mac）結果を回収**
 
 完了時にスクリプトが表示するコマンドをそのまま貼ればよい。
 
 ```bash
-mkdir -p /Users/wadaketsunin/research/results/fkgl-full-v2-epochs
+mkdir -p /Users/wadaketsunin/research/results/fkgl-full-v2-epochs-seed43
 rsync -av --exclude='*.safetensors' \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
-  /Users/wadaketsunin/research/results/fkgl-full-v2-epochs/
+  /Users/wadaketsunin/research/results/fkgl-full-v2-epochs-seed43/
 ```
 
 **モデル重み（`*.safetensors`）は回収しない。** 1実験あたり約4.9GB とアーカイブの99%以上を占めるが、**Mac には CUDA が無く使い道がない**。再現性は「ブランチ＝実験」で担保される。`models/` の `args.json` / `config.json` / `tokenizer.json` は残すので、実験条件の証跡とローカルでのプロンプト再現には使える（除外により 4.9GB → 約20MB）。
