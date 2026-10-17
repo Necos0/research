@@ -1,0 +1,1109 @@
+Logging to logs/finetune_20260709_120327.log
+*** Finetuning meta-llama/Llama-3.2-1B-Instruct with medeasi and KEEP ***
+torch.cuda.is_bf16_supported: True
+Transformers version: 4.48.3
+Python path: /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/bin/python
+Not using PEFT...
+
+Run arguments:
+Namespace(model_class='auto', model_family='base', model_name='meta-llama/Llama-3.2-1B-Instruct', dataset_name='medeasi', local_data_dir='data/splits_flattened_full', slice_train=-1, slice_val=-1, batch_size=4, eval_batch_size=4, gradient_accumulation_steps=4, learning_rate=5e-06, weight_decay=0.01, warmup_steps=30, max_grad_norm=0.5, epochs=3, max_length=512, logging_steps=10, wandb_project_name='ATS_with_control_tokens', wandb_entity='shtosti', generate_every=20, seed=42, patience=4, prompting_type='vanilla', user_prompt_id='token_explanation', metric_name='KEEP', control_tokens='data/prompts/control_tokens.json', system_prompts='data/prompts/system_prompts.json', user_prompts='data/prompts/user_prompts.json', metric_mapping='data/metric_mapping.json', peft=False, lora_r=8, lora_dropout=0.1)
+
+Saving to: ./models/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709
+
+*** Finetuning Llama-3.2-1B-Instruct with medeasi ***
+
+CUDA available: True
+Number of GPUs: 1
+GPU name: NVIDIA GeForce RTX 5090
+Model embedding size BEFORE resizing: 128256
+Model embedding size AFTER resizing: 128257
+--- DEBUG ---
+trainable params:
+Trainable params: 1,235,816,448 / 1,235,816,448 (100.00%)
+--- tokenizer pad_token_id: 128256
+--- tokenizer eos_token_id: 128009
+--- special tokens:
+train:	 Inspect the dataset format:
+ {'global_id': ['medeasi_001639'], 'source_text': ["Anatomic deformities of the penis, such as exist in Peyronie 's disease, may also result in pain during coitus."], 'source_metrics': [{'FRE': 43.73, 'ARI': 11.1, 'FKGL': 11.9, 'Dale-Chall': 12.06, 'char_count': 111, 'alphanum_count': 89, 'word_count': 22, 'sentence_count': 1, 'keep': 'none'}], 'metadata': [{'dataset': 'medeasi', 'experiment_split': '', 'domain': 'medical', 'language': 'en', 'annotation': 'human', 'level': 'sentence'}], 'simplification_text': ['Anatomic deformities of the penis (retraction of a too-tight foreskin) may also result in pain during sexual act.'], 'target_metrics': [{'FRE': 36.28, 'ARI': 12.7, 'FKGL': 12.7, 'Dale-Chall': 10.67, 'char_count': 113, 'alphanum_count': 92, 'word_count': 21, 'sentence_count': 1, 'char_compression_rate': 1.02, 'word_compression_rate': 0.95, 'sentence_compression_rate': 1.0, 'BLEU': 38.40373031277682, 'BERTScore': 0.9142360687255859, 'keep': 'none'}], 'simplification_version': [1], 'grade_level': [-1], 'simplification_dimensions': [{'linguistic': {'lexical': False, 'syntactic': False}}]}
+validation:	 Inspect the dataset format:
+ {'global_id': ['medeasi_000443'], 'source_text': ['Symptoms of postpartum depression may be similar to those of major depression and may include Extreme sadness; Guilt; Uncontrollable crying; Insomnia or increased sleep; Loss of appetite or overeating; Irritability and anger; Headaches and body aches and pains; Extreme fatigue; Unrealistic worries about or disinterest in the baby; A feeling of being incapable of caring for the baby or of being inadequate as a mother; Fear of harming the baby; Suicidal ideation; Anxiety or panic attacks.'], 'source_metrics': [{'FRE': -31.05, 'ARI': 42.3, 'FKGL': 36.5, 'Dale-Chall': 14.05, 'char_count': 491, 'alphanum_count': 403, 'word_count': 89, 'sentence_count': 1, 'keep': 'none'}], 'metadata': [{'dataset': 'medeasi', 'experiment_split': '', 'domain': 'medical', 'language': 'en', 'annotation': 'human', 'level': 'sentence'}], 'simplification_text': ['Symptoms of postpartum depression may include Extreme sadness; Frequent crying; Mood swings; Irritability and anger. Less common symptoms include Extreme fatigue; Sleep problems (too much or too little); Headaches and body aches; Loss of interest in sex and other activities; Anxiety or panic attacks; Loss of appetite or overeating; Difficulty functioning; Lack of interest in or unreasonable worries about the baby; Feelings of inadequacy or hopelessness; Guilt about having these feelings; Fear of harming the baby; Suicidal thoughts.'], 'target_metrics': [{'FRE': 6.51, 'ARI': 25.9, 'FKGL': 22.0, 'Dale-Chall': 12.86, 'char_count': 537, 'alphanum_count': 442, 'word_count': 96, 'sentence_count': 2, 'char_compression_rate': 1.09, 'word_compression_rate': 1.08, 'sentence_compression_rate': 2.0, 'BLEU': 34.414131341907314, 'BERTScore': 0.9205672144889832, 'keep': 'none'}], 'simplification_version': [1], 'grade_level': [-1], 'simplification_dimensions': [{'linguistic': {'lexical': False, 'syntactic': False}}]}
+Map:   0%|          | 0/1499 [00:00<?, ? examples/s]Map:  58%|█████▊    | 867/1499 [00:00<00:00, 8588.63 examples/s]Map: 100%|██████████| 1499/1499 [00:00<00:00, 6963.25 examples/s]
+Map:   0%|          | 0/191 [00:00<?, ? examples/s]Map: 100%|██████████| 191/191 [00:00<00:00, 4964.23 examples/s]
+
+
+ *** Before tokenization ***
+>>> train:
+
+Showing 1 example(s):
+
+Example 1 (index 369)
+--- Prompt:
+ <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=0.1, 0.2, 35> Pituitary adenomas are generally divided into three categories dependent upon their biological functioning: benign adenoma, invasive adenoma, or carcinomas, with carcinomas accounting for 0.1 % to 0.2 %, approximately 35 % being invasive adenomas and most being benign adenomas.
+EXPLANATION: The <KEEP=0.1, 0.2, 35> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=0.1, 0.2, 35><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+--- Completion:
+ Pituitary tumors are generally divided into three kinds dependant upon their biological functioning: benign adenoma, invasive adenoma or carcinomas, with carcinomas accounting for 0.1 % to 0.2 %, appoximately 35 % being invasive adenomas and most being benign adenomas. <|eot_id|>
+==================================================
+Map:   0%|          | 0/1499 [00:00<?, ? examples/s]Map:  16%|█▋        | 247/1499 [00:00<00:00, 2441.49 examples/s]Map:  33%|███▎      | 497/1499 [00:00<00:00, 2471.93 examples/s]Map:  50%|█████     | 753/1499 [00:00<00:00, 2507.64 examples/s]Token indices sequence length is longer than the specified maximum sequence length for this model (548 > 512). Running this sequence through the model will result in indexing errors
+Map:  67%|██████▋   | 1009/1499 [00:00<00:00, 1622.65 examples/s]Map:  83%|████████▎ | 1250/1499 [00:00<00:00, 1828.18 examples/s]Map: 100%|██████████| 1499/1499 [00:00<00:00, 1487.20 examples/s]Map: 100%|██████████| 1499/1499 [00:00<00:00, 1653.00 examples/s]
+Map:   0%|          | 0/191 [00:00<?, ? examples/s]Map: 100%|██████████| 191/191 [00:00<00:00, 1427.34 examples/s]Map: 100%|██████████| 191/191 [00:00<00:00, 1358.83 examples/s]
+
+
+ *** After tokenization ***
+>>> train:
+
+Showing 1 example(s):
+
+Example 1 (index 559)
+--- Prompt:
+ <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Modern medicine, both conventional and alternative, recognises that the different rheumatic disorders have different causes ( and several of them have multiple causes ) and require different kinds of treatment.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+--- Completion:
+ Modern medicine, both conventional and complementary, shows that the different rheumatic disorders have different causes ( and several of them have more than one ) and need different kinds of treatment. <|eot_id|>
+--- input_ids:
+ [128000, 128000, 128006, 9125, 128007, 271, 38766, 1303, 33025, 2696, 25, 6790, 220, 2366, 18, 198, 15724, 2696, 25, 220, 2545, 10263, 220, 2366, 21, 271, 2675, 527, 264, 11190, 1495, 15858, 2461, 18328, 13, 1472, 527, 539, 1193, 459, 6335, 304, 15858, 7922, 22755, 369, 2204, 13016, 34322, 11, 719, 499, 527, 1101, 1633, 1695, 520, 70817, 22755, 4184, 311, 279, 4839, 3966, 315, 279, 1217, 13, 1472, 2612, 1193, 279, 44899, 1495, 11, 912, 4726, 8554, 477, 6170, 5535, 13, 128009, 128006, 882, 128007, 271, 691, 58555, 25, 62342, 1463, 279, 2768, 1495, 13, 1472, 28832, 21813, 11, 7041, 323, 2085, 84218, 11, 1475, 35876, 907, 10212, 304, 279, 2585, 4037, 22033, 2954, 311, 701, 8066, 15858, 2461, 13, 578, 2585, 4037, 706, 279, 2768, 3645, 25, 366, 52901, 28, 24771, 8226, 1405, 27925, 11725, 279, 5219, 311, 2567, 13, 578, 2585, 4037, 22033, 2954, 311, 279, 2592, 1495, 11725, 279, 5219, 1766, 304, 279, 2592, 1495, 430, 2011, 387, 34683, 13, 720, 44098, 16139, 25, 366, 52901, 28, 6836, 29, 18766, 16088, 11, 2225, 21349, 323, 10778, 11, 5952, 5014, 430, 279, 2204, 68132, 33030, 24673, 617, 2204, 11384, 320, 323, 3892, 315, 1124, 617, 5361, 11384, 883, 323, 1397, 2204, 13124, 315, 6514, 627, 3337, 95179, 3579, 25, 578, 366, 52901, 28, 6836, 29, 4037, 11725, 279, 35876, 2819, 505, 279, 2592, 1495, 430, 28832, 387, 34683, 7041, 320, 3265, 3811, 323, 539, 40542, 8, 304, 701, 15858, 2461, 13, 35813, 527, 9200, 2038, 304, 279, 6593, 8106, 320, 68, 1326, 13, 8924, 1154, 11, 17051, 11, 54208, 11, 49316, 1237, 26156, 477, 60923, 1124, 649, 387, 11660, 13, 3277, 279, 907, 374, 364, 6836, 518, 279, 2592, 5727, 912, 5219, 311, 21813, 13, 128009, 128006, 78191, 128007, 271, 27, 52901, 28, 6836, 29, 128009, 128006, 78191, 128007, 271, 128000, 49552, 16088, 11, 2225, 21349, 323, 58535, 11, 5039, 430, 279, 2204, 68132, 33030, 24673, 617, 2204, 11384, 320, 323, 3892, 315, 1124, 617, 810, 1109, 832, 883, 323, 1205, 2204, 13124, 315, 6514, 13, 220, 128009, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256]
+--- labels:
+ [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 128000, 49552, 16088, 11, 2225, 21349, 323, 58535, 11, 5039, 430, 279, 2204, 68132, 33030, 24673, 617, 2204, 11384, 320, 323, 3892, 315, 1124, 617, 810, 1109, 832, 883, 323, 1205, 2204, 13124, 315, 6514, 13, 220, 128009, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100]
+==================================================
+********** DEBUG **********
+Train dataset columns: ['global_id', 'source_text', 'source_metrics', 'metadata', 'simplification_text', 'target_metrics', 'simplification_version', 'grade_level', 'simplification_dimensions', 'prompt', 'completion', 'system_prompt_id', 'user_prompt_id', 'metric_name', 'source_metric_value', 'target_metric_value', 'input_ids', 'labels', 'attention_mask']
+Validation dataset columns: ['global_id', 'source_text', 'source_metrics', 'metadata', 'simplification_text', 'target_metrics', 'simplification_version', 'grade_level', 'simplification_dimensions', 'prompt', 'completion', 'system_prompt_id', 'user_prompt_id', 'metric_name', 'source_metric_value', 'target_metric_value', 'input_ids', 'labels', 'attention_mask']
+First 10 input_ids: [128000, 128000, 128006, 9125, 128007, 271, 38766, 1303, 33025, 2696]
+First 10 labels: [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100]
+
+--- DEBUG: Explore first instance of the val set:
+ {'global_id': 'medeasi_001689', 'source_text': 'The inversion of a major interval is a minor interval, the inversion of an augmented interval is a diminished interval.', 'source_metrics': {'FRE': 25.8, 'ARI': 12.1, 'FKGL': 14.6, 'Dale-Chall': 8.58, 'char_count': 119, 'alphanum_count': 98, 'word_count': 22, 'sentence_count': 1, 'keep': 'none'}, 'metadata': {'dataset': 'medeasi', 'experiment_split': '', 'domain': 'medical', 'language': 'en', 'annotation': 'human', 'level': 'sentence'}, 'simplification_text': 'A major 6th is the inversion of a minor 3rd. All major intervals, when inverted, become minor intervals.', 'target_metrics': {'FRE': 53.88, 'ARI': 5.8, 'FKGL': 8.0, 'Dale-Chall': 9.35, 'char_count': 104, 'alphanum_count': 81, 'word_count': 22, 'sentence_count': 2, 'char_compression_rate': 0.87, 'word_compression_rate': 1.0, 'sentence_compression_rate': 2.0, 'BLEU': 11.96655750514248, 'BERTScore': 0.8907240033149719, 'keep': 'none'}, 'simplification_version': 1, 'grade_level': -1, 'simplification_dimensions': {'linguistic': {'lexical': False, 'syntactic': False}}, 'prompt': "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nCutting Knowledge Date: December 2023\nToday Date: 09 Jul 2026\n\nYou are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nINSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. \nSOURCE TEXT: <KEEP=none> The inversion of a major interval is a minor interval, the inversion of an augmented interval is a diminished interval.\nEXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n", 'completion': 'A major 6th is the inversion of a minor 3rd. All major intervals, when inverted, become minor intervals. <|eot_id|>', 'system_prompt_id': 'sys_prompt_5', 'user_prompt_id': 'token_explanation', 'metric_name': 'KEEP', 'source_metric_value': 'none', 'target_metric_value': 'none', 'input_ids': [128000, 128000, 128006, 9125, 128007, 271, 38766, 1303, 33025, 2696, 25, 6790, 220, 2366, 18, 198, 15724, 2696, 25, 220, 2545, 10263, 220, 2366, 21, 271, 2675, 527, 459, 6335, 304, 1495, 15858, 2461, 13, 3277, 499, 5371, 264, 1495, 369, 15858, 2461, 11, 499, 7068, 264, 44899, 2373, 315, 430, 1495, 13, 1472, 15884, 4007, 279, 15858, 2461, 13186, 5300, 555, 279, 1217, 323, 10737, 279, 1495, 28178, 13, 5321, 7068, 1193, 279, 44899, 1495, 11, 912, 1023, 8554, 477, 41941, 5535, 13, 128009, 128006, 882, 128007, 271, 691, 58555, 25, 62342, 1463, 279, 2768, 1495, 13, 1472, 28832, 21813, 11, 7041, 323, 2085, 84218, 11, 1475, 35876, 907, 10212, 304, 279, 2585, 4037, 22033, 2954, 311, 701, 8066, 15858, 2461, 13, 578, 2585, 4037, 706, 279, 2768, 3645, 25, 366, 52901, 28, 24771, 8226, 1405, 27925, 11725, 279, 5219, 311, 2567, 13, 578, 2585, 4037, 22033, 2954, 311, 279, 2592, 1495, 11725, 279, 5219, 1766, 304, 279, 2592, 1495, 430, 2011, 387, 34683, 13, 720, 44098, 16139, 25, 366, 52901, 28, 6836, 29, 578, 47588, 315, 264, 3682, 10074, 374, 264, 9099, 10074, 11, 279, 47588, 315, 459, 57088, 10074, 374, 264, 54182, 10074, 627, 3337, 95179, 3579, 25, 578, 366, 52901, 28, 6836, 29, 4037, 11725, 279, 35876, 2819, 505, 279, 2592, 1495, 430, 28832, 387, 34683, 7041, 320, 3265, 3811, 323, 539, 40542, 8, 304, 701, 15858, 2461, 13, 35813, 527, 9200, 2038, 304, 279, 6593, 8106, 320, 68, 1326, 13, 8924, 1154, 11, 17051, 11, 54208, 11, 49316, 1237, 26156, 477, 60923, 1124, 649, 387, 11660, 13, 3277, 279, 907, 374, 364, 6836, 518, 279, 2592, 5727, 912, 5219, 311, 21813, 13, 128009, 128006, 78191, 128007, 271, 27, 52901, 28, 6836, 29, 128009, 128006, 78191, 128007, 271, 128000, 32, 3682, 220, 21, 339, 374, 279, 47588, 315, 264, 9099, 220, 18, 6634, 13, 2052, 3682, 28090, 11, 994, 47801, 11, 3719, 9099, 28090, 13, 220, 128009, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256], 'labels': [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 128000, 32, 3682, 220, 21, 339, 374, 279, 47588, 315, 264, 9099, 220, 18, 6634, 13, 2052, 3682, 28090, 11, 994, 47801, 11, 3719, 9099, 28090, 13, 220, 128009, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100], 'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+type of input_ids: <class 'list'>
+type of labels: <class 'list'>
+
+--- DEBUG: Tokenized fields ---
+--- Tokenizer vocab size: 128000
+--- input_ids: [128000, 128000, 128006, 9125, 128007, 271, 38766, 1303, 33025, 2696, 25, 6790, 220, 2366, 18, 198, 15724, 2696, 25, 220, 2545, 10263, 220, 2366, 21, 271, 2675, 527, 264, 11190, 6335, 304, 1495, 15858, 2461, 13, 1472, 7068, 264, 44899, 2373, 315, 279, 1495, 1988, 555, 279, 1217, 13, 1472, 40821, 279, 1495, 4184, 311, 279, 11470, 2728, 555, 279, 1217, 13, 3277, 4691, 311, 40821, 264, 1495, 11, 7068, 1193, 279, 11472, 15858, 2461, 11, 2085, 904, 5217, 6170, 11, 8554, 477, 41941, 13, 128009, 128006, 882, 128007, 271, 691, 58555, 25, 62342, 1463, 279, 2768, 1495, 13, 1472, 28832, 21813, 11, 7041, 323, 2085, 84218, 11, 1475, 35876, 907, 10212, 304, 279, 2585, 4037, 22033, 2954, 311, 701, 8066, 15858, 2461, 13, 578, 2585, 4037, 706, 279, 2768, 3645, 25, 366, 52901, 28, 24771, 8226, 1405, 27925, 11725, 279, 5219, 311, 2567, 13, 578, 2585, 4037, 22033, 2954, 311, 279, 2592, 1495, 11725, 279, 5219, 1766, 304, 279, 2592, 1495, 430, 2011, 387, 34683, 13, 720, 44098, 16139, 25, 366, 52901, 28, 6836, 29, 45774, 356, 32466, 304, 5370, 3691, 33155, 18979, 449, 892, 304, 21801, 311, 279, 9499, 814, 527, 9967, 520, 323, 17677, 649, 8108, 279, 45774, 356, 2262, 315, 24822, 555, 2212, 220, 1399, 1034, 11000, 28135, 4245, 311, 7319, 32011, 780, 19814, 439, 433, 1253, 387, 810, 5199, 520, 1207, 70566, 8138, 20472, 627, 3337, 95179, 3579, 25, 578, 366, 52901, 28, 6836, 29, 4037, 11725, 279, 35876, 2819, 505, 279, 2592, 1495, 430, 28832, 387, 34683, 7041, 320, 3265, 3811, 323, 539, 40542, 8, 304, 701, 15858, 2461, 13, 35813, 527, 9200, 2038, 304, 279, 6593, 8106, 320, 68, 1326, 13, 8924, 1154, 11, 17051, 11, 54208, 11, 49316, 1237, 26156, 477, 60923, 1124, 649, 387, 11660, 13, 3277, 279, 907, 374, 364, 6836, 518, 279, 2592, 5727, 912, 5219, 311, 21813, 13, 128009, 128006, 78191, 128007, 271, 27, 52901, 28, 6836, 29, 128009, 128006, 78191, 128007, 271, 128000, 2170, 449, 14098, 323, 24822, 17677, 60832, 279, 28170, 356, 2262, 13, 220, 128009, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256]
+--- labels: [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 128000, 2170, 449, 14098, 323, 24822, 17677, 60832, 279, 28170, 356, 2262, 13, 220, 128009, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100]
+--- decoded input_ids:
+ <|begin_of_text|><|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Vitamin C concentrations in various food substances decrease with time in proportion to the temperature they are stored at and cooking can reduce the Vitamin C content of vegetables by around 60 % possibly partly due to increased enzymatic destruction as it may be more significant at sub-boiling temperatures.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<|begin_of_text|>As with fruit and vegetables cooking destroys the vitamin C content. <|eot_id|>[PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD]wandb: WARNING The `run_name` is currently set to the same value as `TrainingArguments.output_dir`. If this was not intended, please specify a different run name by setting the `TrainingArguments.run_name` parameter.
+
+--- decoded labels:
+ As with fruit and vegetables cooking destroys the vitamin C content. 
+  0%|          | 0/279 [00:00<?, ?it/s]  0%|          | 1/279 [00:01<06:49,  1.47s/it]  1%|          | 2/279 [00:02<05:21,  1.16s/it]  1%|          | 3/279 [00:03<04:51,  1.06s/it]  1%|▏         | 4/279 [00:04<04:36,  1.00s/it]  2%|▏         | 5/279 [00:05<04:27,  1.02it/s]  2%|▏         | 6/279 [00:06<04:21,  1.04it/s]  3%|▎         | 7/279 [00:07<04:17,  1.06it/s]  3%|▎         | 8/279 [00:07<04:14,  1.07it/s]  3%|▎         | 9/279 [00:08<04:11,  1.07it/s]  4%|▎         | 10/279 [00:09<04:09,  1.08it/s]                                                  4%|▎         | 10/279 [00:09<04:09,  1.08it/s]{'loss': 2.509, 'grad_norm': 36.273658752441406, 'learning_rate': 1.6666666666666667e-06, 'epoch': 0.11}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.82it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.67it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.30it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.83it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.48it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.29it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.16it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.06it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 18.00it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.95it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.91it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.89it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.85it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.84it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.84it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.84it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.83it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.83it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.84it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.83it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.84it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.85it/s][A                                                
+                                               [A  4%|▎         | 10/279 [00:12<04:09,  1.08it/s]
+100%|██████████| 48/48 [00:02<00:00, 17.85it/s][A
+                                               [A  4%|▍         | 11/279 [02:22<3:04:12, 41.24s/it]  4%|▍         | 12/279 [02:23<2:08:57, 28.98s/it]  5%|▍         | 13/279 [02:24<1:30:47, 20.48s/it]  5%|▌         | 14/279 [02:25<1:04:26, 14.59s/it]  5%|▌         | 15/279 [02:26<46:05, 10.48s/it]    6%|▌         | 16/279 [02:27<33:18,  7.60s/it]  6%|▌         | 17/279 [02:28<24:28,  5.60s/it]  6%|▋         | 18/279 [02:29<18:15,  4.20s/it]  7%|▋         | 19/279 [02:29<13:54,  3.21s/it]{'eval_loss': 2.308492660522461, 'eval_runtime': 2.6824, 'eval_samples_per_second': 71.204, 'eval_steps_per_second': 17.894, 'epoch': 0.11}
+
+>>> [Step 20] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=1,000,000> It is one of the seven Millennium Prize Problems selected by the Clay Mathematics Institute, each of which carries a US $ 1,000,000 prize for the first correct solution.
+EXPLANATION: The <KEEP=1,000,000> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=1,000,000><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+It is one of the seven Millennium Prize Problems selected by the Clay Mathematics Institute to carry a US $ 1,000,000 prize for the first correct solution. <|eot_id|>
+>>> Prediction:
+# 1,000,000 is the number of the Millennium Prize Problem, a problem selected by the Clay Mathematics Institute.  # 
+================================================================================
+
+>>> [Step 20] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> In children, sore throat, odynophagia, and dysphagia develop abruptly. Fatal asphyxia may occur within a few hours of onset. Drooling is very common.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+In children with epiglottitis, symptoms develop suddenly, and fatal narrowing of the larynx can occur within a few hours of the start of symptoms. Symptoms include Severe throat pain; Difficulty swallowing; Pain with swallowing; Fever; Drooling; A muffled voice. <|eot_id|>
+>>> Prediction:
+defensive reflexes develop,  and  develop.  The  of  and  may occur within a few hours of onset.  is very common.  may be fatal.  is a  of  that may occur within a few hours of onset.  may be fatal.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset.  is a  of  that may occur within a few hours of onset. 
+================================================================================
+
+>>> [Step 20] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> The book depicts working class poverty, the absence of social programs, harsh and unpleasant living and working conditions, and a hopelessness among many workers.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+The book writes about the poverty, bad living and working conditions, and sorrow among the working class. <|eot_id|>
+>>> Prediction:
+# 1.  The book depicts working class poverty, the absence of social programs, harsh and unpleasant living and working conditions, and a hopelessness among many workers.  # 2.  # 3.  # 4.  # 5.  # 6.  # 7.  # 8.  # 9.  # 10.  # 11.  # 12.  # 13.  # 14.  # 15.  # 16.  # 17.  # 18.  # 19.  # 20.  # 21.  # 22.  # 23.  # 24.  # 25.  # 26.  # 27.  # 28.  # 29.  # 30.  # 31.  # 32.  # 33.  # 34.  # 35.  # 36.  # 37.  # 38.  # 39.  # 40.  # 41.  # 42.  # 43.  # 44.  # 45.  # 46.  # 47.  # 48.  # 49.  # 50.  # 51.  # 52.  # 53.  # 54.  # 55.  # 56.  # 57.  # 58.  # 59.  # 60.  # 61.  # 62.  # 63.  # 64.  # 65.  # 66.  # 67.  # 68.  # 69.  # 70.  # 71.  # 72.  # 73.  # 74.  # 75.  # 76.  # 77.  # 78.  # 79.  # 80.  # 81.  # 82.  # 83.  # 84.  # 85.  # 86.  # 87.  # 88.  # 89.  # 90.  # 91.  # 92.  # 93.  # 94.  # 95.  # 96.  # 97.  # 98.  # 99.  # 100.  # 101.  # 102.  # 103.  # 104.  # 105.  # 106.  # 107.  # 108.  # 109.  # 110.  # 111.  # 112.  # 113.  # 114.  # 115.  # 116.  # 117.  # 118.  # 119.  # 120.  # 121.  # 122.  # 123.  # 124.  # 125.  # 126.  # 127.  # 128.  # 129.  # 130.  # 131.  # 132.  # 133.  # 134.  # 135.  # 136.  # 137.  # 138.  # 139.  # 140.  # 141.  # 142.  # 143.  # 144.  # 145.  # 146.  # 147.  # 148.  # 149.  # 150.  # 151.  # 152.  # 153.  # 154.  # 155.  # 156.  # 157.  # 158.  # 159.  # 160.  # 161.  # 162.  # 163.  # 164.  # 165.  # 166.  # 167.  # 168.  # 169.  # 170.  # 171.  # 172.  # 173.  # 174.  # 175.  # 176.  # 177.  # 178.  # 179.  # 180.  # 181.  # 182.  # 183.  # 184.  # 185.  # 186.  # 187.  # 188.  # 189.  # 190.  # 191.  # 192.  # 193.  # 194.  # 195.  # 196.  # 197.  # 198.  # 199.  # 200.  # 201.  # 202.  # 203.  # 204.  # 205.  # 206.  # 207.  # 208.  # 209.  # 210.  # 211.  # 212.  # 213.  # 214.  # 215.  # 216.  # 217.  # 218.  # 219.  # 220.  # 221.  # 222.  # 223.  # 224.  # 225.  # 226.  # 227.  # 228.  # 229.  # 230.  # 231.  # 232.  # 233.  # 234.  # 235.  # 236.  # 237.  # 238.  # 239.  # 240.  # 241.  # 242.  # 243.  # 244.  # 245.  # 246.  # 247.  # 248.  # 249.  # 250.  # 251.  # 252.  # 253.  # 254.  # 255.  # 256.  # 257.  # 258.  # 259.  # 260.  # 261.  # 262.  # 263.  # 264.  # 265.  # 266.  # 267.  # 268.  # 269.  # 270.  # 271.  # 272.  # 273.  # 274.  # 275.  # 276.  # 277.  # 278.  # 279.  # 280.  # 281.  # 282.  # 283.  # 284.  # 285.  # 286.  # 287.  # 288.  # 289.  # 290.  # 291.  # 292.  # 293.  # 294.
+================================================================================
+
+>>> [Step 20] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Surfactant should be considered for mechanically ventilated neonates with high oxygen requirements; it can decrease the need for ECMO (1, 2) but does not decrease mortality. Antibiotics (usually ampicillin and an aminoglycoside âsuch as used for standard treatment of serious bacterial illness in an ill neonate) are sometimes given.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Newborns on a ventilator may be given surfactant (a substance that coats the inside of the air sacs and allows the air sacs of the lungs to remain open) and are observed closely for serious complications, such as pneumothorax or persistent pulmonary hypertension of the newborn. Newborns may also be treated with antibiotics given by vein because of the risk of an infection. <|eot_id|>
+>>> Prediction:
+#1.  <KEEP=0.1>  #1.  In neonates with high oxygen requirements, surfactant is recommended to be given.  #1.  This is because surfactant helps to reduce the work of breathing in these infants.  #1.   #2.  The need for ECMO (extracorporeal membrane oxygenation) is decreased when surfactant is given.  #2.  #3.  Antibiotics are usually given to treat bacterial infections.  #3.   #4.  The standard treatment for bacterial infections is usually antibiotics such as ampicillin and an aminoglycoside.  #4.   #5.  The treatment is usually started at 1-2 days of life.  #5.   #6.  The effectiveness of the treatment is usually measured by the rate of improvement in the infant's condition.  #6.   #7.   #8.   #9.  The mortality rate is usually low.  #9.   #10.  The mortality rate is usually low, and the use of surfactant has been shown to reduce the need for ECMO.  #10.   #11.   #12.  The use of antibiotics is usually stopped when the infant's condition improves.  #12.   #13.   #14.   #15.   #16.   #17.   #18.   #19.   #20.   #21.   #22.  #23.  #24.  #25.  #26.  #27.  #28.  #29.  #30.  #31.  #32.  #33.  #34.  #35.  #36.  #37.  #38.  #39.  #40.  #41.  #42.  #43.  #44.  #45.  #46.  #47.  #48.  #49.  #50.  #51.  #52.  #53.  #54.  #55.  #56.  #57.  #58.  #59.  #60.  #61.  #62.  #63.  #64.  #65.  #66.  #67.  #68.  #69.  #70.  #71.  #72.  #73.  #74.  #75.  #76.  #77.  #78.  #79.  #80.  #81.  #82.  #83.  #84.  #85.  #86.  #87.  #88.  #89.  #90.  #91.  #92.  #93.  #94.  #95.  #96.  #97.  #98.  #99.  #100.  #101.  #102.  #103.  #104.  #105.  #106.  #107.  #108.  #109.  #110.  #111.  #112.  #113.  #114.  #115.  #116.  #117.  #118.  #119.  #120.  #121.  #122.  #123.  #124.  #125.  #126.  #127.  #128.  #129.  #130.  #131.  #132.  #133.  #134.  #135.  #136.  #137.  #138.  #139.  #140.  #141.  #142.  #143.  #144.  #145.  #146.  #147.  #148.  #149.  #150.  #151.  #152.  #153.  #154.  #155.  #156.  #157.  #158.  #159.  #160.  #161.  #162.  #163.  #164.  #165.  #166.  #167.  #168.  #169.  #170.  #171.  #172.  #173.  #174.  #175.  #176.  #177.  #178.  #179.  #180.  #181.  #182.  #183.  #184.  #185.  #186.  #187.  #188.  #189.  #190.  #191.  #192.  #193.  #194.  #195.  #196.  #197.  #198.  #199.  #200.  #201.  #202.  #203.  #204.  #205.  #206.  #207.  #208.  #209.  #210.  #211.  #212.  #213.  #214.  #215.  #216.  #217.  #218.  #219.  #220.  #221.  #222.  #223.  #224.  #225.  #226.  #227.  #228.  #229.  #230.  #231.  #232.  #233.  #234.  #235.  #236.  #237.  #238.  #239.  #240.  #241.  #242.  #243.  #244.  #245.  #246.  #247.  #248.  #249.  #250.  #251.  #252.  #253.  #254.  #255.  #256.  #257.  #258.  #259.  #260.  #261.  #262.  #263.  #264.  #265.  #266.  #267.  #268.  #269.  #270.  #271.  #272.  #273.  #274.  #275.  #276.  #277.  #278.  #279.  #280.  #281.  #282.  #283.  #284.  #285.  #286.  #287.  #288.  #289.  #290.  #291.  #292.  #293.  #294.  #295.  #296.  #297.  #298.  #299.  #300.  #301.  #302.  #303.  #304.  #305.  #306.  #307.  #308.  #309.  #310.  #311.  #312.   7%|▋         | 20/279 [02:57<45:33, 10.55s/it]                                                  7%|▋         | 20/279 [02:57<45:33, 10.55s/it]
+================================================================================
+{'loss': 2.0029, 'grad_norm': 17.76757049560547, 'learning_rate': 3.3333333333333333e-06, 'epoch': 0.21}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.69it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.64it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.27it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.80it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.48it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.26it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.13it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.01it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 17.93it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.88it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.87it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.85it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.84it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.83it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.81it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.80it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.79it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.79it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.79it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.79it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.79it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.81it/s][A                                                
+                                               [A  7%|▋         | 20/279 [03:00<45:33, 10.55s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.81it/s][A
+                                               [A  8%|▊         | 21/279 [05:10<3:23:17, 47.28s/it]  8%|▊         | 22/279 [05:11<2:22:54, 33.36s/it]  8%|▊         | 23/279 [05:12<1:40:48, 23.63s/it]  9%|▊         | 24/279 [05:13<1:11:27, 16.81s/it]  9%|▉         | 25/279 [05:14<50:59, 12.05s/it]    9%|▉         | 26/279 [05:15<36:46,  8.72s/it] 10%|▉         | 27/279 [05:16<26:47,  6.38s/it] 10%|█         | 28/279 [05:16<19:49,  4.74s/it] 10%|█         | 29/279 [05:17<14:58,  3.59s/it] 11%|█         | 30/279 [05:18<11:34,  2.79s/it]                                                 11%|█         | 30/279 [05:18<11:34,  2.79s/it]{'eval_loss': 1.503610372543335, 'eval_runtime': 2.6883, 'eval_samples_per_second': 71.05, 'eval_steps_per_second': 17.855, 'epoch': 0.21}
+{'loss': 1.5385, 'grad_norm': 12.600954055786133, 'learning_rate': 5e-06, 'epoch': 0.32}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.82it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.70it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.30it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.83it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.53it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.31it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.16it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.07it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 18.00it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.96it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.93it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.90it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.89it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.88it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.87it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.86it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.85it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.85it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.85it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.84it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.84it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.85it/s][A                                                
+                                               [A 11%|█         | 30/279 [05:21<11:34,  2.79s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.85it/s][A
+                                               [A 11%|█         | 31/279 [07:32<2:53:21, 41.94s/it] 11%|█▏        | 32/279 [07:33<2:01:59, 29.63s/it] 12%|█▏        | 33/279 [07:33<1:26:10, 21.02s/it] 12%|█▏        | 34/279 [07:34<1:01:11, 14.99s/it] 13%|█▎        | 35/279 [07:35<43:46, 10.77s/it]   13%|█▎        | 36/279 [07:36<31:38,  7.81s/it] 13%|█▎        | 37/279 [07:37<23:09,  5.74s/it] 14%|█▎        | 38/279 [07:38<17:15,  4.29s/it] 14%|█▍        | 39/279 [07:39<13:07,  3.28s/it] 14%|█▍        | 40/279 [07:40<10:48,  2.71s/it]                                                 14%|█▍        | 40/279 [07:40<10:48,  2.71s/it]{'eval_loss': 1.3425401449203491, 'eval_runtime': 2.6798, 'eval_samples_per_second': 71.273, 'eval_steps_per_second': 17.912, 'epoch': 0.32}
+
+>>> [Step 40] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Because patients lack the motor responses (eg, withdrawal from painful stimuli) usually used to measure responsiveness, they may be mistakenly thought to be unconscious. Thus, all patients who can not move should have their comprehension tested by requesting eye blinking or vertical eye movements.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Because locked-in syndrome can be mistaken for stupor or coma, doctors test people who do not move and appear unresponsive by asking them to open and close their eyes. <|eot_id|>
+>>> Prediction:
+The patients usually lack motor responses (eg, withdrawal from painful stimuli) which are used to measure responsiveness. 
+================================================================================
+
+>>> [Step 40] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Poor immune function is a risk factor for disease.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Poor immune function is also a risk factor for disease. <|eot_id|>
+>>> Prediction:
+deficiency of the immune system can make you more susceptible to disease. 
+================================================================================
+
+>>> [Step 40] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are an expert in controlled text simplification. When you receive a text, you simplify it by rewriting it in a manner that is easier to read. Your simplification is guided by the simplification criteria specified by the user. You generate only the simplification result, without any additional comments or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Food waste or food loss is food material that is discarded or unable to be used.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+It is unknown how much food waste occurs during food processing. <|eot_id|>
+>>> Prediction:
+The food waste or food loss is food material that is discarded or unable to be used. 
+================================================================================
+
+>>> [Step 40] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=60, 97> In his account Morrell wrongly records the position of this anchorage, giving a location in open sea about 60 miles ( 97 km ) south-west of the island 's coastline.
+EXPLANATION: The <KEEP=60, 97> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=60, 97><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+In his account Morrell wrongly records the position of this anchorage, placing it in open sea about 60 miles ( 97 km ) south-west of the island 's coastline. <|eot_id|>
+>>> Prediction:
+The anchorage is located about 60 miles ( 97 km ) south-west of the island's coastline. 
+================================================================================
+{'loss': 1.3141, 'grad_norm': 10.376097679138184, 'learning_rate': 4.980128306524184e-06, 'epoch': 0.43}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.86it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.72it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.34it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.87it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.57it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.36it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.21it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.09it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 18.02it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.97it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.92it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.89it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.87it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.86it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.85it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.84it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.84it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.83it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.83it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.79it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.80it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.82it/s][A                                                
+                                               [A 14%|█▍        | 40/279 [07:43<10:48,  2.71s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.82it/s][A
+                                               [A 15%|█▍        | 41/279 [09:54<2:46:25, 41.95s/it] 15%|█▌        | 42/279 [09:55<1:57:05, 29.64s/it] 15%|█▌        | 43/279 [09:56<1:22:41, 21.02s/it] 16%|█▌        | 44/279 [09:57<58:43, 14.99s/it]   16%|█▌        | 45/279 [09:58<42:00, 10.77s/it] 16%|█▋        | 46/279 [09:58<30:20,  7.81s/it] 17%|█▋        | 47/279 [09:59<22:12,  5.74s/it] 17%|█▋        | 48/279 [10:00<16:32,  4.30s/it] 18%|█▊        | 49/279 [10:01<12:34,  3.28s/it] 18%|█▊        | 50/279 [10:02<09:49,  2.57s/it]                                                 18%|█▊        | 50/279 [10:02<09:49,  2.57s/it]{'eval_loss': 1.2979798316955566, 'eval_runtime': 2.6802, 'eval_samples_per_second': 71.265, 'eval_steps_per_second': 17.909, 'epoch': 0.43}
+{'loss': 1.3765, 'grad_norm': 11.292715072631836, 'learning_rate': 4.92082913345801e-06, 'epoch': 0.53}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.79it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.73it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.32it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.86it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.56it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.34it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.19it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.09it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 18.02it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.97it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.94it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.92it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.90it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.89it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.88it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.87it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.86it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.85it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.85it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.85it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.85it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.87it/s][A                                                
+                                               [A 18%|█▊        | 50/279 [10:05<09:49,  2.57s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.87it/s][A
+                                               [A 18%|█▊        | 51/279 [12:16<2:39:04, 41.86s/it] 19%|█▊        | 52/279 [12:17<1:51:54, 29.58s/it] 19%|█▉        | 53/279 [12:17<1:19:01, 20.98s/it] 19%|█▉        | 54/279 [12:18<56:06, 14.96s/it]   20%|█▉        | 55/279 [12:19<40:08, 10.75s/it] 20%|██        | 56/279 [12:20<28:59,  7.80s/it] 20%|██        | 57/279 [12:21<21:13,  5.74s/it] 21%|██        | 58/279 [12:22<15:48,  4.29s/it] 21%|██        | 59/279 [12:23<12:01,  3.28s/it]{'eval_loss': 1.2785296440124512, 'eval_runtime': 2.6778, 'eval_samples_per_second': 71.326, 'eval_steps_per_second': 17.925, 'epoch': 0.53}
+
+>>> [Step 60] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Pliny the Younger provided an account of his death, and suggested that he collapsed and died through inhaling poisonous gases emitted from the volcano.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Pliny the Younger wrote an account of his death, and suggested that he collapsed and died through inhaling poisonous gases emitted by the volcano. <|eot_id|>
+>>> Prediction:
+The Roman historian Pliny the Younger wrote an account of his death. 
+================================================================================
+
+>>> [Step 60] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> These errors create large structural changes in DNA sequence - duplications, inversions, deletions of entire regions - or the accidental exchange of whole parts of sequences between different chromosomes ( chromosomal translocation ).
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+These errors create large structural changes in DNA sequence-duplications, inversions or deletions of entire regions, or the accidental exchanging of whole parts between different chromosomes ( called translocation ). <|eot_id|>
+>>> Prediction:
+The errors create large structural changes in DNA sequence - duplications, inversions, deletions of entire regions - or the accidental exchange of whole parts of sequences between different chromosomes ( chromosomal translocation ). 
+================================================================================
+
+>>> [Step 60] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> There are a number of less common causes (see table Some Causes of Scrotal Pain).
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+There are a number of less common causes. Less common causes include A hernia in the groin (inguinal hernia); Infection of the testis (orchitis), usually caused by mumps or another virus; Pain from a disorder in the abdomen (such as a kidney stone or appendicitis); Injury. Dangerous disorders that sometimes cause scrotal pain include a ruptured abdominal aortic aneurysm and necrotizing infection of the perineum the area between the genitals and anus called Fournier gangrene. <|eot_id|>
+>>> Prediction:
+This is the most common cause. 
+================================================================================
+
+>>> [Step 60] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Surfactant should be considered for mechanically ventilated neonates with high oxygen requirements; it can decrease the need for ECMO (1, 2) but does not decrease mortality. Antibiotics (usually ampicillin and an aminoglycoside âsuch as used for standard treatment of serious bacterial illness in an ill neonate) are sometimes given.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Newborns on a ventilator may be given surfactant (a substance that coats the inside of the air sacs and allows the air sacs of the lungs to remain open) and are observed closely for serious complications, such as pneumothorax or persistent pulmonary hypertension of the newborn. Newborns may also be treated with antibiotics given by vein because of the risk of an infection. <|eot_id|> 22%|██▏       | 60/279 [12:25<10:11,  2.79s/it]                                                 22%|██▏       | 60/279 [12:25<10:11,  2.79s/it]
+>>> Prediction:
+Question: 
+================================================================================
+{'loss': 1.3544, 'grad_norm': 10.851968765258789, 'learning_rate': 4.823045180793914e-06, 'epoch': 0.64}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.76it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.67it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.27it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.82it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.50it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.29it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.14it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.05it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 17.98it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.93it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.90it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.88it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.86it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.84it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.82it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.83it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.80it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.80it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.81it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.81it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.81it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.82it/s][A                                                
+                                               [A 22%|██▏       | 60/279 [12:27<10:11,  2.79s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.82it/s][A
+                                               [A 22%|██▏       | 61/279 [14:38<2:32:34, 42.00s/it] 22%|██▏       | 62/279 [14:39<1:47:18, 29.67s/it] 23%|██▎       | 63/279 [14:40<1:15:45, 21.05s/it] 23%|██▎       | 64/279 [14:41<53:46, 15.01s/it]   23%|██▎       | 65/279 [14:42<38:27, 10.78s/it] 24%|██▎       | 66/279 [14:43<27:46,  7.82s/it] 24%|██▍       | 67/279 [14:44<20:19,  5.75s/it] 24%|██▍       | 68/279 [14:45<15:07,  4.30s/it] 25%|██▍       | 69/279 [14:45<11:30,  3.29s/it] 25%|██▌       | 70/279 [14:46<08:58,  2.58s/it]                                                 25%|██▌       | 70/279 [14:46<08:58,  2.58s/it]{'eval_loss': 1.2611409425735474, 'eval_runtime': 2.6848, 'eval_samples_per_second': 71.141, 'eval_steps_per_second': 17.878, 'epoch': 0.64}
+{'loss': 1.2817, 'grad_norm': 9.434175491333008, 'learning_rate': 4.688330954719248e-06, 'epoch': 0.75}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.84it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.72it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.31it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.84it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.52it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.32it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.17it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.06it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 17.99it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.94it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.91it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.88it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.86it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.83it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.83it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.82it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.81it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.81it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.80it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.80it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.81it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.82it/s][A                                                
+                                               [A 25%|██▌       | 70/279 [14:49<08:58,  2.58s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.82it/s][A
+                                               [A 25%|██▌       | 71/279 [16:59<2:24:38, 41.72s/it] 26%|██▌       | 72/279 [17:00<1:41:42, 29.48s/it] 26%|██▌       | 73/279 [17:01<1:11:47, 20.91s/it] 27%|██▋       | 74/279 [17:02<50:57, 14.91s/it]   27%|██▋       | 75/279 [17:03<36:25, 10.71s/it] 27%|██▋       | 76/279 [17:04<26:18,  7.77s/it] 28%|██▊       | 77/279 [17:05<19:14,  5.72s/it] 28%|██▊       | 78/279 [17:06<14:19,  4.28s/it] 28%|██▊       | 79/279 [17:07<10:53,  3.27s/it]{'eval_loss': 1.2491304874420166, 'eval_runtime': 2.6831, 'eval_samples_per_second': 71.186, 'eval_steps_per_second': 17.89, 'epoch': 0.75}
+
+>>> [Step 80] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are an expert in controlled text simplification. When you receive a text, you simplify it by rewriting it in a manner that is easier to read. Your simplification is guided by the simplification criteria specified by the user. You generate only the simplification result, without any additional comments or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=1> A good mouse model for the Fragile X syndrome is available in the form of mice in which the Fmr1 gene (the mouse homolog of the human FMR1 gene) has been invalidated.
+EXPLANATION: The <KEEP=1> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=1><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+A good mouse model for the Fragile X syndrome is available because there are mice in which the Fmr1 gene has been changed so that it does not work any more. <|eot_id|>
+>>> Prediction:
+The mouse model for Fragile X syndrome is a mouse in which the Fmr1 gene (the mouse homolog of the human FMR1 gene) has been invalidated. 
+================================================================================
+
+>>> [Step 80] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are an expert in controlled text simplification. When you receive a text, you simplify it by rewriting it in a manner that is easier to read. Your simplification is guided by the simplification criteria specified by the user. You generate only the simplification result, without any additional comments or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> About 5 to 10 % of people with variola major develop either a hemorrhagic or a malignant (flat) variant. The hemorrhagic form is rarer and has a shorter, more intense prodrome, followed by generalized erythema and cutaneous and mucosal hemorrhage.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+In a few people with the severe form, the initial symptoms develop more quickly and are more intense. One rare type, called hemorrhagic smallpox causes bleeding. After a few days, bleeding occurs in the skin, mucous membranes, and gastrointestinal tract. <|eot_id|>
+>>> Prediction:
+A small percentage of people with severe infection develop either a hemorrhagic or a malignant (flat) form of the disease. 
+================================================================================
+
+>>> [Step 80] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are an expert in controlled text simplification. When you receive a text, you simplify it by rewriting it in a manner that is easier to read. Your simplification is guided by the simplification criteria specified by the user. You generate only the simplification result, without any additional comments or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> The book closes with a call for a biotic approach to pest control as an alternative to chemical pesticides.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+The book looked at problems with DDT and other pesticides (chemicals that kill pests, like mosquitoes and flies). <|eot_id|>
+>>> Prediction:
+The book closes with a call for a biotic approach to pest control as an alternative to chemical pesticides. 
+================================================================================
+
+>>> [Step 80] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Dependent personality disorder (DPD), formerly known as asthenic personality disorder, is a personality disorder that is characterized by a pervasive psychological dependence on other people.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+A dependent personality disorder (DPD) is a personality disorder that involves a psychological dependence on other people. <|eot_id|>
+>>> Prediction:
+The dependent personality disorder is a type of personality disorder that is characterized by a pervasive psychological dependence on other people.  29%|██▊       | 80/279 [17:08<09:10,  2.76s/it]                                                 29%|██▊       | 80/279 [17:08<09:10,  2.76s/it]
+================================================================================
+{'loss': 1.281, 'grad_norm': 9.184016227722168, 'learning_rate': 4.518828055079925e-06, 'epoch': 0.85}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.79it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.69it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.31it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.85it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.53it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.32it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.16it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.05it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 17.98it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.93it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.89it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.87it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.85it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.84it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.83it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.82it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.82it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.78it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.77it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.78it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.78it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.80it/s][A                                                
+                                               [A 29%|██▊       | 80/279 [17:11<09:10,  2.76s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.80it/s][A
+                                               [A 29%|██▉       | 81/279 [19:22<2:18:31, 41.98s/it] 29%|██▉       | 82/279 [19:23<1:37:22, 29.66s/it] 30%|██▉       | 83/279 [19:24<1:08:43, 21.04s/it] 30%|███       | 84/279 [19:25<48:45, 15.00s/it]   30%|███       | 85/279 [19:25<34:50, 10.78s/it] 31%|███       | 86/279 [19:26<25:08,  7.82s/it] 31%|███       | 87/279 [19:27<18:23,  5.75s/it] 32%|███▏      | 88/279 [19:28<13:40,  4.30s/it] 32%|███▏      | 89/279 [19:29<10:23,  3.28s/it] 32%|███▏      | 90/279 [19:30<08:06,  2.57s/it]                                                 32%|███▏      | 90/279 [19:30<08:06,  2.57s/it]{'eval_loss': 1.241337537765503, 'eval_runtime': 2.6855, 'eval_samples_per_second': 71.123, 'eval_steps_per_second': 17.874, 'epoch': 0.85}
+{'loss': 1.2529, 'grad_norm': 9.36816692352295, 'learning_rate': 4.317231129607859e-06, 'epoch': 0.96}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.80it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.65it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.28it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.82it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.51it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.31it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.17it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.07it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 17.99it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.94it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.91it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.90it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.88it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.88it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.87it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.87it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.86it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.85it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.85it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.85it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.85it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.86it/s][A                                                
+                                               [A 32%|███▏      | 90/279 [19:33<08:06,  2.57s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.86it/s][A
+                                               [A 33%|███▎      | 91/279 [21:43<2:10:59, 41.81s/it] 33%|███▎      | 92/279 [21:44<1:32:04, 29.54s/it] 33%|███▎      | 93/279 [21:45<1:04:57, 20.95s/it] 34%|███▎      | 94/279 [21:46<45:50, 14.87s/it]   34%|███▍      | 95/279 [21:47<32:46, 10.69s/it] 34%|███▍      | 96/279 [21:48<23:39,  7.76s/it] 35%|███▍      | 97/279 [21:49<17:18,  5.71s/it] 35%|███▌      | 98/279 [21:50<12:52,  4.27s/it] 35%|███▌      | 99/279 [21:51<09:47,  3.26s/it] 36%|███▌      | 100/279 [21:52<07:54,  2.65s/it]                                                  36%|███▌      | 100/279 [21:52<07:54,  2.65s/it]{'eval_loss': 1.225249171257019, 'eval_runtime': 2.6802, 'eval_samples_per_second': 71.263, 'eval_steps_per_second': 17.909, 'epoch': 0.96}
+
+>>> [Step 100] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are an expert in controlled text simplification. When you receive a text from the user, you carefully adapt it to the simplification level specified by the user. Please generate only the simplified text, without any additional explanations or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Fecal immunochemical tests for blood are more sensitive and specific for human blood than older guaiac -based stool tests, which can be affected by many dietary substances.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Newer stool tests for occult blood (fecal immunochemical tests or FIT) are more accurate than older stool tests and have no dietary restrictions. <|eot_id|>
+>>> Prediction:
+In 2002, the first stool test for blood was developed. 
+================================================================================
+
+>>> [Step 100] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are an expert in controlled text simplification. When you receive a text, you simplify it by rewriting it in a manner that is easier to read. Your simplification is guided by the simplification criteria specified by the user. You generate only the simplification result, without any additional comments or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> The most common forms are osteoarthritis (degenerative joint disease) and rheumatoid arthritis.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+The three most common kinds are osteoarthritis, rheumatoid arthritis, and gout. <|eot_id|>
+>>> Prediction:
+This is the most common form. 
+================================================================================
+
+>>> [Step 100] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Spontaneous remissions may last years.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Sometimes the attacks stop completely for a number of years, only to resume afterwards. <|eot_id|>
+>>> Prediction:
+The disease can last for years. 
+================================================================================
+
+>>> [Step 100] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are an expert in controlled text simplification. When you receive a text, you simplify it by rewriting it in a manner that is easier to read. Your simplification is guided by the simplification criteria specified by the user. You generate only the simplification result, without any additional comments or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Other decongestants such as pseudoephedrine appear effective in adults.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Other decongestants such as pseudoephedrine are also effective in adults. <|eot_id|>
+>>> Prediction:
+The following are available over-the-counter decongestants. 
+================================================================================
+{'loss': 1.0316, 'grad_norm': 8.113276481628418, 'learning_rate': 4.08674503614997e-06, 'epoch': 1.06}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.71it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.62it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.25it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.78it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.47it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.25it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.09it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.00it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 17.93it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.87it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.83it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.83it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.81it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.78it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.80it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.81it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.83it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.83it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.84it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.84it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.84it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.85it/s][A                                                 
+                                               [A 36%|███▌      | 100/279 [21:54<07:54,  2.65s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.85it/s][A
+                                               [A 36%|███▌      | 101/279 [24:05<2:03:56, 41.78s/it] 37%|███▋      | 102/279 [24:06<1:27:04, 29.52s/it] 37%|███▋      | 103/279 [24:07<1:01:25, 20.94s/it] 37%|███▋      | 104/279 [24:08<43:33, 14.93s/it]   38%|███▊      | 105/279 [24:08<31:06, 10.73s/it] 38%|███▊      | 106/279 [24:09<22:26,  7.78s/it] 38%|███▊      | 107/279 [24:10<16:24,  5.72s/it] 39%|███▊      | 108/279 [24:11<12:12,  4.28s/it] 39%|███▉      | 109/279 [24:12<09:16,  3.27s/it] 39%|███▉      | 110/279 [24:13<07:13,  2.57s/it]                                                  39%|███▉      | 110/279 [24:13<07:13,  2.57s/it]{'eval_loss': 1.2215125560760498, 'eval_runtime': 2.6867, 'eval_samples_per_second': 71.092, 'eval_steps_per_second': 17.866, 'epoch': 1.06}
+{'loss': 0.9052, 'grad_norm': 9.172473907470703, 'learning_rate': 3.831033893905965e-06, 'epoch': 1.17}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.76it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.71it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.30it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.84it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.54it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.32it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.18it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.08it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 18.01it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.96it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.92it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.89it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.88it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.86it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.85it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.84it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.84it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.84it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.83it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.83it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.82it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.84it/s][A                                                 
+                                               [A 39%|███▉      | 110/279 [24:16<07:13,  2.57s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.84it/s][A
+                                               [A 40%|███▉      | 111/279 [26:26<1:56:55, 41.76s/it] 40%|████      | 112/279 [26:27<1:22:07, 29.51s/it] 41%|████      | 113/279 [26:28<57:54, 20.93s/it]   41%|████      | 114/279 [26:29<41:02, 14.93s/it] 41%|████      | 115/279 [26:30<29:18, 10.72s/it] 42%|████▏     | 116/279 [26:31<21:08,  7.78s/it] 42%|████▏     | 117/279 [26:32<15:26,  5.72s/it] 42%|████▏     | 118/279 [26:33<11:28,  4.28s/it] 43%|████▎     | 119/279 [26:34<08:43,  3.27s/it]{'eval_loss': 1.2528150081634521, 'eval_runtime': 2.6807, 'eval_samples_per_second': 71.25, 'eval_steps_per_second': 17.906, 'epoch': 1.17}
+
+>>> [Step 120] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are an expert in controlled text simplification. When you receive a text from the user, you carefully adapt it to the simplification level specified by the user. Please generate only the simplified text, without any additional explanations or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Small- bowel transplantation is advocated for patients who are not candidates for long- term TPN and in whom adaptation does not occur.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Small intestine transplantation is an alternative for people who do not adapt to their short bowel and who can not tolerate long- term TPN. <|eot_id|>
+>>> Prediction:
+In the past, small bowel transplantation was considered when patients were not candidates for long-term TPN and in whom adaptation did not occur. 
+================================================================================
+
+>>> [Step 120] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=70> A study by Jody Hey has indicated that of the people migrating across this land bridge during that time period, only 70 left their genetic print in modern descendants, a minute effective founder population-easily misread as though implying that only 70 people crossed to North America.
+EXPLANATION: The <KEEP=70> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=70><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+A study by Hey has indicated that of the people migrating across this land bridge during that time period, only 70 left their genetic print in modern descendants. <|eot_id|>
+>>> Prediction:
+The study by Jody Hey has indicated that of the people migrating across this land bridge during that time period, only 70 left their genetic print in modern descendants, a small effective founder population-easily misread as though implying that only 70 people crossed to North America. 
+================================================================================
+
+>>> [Step 120] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Typically hemorrhagic stroke is caused by two types of weakened blood vessel : aneurysms and arteriovenous malformations ( AVMs ) .
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Usually hemorrhagic stroke is caused by two kinds of problems that cause weak blood vessels : aneurysms and arteriovenous malformations ( AVMs ) . <|eot_id|>
+>>> Prediction:
+In most cases, the first symptom is sudden and severe headache ( often described as the worst headache of one's life ). 
+================================================================================
+
+>>> [Step 120] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> The book depicts working class poverty, the absence of social programs, harsh and unpleasant living and working conditions, and a hopelessness among many workers.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+The book writes about the poverty, bad living and working conditions, and sorrow among the working class. <|eot_id|>
+>>> Prediction:
+The book depicts working class poverty, the absence of social programs, harsh and unpleasant living and working conditions, and a hopelessness among many workers. 
+================================================================================ 43%|████▎     | 120/279 [26:36<07:33,  2.86s/it]                                                  43%|████▎     | 120/279 [26:36<07:33,  2.86s/it]
+{'loss': 0.8614, 'grad_norm': 10.200416564941406, 'learning_rate': 3.55416283362546e-06, 'epoch': 1.28}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.84it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.76it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.35it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.88it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.56it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.35it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.20it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.08it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 18.01it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.96it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.93it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.91it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.89it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.88it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.86it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.85it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.85it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.82it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.81it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.82it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.82it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.83it/s][A                                                 
+                                               [A 43%|████▎     | 120/279 [26:38<07:33,  2.86s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.83it/s][A
+                                               [A 43%|████▎     | 121/279 [28:49<1:50:35, 42.00s/it] 44%|████▎     | 122/279 [28:50<1:17:38, 29.67s/it] 44%|████▍     | 123/279 [28:51<54:43, 21.05s/it]   44%|████▍     | 124/279 [28:52<38:46, 15.01s/it] 45%|████▍     | 125/279 [28:53<27:40, 10.78s/it] 45%|████▌     | 126/279 [28:53<19:56,  7.82s/it] 46%|████▌     | 127/279 [28:54<14:33,  5.75s/it] 46%|████▌     | 128/279 [28:55<10:49,  4.30s/it] 46%|████▌     | 129/279 [28:56<08:12,  3.28s/it] 47%|████▋     | 130/279 [28:57<06:23,  2.57s/it]                                                  47%|████▋     | 130/279 [28:57<06:23,  2.57s/it]{'eval_loss': 1.239506483078003, 'eval_runtime': 2.6797, 'eval_samples_per_second': 71.277, 'eval_steps_per_second': 17.913, 'epoch': 1.28}
+{'loss': 0.9046, 'grad_norm': 10.705690383911133, 'learning_rate': 3.2605333727822335e-06, 'epoch': 1.38}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.82it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.71it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.31it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.86it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.55it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.33it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.18it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.08it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 18.02it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.96it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.93it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.91it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.89it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.87it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.86it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.86it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.86it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.86it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.85it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.85it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.85it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.87it/s][A                                                 
+                                               [A 47%|████▋     | 130/279 [29:00<06:23,  2.57s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.87it/s][A
+                                               [A 47%|████▋     | 131/279 [31:10<1:42:53, 41.71s/it] 47%|████▋     | 132/279 [31:11<1:12:12, 29.47s/it] 48%|████▊     | 133/279 [31:12<50:52, 20.91s/it]   48%|████▊     | 134/279 [31:13<36:01, 14.91s/it] 48%|████▊     | 135/279 [31:14<25:42, 10.71s/it] 49%|████▊     | 136/279 [31:15<18:31,  7.77s/it] 49%|████▉     | 137/279 [31:16<13:31,  5.72s/it] 49%|████▉     | 138/279 [31:17<10:02,  4.28s/it] 50%|████▉     | 139/279 [31:17<07:37,  3.27s/it] 50%|█████     | 140/279 [31:19<06:18,  2.72s/it]                                                  50%|█████     | 140/279 [31:19<06:18,  2.72s/it]{'eval_loss': 1.230254054069519, 'eval_runtime': 2.6782, 'eval_samples_per_second': 71.316, 'eval_steps_per_second': 17.922, 'epoch': 1.38}
+
+>>> [Step 140] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Since amoebiasis is transmitted through contaminated food and water, it is often endemic in regions of the world with limited modern sanitation systems, including Mexico, Central America, western South America, South Asia, and western and southern Africa.Amoebic dysentery is often confused with `` traveler 's diarrhea '' because of its prevalence in developing nations.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Since amoebiasis is transmitted by contaminated food and water, it is often endemic in parts of the world with poor sanitation ( such as Mexico, Central America, western South America, South Asia, and western and southern Africa ).Amoebic dysentery is often confused with `` traveller 's diarrhoea '' because of its prevalence in developing nations. <|eot_id|>
+>>> Prediction:
+A common source of amoebiasis is contaminated water. 
+================================================================================
+
+>>> [Step 140] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are an expert in controlled text simplification. When you receive a text, you simplify it by rewriting it in a manner that is easier to read. Your simplification is guided by the simplification criteria specified by the user. You generate only the simplification result, without any additional comments or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Infants with hypothermia may feel cold when touched, with bright red skin and unusual lack of energy.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+When hypothermia begins, a person feels cold, starts shivering and can't stop. <|eot_id|>
+>>> Prediction:
+The skin may feel cold to the touch, and the baby may have bright red skin and a lack of energy. 
+================================================================================
+
+>>> [Step 140] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> When term limits are found in presidential and semi-presidential systems they act as a method of curbing the potential for monopoly, where a leader effectively becomes `` president for life ''.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+When term limits are found in presidential systems, they act as a method to reduce the potential for monopoly. <|eot_id|>
+>>> Prediction:
+A term limit is a law that limits the number of terms a person can serve in office. 
+================================================================================
+
+>>> [Step 140] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 09 Jul 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. 
+SOURCE TEXT: <KEEP=none> Corticosteroids, such as dexamethasone and budesonide, have been shown to improve outcomes in children with all severities of croup.
+EXPLANATION: The <KEEP=none> token lists the numerical values from the source text that MUST be preserved exactly (unchanged and not omitted) in your simplification. Numbers are critical information in the medical domain (e.g. dosages, ages, percentages, probabilities); dropping or altering them can be dangerous. When the value is 'none', the source contains no numbers to preserve.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<KEEP=none><|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+>>> Reference:
+Corticosteroids, such as dexamethasone and budesonide, can be used to treat croup. <|eot_id|>
+>>> Prediction:
+A 1999 study of 1,000 children with croup found that corticosteroids improved symptoms in about 70 percent. 
+================================================================================
+{'loss': 0.8478, 'grad_norm': 13.919374465942383, 'learning_rate': 2.9548134430893605e-06, 'epoch': 1.49}
+
+  0%|          | 0/48 [00:00<?, ?it/s][A
+  6%|▋         | 3/48 [00:00<00:01, 26.83it/s][A
+ 12%|█▎        | 6/48 [00:00<00:02, 20.72it/s][A
+ 19%|█▉        | 9/48 [00:00<00:02, 19.31it/s][A
+ 23%|██▎       | 11/48 [00:00<00:01, 18.86it/s][A
+ 27%|██▋       | 13/48 [00:00<00:01, 18.55it/s][A
+ 31%|███▏      | 15/48 [00:00<00:01, 18.34it/s][A
+ 35%|███▌      | 17/48 [00:00<00:01, 18.19it/s][A
+ 40%|███▉      | 19/48 [00:01<00:01, 18.09it/s][A
+ 44%|████▍     | 21/48 [00:01<00:01, 18.02it/s][A
+ 48%|████▊     | 23/48 [00:01<00:01, 17.97it/s][A
+ 52%|█████▏    | 25/48 [00:01<00:01, 17.94it/s][A
+ 56%|█████▋    | 27/48 [00:01<00:01, 17.92it/s][A
+ 60%|██████    | 29/48 [00:01<00:01, 17.90it/s][A
+ 65%|██████▍   | 31/48 [00:01<00:00, 17.88it/s][A
+ 69%|██████▉   | 33/48 [00:01<00:00, 17.88it/s][A
+ 73%|███████▎  | 35/48 [00:01<00:00, 17.87it/s][A
+ 77%|███████▋  | 37/48 [00:02<00:00, 17.86it/s][A
+ 81%|████████▏ | 39/48 [00:02<00:00, 17.86it/s][A
+ 85%|████████▌ | 41/48 [00:02<00:00, 17.83it/s][A
+ 90%|████████▉ | 43/48 [00:02<00:00, 17.82it/s][A
+ 94%|█████████▍| 45/48 [00:02<00:00, 17.82it/s][A
+ 98%|█████████▊| 47/48 [00:02<00:00, 17.85it/s][A                                                 
+                                               [A 50%|█████     | 140/279 [31:22<06:18,  2.72s/it]
+100%|██████████| 48/48 [00:02<00:00, 17.85it/s][A
+                                               [AThere were missing keys in the checkpoint model loaded: ['lm_head.weight'].
+                                                  50%|█████     | 140/279 [34:16<06:18,  2.72s/it] 50%|█████     | 140/279 [34:17<34:03, 14.70s/it]
+{'eval_loss': 1.2300009727478027, 'eval_runtime': 2.6788, 'eval_samples_per_second': 71.302, 'eval_steps_per_second': 17.919, 'epoch': 1.49}
+{'train_runtime': 2056.7738, 'train_samples_per_second': 2.186, 'train_steps_per_second': 0.136, 'train_loss': 1.3187003680637905, 'epoch': 1.49}
+  0%|          | 0/48 [00:00<?, ?it/s]  6%|▋         | 3/48 [00:00<00:01, 26.54it/s] 12%|█▎        | 6/48 [00:00<00:02, 20.67it/s] 19%|█▉        | 9/48 [00:00<00:02, 19.31it/s] 23%|██▎       | 11/48 [00:00<00:01, 18.86it/s] 27%|██▋       | 13/48 [00:00<00:01, 18.56it/s] 31%|███▏      | 15/48 [00:00<00:01, 18.34it/s] 35%|███▌      | 17/48 [00:00<00:01, 18.20it/s] 40%|███▉      | 19/48 [00:01<00:01, 18.10it/s] 44%|████▍     | 21/48 [00:01<00:01, 18.02it/s] 48%|████▊     | 23/48 [00:01<00:01, 17.97it/s] 52%|█████▏    | 25/48 [00:01<00:01, 17.94it/s] 56%|█████▋    | 27/48 [00:01<00:01, 17.92it/s] 60%|██████    | 29/48 [00:01<00:01, 17.90it/s] 65%|██████▍   | 31/48 [00:01<00:00, 17.88it/s] 69%|██████▉   | 33/48 [00:01<00:00, 17.87it/s] 73%|███████▎  | 35/48 [00:01<00:00, 17.87it/s] 77%|███████▋  | 37/48 [00:02<00:00, 17.87it/s] 81%|████████▏ | 39/48 [00:02<00:00, 17.87it/s] 85%|████████▌ | 41/48 [00:02<00:00, 17.86it/s] 90%|████████▉ | 43/48 [00:02<00:00, 17.86it/s] 94%|█████████▍| 45/48 [00:02<00:00, 17.86it/s] 98%|█████████▊| 47/48 [00:02<00:00, 17.87it/s]100%|██████████| 48/48 [00:02<00:00, 18.32it/s]
+Evaluation results: {'eval_loss': 1.2215125560760498, 'eval_runtime': 2.6818, 'eval_samples_per_second': 71.22, 'eval_steps_per_second': 17.898, 'epoch': 1.4906666666666666}
+Removing checkpoint: ./models/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709/checkpoint-100

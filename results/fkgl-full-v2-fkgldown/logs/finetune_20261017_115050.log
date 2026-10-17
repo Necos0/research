@@ -1,0 +1,1186 @@
+Logging to logs/finetune_20261017_115050.log
+*** Finetuning meta-llama/Llama-3.2-1B-Instruct with medeasi and FKGL ***
+torch.cuda.is_bf16_supported: True
+Transformers version: 4.48.3
+Python path: /mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/bin/python
+Not using PEFT...
+
+Run arguments:
+Namespace(model_class='auto', model_family='base', model_name='meta-llama/Llama-3.2-1B-Instruct', dataset_name='medeasi', local_data_dir='data/splits_flattened_full_fkgldown', slice_train=-1, slice_val=-1, batch_size=4, eval_batch_size=4, gradient_accumulation_steps=4, learning_rate=5e-06, weight_decay=0.01, warmup_steps=30, max_grad_norm=0.5, epochs=3, max_length=512, logging_steps=10, wandb_project_name='ATS_with_control_tokens', wandb_entity='shtosti', generate_every=20, seed=42, patience=4, save_each_epoch=True, prompting_type='vanilla', user_prompt_id='token_explanation', metric_name='FKGL', control_tokens='data/prompts/control_tokens.json', system_prompts='data/prompts/system_prompts.json', user_prompts='data/prompts/user_prompts.json', metric_mapping='data/metric_mapping.json', peft=False, lora_r=8, lora_dropout=0.1)
+
+Saving to: ./models/FKGL-medeasi-token_explanation-Llama-3.2-1B-Instruct-20261017
+
+*** Finetuning Llama-3.2-1B-Instruct with medeasi ***
+
+CUDA available: True
+Number of GPUs: 1
+GPU name: NVIDIA GeForce RTX 5090
+Model embedding size BEFORE resizing: 128256
+Model embedding size AFTER resizing: 128257
+--- DEBUG ---
+trainable params:
+Trainable params: 1,235,816,448 / 1,235,816,448 (100.00%)
+--- tokenizer pad_token_id: 128256
+--- tokenizer eos_token_id: 128009
+--- special tokens:
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 987 examples [00:00, 29700.53 examples/s]
+Generating test split: 0 examples [00:00, ? examples/s]Generating test split: 203 examples [00:00, 46836.66 examples/s]
+Generating validation split: 0 examples [00:00, ? examples/s]Generating validation split: 129 examples [00:00, 39182.07 examples/s]
+train:	 Inspect the dataset format:
+ {'global_id': ['medeasi_000510'], 'source_text': ['Vasoconstriction can change a lesion that does not limit blood flow into a severe or complete stenosis. Symptoms of unstable angina or myocardial infarction, ischemic stroke, or rest pain in the limbs may develop when unstable plaques rupture and acutely occlude a major artery, with superimposition of thrombosis or embolism.'], 'source_metrics': [{'FRE': 20.72, 'ARI': 17.2, 'FKGL': 16.6, 'Dale-Chall': 12.14, 'char_count': 326, 'alphanum_count': 272, 'word_count': 55, 'sentence_count': 2, 'keep': 'none'}], 'metadata': [{'dataset': 'medeasi', 'experiment_split': '', 'domain': 'medical', 'language': 'en', 'annotation': 'human', 'level': 'sentence'}], 'simplification_text': ['The first symptom of a narrowed artery may be pain or cramps at times when blood flow can not keep up with the tissues â\x80\x99 need for oxygen.'], 'target_metrics': [{'FRE': 68.44, 'ARI': 11.4, 'FKGL': 10.7, 'Dale-Chall': 8.97, 'char_count': 139, 'alphanum_count': 109, 'word_count': 29, 'sentence_count': 1, 'char_compression_rate': 0.43, 'word_compression_rate': 0.53, 'sentence_compression_rate': 0.5, 'BLEU': 1.7077282402567968, 'BERTScore': 0.8271716237068176, 'keep': 'none'}], 'simplification_version': [1], 'grade_level': [-1], 'simplification_dimensions': [{'linguistic': {'lexical': False, 'syntactic': False}}]}
+validation:	 Inspect the dataset format:
+ {'global_id': ['medeasi_000443'], 'source_text': ['Symptoms of postpartum depression may be similar to those of major depression and may include Extreme sadness; Guilt; Uncontrollable crying; Insomnia or increased sleep; Loss of appetite or overeating; Irritability and anger; Headaches and body aches and pains; Extreme fatigue; Unrealistic worries about or disinterest in the baby; A feeling of being incapable of caring for the baby or of being inadequate as a mother; Fear of harming the baby; Suicidal ideation; Anxiety or panic attacks.'], 'source_metrics': [{'FRE': -31.05, 'ARI': 42.3, 'FKGL': 36.5, 'Dale-Chall': 14.05, 'char_count': 491, 'alphanum_count': 403, 'word_count': 89, 'sentence_count': 1, 'keep': 'none'}], 'metadata': [{'dataset': 'medeasi', 'experiment_split': '', 'domain': 'medical', 'language': 'en', 'annotation': 'human', 'level': 'sentence'}], 'simplification_text': ['Symptoms of postpartum depression may include Extreme sadness; Frequent crying; Mood swings; Irritability and anger. Less common symptoms include Extreme fatigue; Sleep problems (too much or too little); Headaches and body aches; Loss of interest in sex and other activities; Anxiety or panic attacks; Loss of appetite or overeating; Difficulty functioning; Lack of interest in or unreasonable worries about the baby; Feelings of inadequacy or hopelessness; Guilt about having these feelings; Fear of harming the baby; Suicidal thoughts.'], 'target_metrics': [{'FRE': 6.51, 'ARI': 25.9, 'FKGL': 22.0, 'Dale-Chall': 12.86, 'char_count': 537, 'alphanum_count': 442, 'word_count': 96, 'sentence_count': 2, 'char_compression_rate': 1.09, 'word_compression_rate': 1.08, 'sentence_compression_rate': 2.0, 'BLEU': 34.414131341907314, 'BERTScore': 0.9205672144889832, 'keep': 'none'}], 'simplification_version': [1], 'grade_level': [-1], 'simplification_dimensions': [{'linguistic': {'lexical': False, 'syntactic': False}}]}
+Map:   0%|          | 0/987 [00:00<?, ? examples/s]Map:  46%|████▌     | 454/987 [00:00<00:00, 4488.32 examples/s]Map:  97%|█████████▋| 962/987 [00:00<00:00, 4829.00 examples/s]Map: 100%|██████████| 987/987 [00:00<00:00, 3909.50 examples/s]
+Map:   0%|          | 0/129 [00:00<?, ? examples/s]Map: 100%|██████████| 129/129 [00:00<00:00, 3016.12 examples/s]
+--- prompt sanity OK: ...'d|><|start_header_id|>assistant<|end_header_id|>\n\n<FKGL=7.2>'
+
+
+ *** Before tokenization ***
+>>> train:
+
+Showing 1 example(s):
+
+Example 1 (index 341)
+--- Prompt:
+ <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=17.3> Neutrophils, along with two other cell types; eosinophils and basophils ( see below ), are known as granulocytes due to the presence of granules in their cytoplasm, or as polymorphonuclear cells ( PMNs ) due to their distinctive lobed nuclei.
+EXPLANATION: The <FKGL=15.0> token specifies that the target Flesch-Kincaid Grade Level should be approximately 15.0. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=15.0>
+--- Completion:
+  Neutrophils and two other cell types ( eosinophils and basophils ), are known as granulocytes ( because they have granules in their cytoplasm ) or polymorphonuclear cells ( PMNs ) due to their distinctive lobed nuclei.<|eot_id|>
+==================================================
+Map:   0%|          | 0/987 [00:00<?, ? examples/s]Map:  18%|█▊        | 175/987 [00:00<00:00, 1724.11 examples/s]Map:  36%|███▌      | 357/987 [00:00<00:00, 1771.67 examples/s]Map:  54%|█████▍    | 535/987 [00:00<00:00, 1774.26 examples/s]Map:  72%|███████▏  | 713/987 [00:00<00:00, 1775.22 examples/s]Map:  91%|█████████ | 900/987 [00:00<00:00, 1804.59 examples/s]Map: 100%|██████████| 987/987 [00:00<00:00, 1224.81 examples/s]
+Map:   0%|          | 0/129 [00:00<?, ? examples/s]Map: 100%|██████████| 129/129 [00:00<00:00, 1205.74 examples/s]Map: 100%|██████████| 129/129 [00:00<00:00, 1145.34 examples/s]
+
+
+ *** After tokenization ***
+>>> train:
+
+Showing 1 example(s):
+
+Example 1 (index 328)
+--- Prompt:
+ <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=12.1> To avoid having a bowel movement, children may tighten the external sphincter muscles, pushing the stool higher in the rectal vault. If this behavior is repeated, the rectum stretches to accommodate the retained stool. The urge to defecate is then decreased, and the stool becomes harder, leading to a vicious circle of painful defecation and worsened constipation. Occasionally, soft stool passes around the impacted stool and leads to stool incontinence (encopresis). Anal fissures cause pain with stool passage, leading to a similar vicious circle of delayed bowel movements, resulting in harder stool that is more painful to pass.
+EXPLANATION: The <FKGL=10.2> token specifies that the target Flesch-Kincaid Grade Level should be approximately 10.2. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=10.2>
+--- Completion:
+  If children do not move their bowels when the natural urge comes, the rectum eventually stretches to accommodate the stool. When the rectum has stretched, the urge to have a BM lessens, and more and more stool accumulates and hardens. A vicious circle of worsening constipation may result. If the accumulated stool hardens, it sometimes blocks the passage of other stool condition called fecal impaction. Looser stool from above the hardened stool may leak around the impaction into the child 's underwear and lead to stool incontinence (encopresis).<|eot_id|>
+--- input_ids:
+ [128000, 128006, 9125, 128007, 271, 38766, 1303, 33025, 2696, 25, 6790, 220, 2366, 18, 198, 15724, 2696, 25, 220, 1114, 5020, 220, 2366, 21, 271, 2675, 527, 264, 11190, 6335, 304, 1495, 15858, 2461, 13, 1472, 7068, 264, 44899, 2373, 315, 279, 1495, 1988, 555, 279, 1217, 13, 1472, 40821, 279, 1495, 4184, 311, 279, 11470, 2728, 555, 279, 1217, 13, 3277, 4691, 311, 40821, 264, 1495, 11, 7068, 1193, 279, 11472, 15858, 2461, 11, 2085, 904, 5217, 6170, 11, 8554, 477, 41941, 13, 128009, 128006, 882, 128007, 271, 691, 58555, 25, 62342, 1463, 279, 2768, 1495, 1778, 430, 1202, 435, 645, 331, 16222, 258, 936, 307, 24749, 9580, 320, 28096, 3910, 8, 5573, 374, 13489, 6273, 311, 430, 5300, 304, 279, 2585, 4037, 22033, 2954, 311, 701, 8066, 15858, 2461, 13, 578, 2585, 4037, 706, 279, 2768, 3645, 25, 366, 45975, 37078, 28, 24771, 14611, 578, 2585, 4037, 22033, 2954, 311, 279, 2592, 1495, 15151, 279, 85346, 3910, 907, 315, 279, 2592, 1495, 13, 720, 44098, 16139, 25, 366, 28096, 3910, 28, 717, 13, 16, 29, 2057, 5766, 3515, 264, 66358, 7351, 11, 2911, 1253, 67845, 279, 9434, 42822, 7956, 261, 24569, 11, 17919, 279, 64172, 5190, 304, 279, 7763, 278, 35684, 13, 1442, 420, 7865, 374, 11763, 11, 279, 7763, 372, 50699, 311, 29376, 279, 35363, 64172, 13, 578, 33147, 311, 711, 762, 349, 374, 1243, 25983, 11, 323, 279, 64172, 9221, 16127, 11, 6522, 311, 264, 43510, 12960, 315, 26175, 711, 762, 367, 323, 47293, 6901, 738, 49686, 13, 89426, 11, 8579, 64172, 16609, 2212, 279, 40028, 64172, 323, 11767, 311, 64172, 304, 22025, 768, 320, 967, 454, 417, 285, 570, 20017, 95159, 1439, 5353, 6784, 449, 64172, 21765, 11, 6522, 311, 264, 4528, 43510, 12960, 315, 23540, 66358, 19567, 11, 13239, 304, 16127, 64172, 430, 374, 810, 26175, 311, 1522, 627, 3337, 95179, 3579, 25, 578, 366, 28096, 3910, 28, 605, 13, 17, 29, 4037, 30202, 430, 279, 2218, 435, 645, 331, 16222, 258, 936, 307, 24749, 9580, 1288, 387, 13489, 220, 605, 13, 17, 13, 28636, 2819, 13519, 35388, 1495, 13, 128009, 128006, 78191, 128007, 271, 27, 28096, 3910, 28, 605, 13, 17, 29, 1442, 2911, 656, 539, 3351, 872, 15631, 2053, 994, 279, 5933, 33147, 4131, 11, 279, 7763, 372, 9778, 50699, 311, 29376, 279, 64172, 13, 3277, 279, 7763, 372, 706, 41398, 11, 279, 33147, 311, 617, 264, 20387, 2753, 729, 11, 323, 810, 323, 810, 64172, 15783, 24031, 323, 2653, 729, 13, 362, 43510, 12960, 315, 93405, 738, 49686, 1253, 1121, 13, 1442, 279, 41165, 64172, 2653, 729, 11, 433, 7170, 10215, 279, 21765, 315, 1023, 64172, 3044, 2663, 55061, 278, 3242, 1335, 13, 6621, 24332, 64172, 505, 3485, 279, 71836, 64172, 1253, 24237, 2212, 279, 3242, 1335, 1139, 279, 1716, 364, 82, 55244, 323, 3063, 311, 64172, 304, 22025, 768, 320, 967, 454, 417, 285, 570, 128009, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256]
+--- labels:
+ [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 1442, 2911, 656, 539, 3351, 872, 15631, 2053, 994, 279, 5933, 33147, 4131, 11, 279, 7763, 372, 9778, 50699, 311, 29376, 279, 64172, 13, 3277, 279, 7763, 372, 706, 41398, 11, 279, 33147, 311, 617, 264, 20387, 2753, 729, 11, 323, 810, 323, 810, 64172, 15783, 24031, 323, 2653, 729, 13, 362, 43510, 12960, 315, 93405, 738, 49686, 1253, 1121, 13, 1442, 279, 41165, 64172, 2653, 729, 11, 433, 7170, 10215, 279, 21765, 315, 1023, 64172, 3044, 2663, 55061, 278, 3242, 1335, 13, 6621, 24332, 64172, 505, 3485, 279, 71836, 64172, 1253, 24237, 2212, 279, 3242, 1335, 1139, 279, 1716, 364, 82, 55244, 323, 3063, 311, 64172, 304, 22025, 768, 320, 967, 454, 417, 285, 570, 128009, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100]
+==================================================
+********** DEBUG **********
+Train dataset columns: ['global_id', 'source_text', 'source_metrics', 'metadata', 'simplification_text', 'target_metrics', 'simplification_version', 'grade_level', 'simplification_dimensions', 'prompt', 'completion', 'system_prompt_id', 'user_prompt_id', 'metric_name', 'source_metric_value', 'target_metric_value', 'input_ids', 'labels', 'attention_mask']
+Validation dataset columns: ['global_id', 'source_text', 'source_metrics', 'metadata', 'simplification_text', 'target_metrics', 'simplification_version', 'grade_level', 'simplification_dimensions', 'prompt', 'completion', 'system_prompt_id', 'user_prompt_id', 'metric_name', 'source_metric_value', 'target_metric_value', 'input_ids', 'labels', 'attention_mask']
+First 10 input_ids: [128000, 128006, 9125, 128007, 271, 38766, 1303, 33025, 2696, 25]
+First 10 labels: [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100]
+
+--- DEBUG: Explore first instance of the val set:
+ {'global_id': 'medeasi_000973', 'source_text': 'On January 11 , 1621 , as Bradford was helping to build houses , he was suddenly struck with great pain in his hipbone and he collapsed .', 'source_metrics': {'FRE': 64.04, 'ARI': 12.1, 'FKGL': 10.3, 'Dale-Chall': 10.75, 'char_count': 137, 'alphanum_count': 100, 'word_count': 28, 'sentence_count': 1, 'keep': '11, 1621'}, 'metadata': {'dataset': 'medeasi', 'experiment_split': '', 'domain': 'medical', 'language': 'en', 'annotation': 'human', 'level': 'sentence'}, 'simplification_text': 'On January 11 , 1621 , as Bradford was helping to build houses when he was got a great pain in his hipbone and fell .', 'target_metrics': {'FRE': 73.51, 'ARI': 8.9, 'FKGL': 8.7, 'Dale-Chall': 8.9, 'char_count': 118, 'alphanum_count': 83, 'word_count': 26, 'sentence_count': 1, 'char_compression_rate': 0.86, 'word_compression_rate': 0.93, 'sentence_compression_rate': 1.0, 'BLEU': 63.068437684145124, 'BERTScore': 0.9612731337547302, 'keep': '11, 1621'}, 'simplification_version': 1, 'grade_level': -1, 'simplification_dimensions': {'linguistic': {'lexical': False, 'syntactic': False}}, 'prompt': '<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nCutting Knowledge Date: December 2023\nToday Date: 17 Oct 2026\n\nYou are an expert in controlled text simplification. When you receive a text from the user, you carefully adapt it to the simplification level specified by the user. Please generate only the simplified text, without any additional explanations or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nINSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. \nSOURCE TEXT: <FKGL=10.3> On January 11 , 1621 , as Bradford was helping to build houses , he was suddenly struck with great pain in his hipbone and he collapsed .\nEXPLANATION: The <FKGL=8.7> token specifies that the target Flesch-Kincaid Grade Level should be approximately 8.7. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n<FKGL=8.7>', 'completion': ' On January 11 , 1621 , as Bradford was helping to build houses when he was got a great pain in his hipbone and fell .<|eot_id|>', 'system_prompt_id': 'sys_prompt_4', 'user_prompt_id': 'token_explanation', 'metric_name': 'FKGL', 'source_metric_value': 10.3, 'target_metric_value': 8.7, 'input_ids': [128000, 128006, 9125, 128007, 271, 38766, 1303, 33025, 2696, 25, 6790, 220, 2366, 18, 198, 15724, 2696, 25, 220, 1114, 5020, 220, 2366, 21, 271, 2675, 527, 459, 6335, 304, 14400, 1495, 15858, 2461, 13, 3277, 499, 5371, 264, 1495, 505, 279, 1217, 11, 499, 15884, 10737, 433, 311, 279, 15858, 2461, 2237, 5300, 555, 279, 1217, 13, 5321, 7068, 1193, 279, 44899, 1495, 11, 2085, 904, 5217, 41941, 477, 8554, 13, 128009, 128006, 882, 128007, 271, 691, 58555, 25, 62342, 1463, 279, 2768, 1495, 1778, 430, 1202, 435, 645, 331, 16222, 258, 936, 307, 24749, 9580, 320, 28096, 3910, 8, 5573, 374, 13489, 6273, 311, 430, 5300, 304, 279, 2585, 4037, 22033, 2954, 311, 701, 8066, 15858, 2461, 13, 578, 2585, 4037, 706, 279, 2768, 3645, 25, 366, 45975, 37078, 28, 24771, 14611, 578, 2585, 4037, 22033, 2954, 311, 279, 2592, 1495, 15151, 279, 85346, 3910, 907, 315, 279, 2592, 1495, 13, 720, 44098, 16139, 25, 366, 28096, 3910, 28, 605, 13, 18, 29, 1952, 6186, 220, 806, 1174, 220, 10674, 16, 1174, 439, 60929, 574, 10695, 311, 1977, 15316, 1174, 568, 574, 15187, 17948, 449, 2294, 6784, 304, 813, 18638, 20337, 323, 568, 29368, 16853, 3337, 95179, 3579, 25, 578, 366, 28096, 3910, 28, 23, 13, 22, 29, 4037, 30202, 430, 279, 2218, 435, 645, 331, 16222, 258, 936, 307, 24749, 9580, 1288, 387, 13489, 220, 23, 13, 22, 13, 28636, 2819, 13519, 35388, 1495, 13, 128009, 128006, 78191, 128007, 271, 27, 28096, 3910, 28, 23, 13, 22, 29, 1952, 6186, 220, 806, 1174, 220, 10674, 16, 1174, 439, 60929, 574, 10695, 311, 1977, 15316, 994, 568, 574, 2751, 264, 2294, 6784, 304, 813, 18638, 20337, 323, 11299, 662, 128009, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256], 'labels': [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 1952, 6186, 220, 806, 1174, 220, 10674, 16, 1174, 439, 60929, 574, 10695, 311, 1977, 15316, 994, 568, 574, 2751, 264, 2294, 6784, 304, 813, 18638, 20337, 323, 11299, 662, 128009, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100], 'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+type of input_ids: <class 'list'>
+type of labels: <class 'list'>
+
+--- DEBUG: Tokenized fields ---
+--- Tokenizer vocab size: 128000
+--- input_ids: [128000, 128006, 9125, 128007, 271, 38766, 1303, 33025, 2696, 25, 6790, 220, 2366, 18, 198, 15724, 2696, 25, 220, 1114, 5020, 220, 2366, 21, 271, 2675, 527, 264, 11190, 6335, 304, 1495, 15858, 2461, 13, 1472, 7068, 264, 44899, 2373, 315, 279, 1495, 1988, 555, 279, 1217, 13, 1472, 40821, 279, 1495, 4184, 311, 279, 11470, 2728, 555, 279, 1217, 13, 3277, 4691, 311, 40821, 264, 1495, 11, 7068, 1193, 279, 11472, 15858, 2461, 11, 2085, 904, 5217, 6170, 11, 8554, 477, 41941, 13, 128009, 128006, 882, 128007, 271, 691, 58555, 25, 62342, 1463, 279, 2768, 1495, 1778, 430, 1202, 435, 645, 331, 16222, 258, 936, 307, 24749, 9580, 320, 28096, 3910, 8, 5573, 374, 13489, 6273, 311, 430, 5300, 304, 279, 2585, 4037, 22033, 2954, 311, 701, 8066, 15858, 2461, 13, 578, 2585, 4037, 706, 279, 2768, 3645, 25, 366, 45975, 37078, 28, 24771, 14611, 578, 2585, 4037, 22033, 2954, 311, 279, 2592, 1495, 15151, 279, 85346, 3910, 907, 315, 279, 2592, 1495, 13, 720, 44098, 16139, 25, 366, 28096, 3910, 28, 1114, 13, 15, 29, 18156, 25636, 477, 2167, 326, 661, 983, 437, 8728, 627, 3337, 95179, 3579, 25, 578, 366, 28096, 3910, 28, 22, 13, 17, 29, 4037, 30202, 430, 279, 2218, 435, 645, 331, 16222, 258, 936, 307, 24749, 9580, 1288, 387, 13489, 220, 22, 13, 17, 13, 28636, 2819, 13519, 35388, 1495, 13, 128009, 128006, 78191, 128007, 271, 27, 28096, 3910, 28, 22, 13, 17, 29, 18156, 2167, 26767, 449, 264, 18327, 477, 264, 20705, 14019, 128009, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256, 128256]
+--- labels: [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 18156, 2167, 26767, 449, 264, 18327, 477, 264, 20705, 14019, 128009, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100]
+--- decoded input_ids:
+ <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=17.0> Sometimes indirect or direct laryngoscopy.
+EXPLANATION: The <FKGL=7.2> token specifies that the target Flesch-Kincaid Grade Level should be approximately 7.2. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=7.2> Sometimes direct inspection with a mirror or a viewing tube<|eot_id|>[PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD][PAD]wandb: WARNING The `run_name` is currently set to the same value as `TrainingArguments.output_dir`. If this was not intended, please specify a different run name by setting the `TrainingArguments.run_name` parameter.
+
+--- decoded labels:
+  Sometimes direct inspection with a mirror or a viewing tube
+  0%|          | 0/183 [00:00<?, ?it/s]  1%|          | 1/183 [00:01<05:30,  1.82s/it]  1%|          | 2/183 [00:02<04:12,  1.40s/it]  2%|▏         | 3/183 [00:04<03:45,  1.25s/it]  2%|▏         | 4/183 [00:05<03:33,  1.19s/it]  3%|▎         | 5/183 [00:06<03:25,  1.15s/it]  3%|▎         | 6/183 [00:07<03:20,  1.13s/it]  4%|▍         | 7/183 [00:08<03:16,  1.12s/it]  4%|▍         | 8/183 [00:09<03:13,  1.11s/it]  5%|▍         | 9/183 [00:10<03:11,  1.10s/it]  5%|▌         | 10/183 [00:11<03:09,  1.09s/it]                                                  5%|▌         | 10/183 [00:11<03:09,  1.09s/it]{'loss': 1.4957, 'grad_norm': 22.319740295410156, 'learning_rate': 1.6666666666666667e-06, 'epoch': 0.16}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.15it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.11it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.18it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.67it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.35it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.16it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.03it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:01, 14.94it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 14.89it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 14.85it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 14.82it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 14.80it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 14.79it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 14.78it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 14.83it/s][A                                                
+                                               [A  5%|▌         | 10/183 [00:13<03:09,  1.09s/it]
+100%|██████████| 33/33 [00:02<00:00, 14.83it/s][A
+                                               [A  6%|▌         | 11/183 [00:14<05:04,  1.77s/it]  7%|▋         | 12/183 [00:15<04:27,  1.56s/it]  7%|▋         | 13/183 [00:17<04:01,  1.42s/it]  8%|▊         | 14/183 [00:18<03:42,  1.32s/it]  8%|▊         | 15/183 [00:19<03:29,  1.25s/it]  9%|▊         | 16/183 [00:20<03:20,  1.20s/it]  9%|▉         | 17/183 [00:21<03:13,  1.16s/it] 10%|▉         | 18/183 [00:22<03:08,  1.14s/it] 10%|█         | 19/183 [00:23<03:04,  1.12s/it] 11%|█         | 20/183 [00:25<03:42,  1.37s/it]                                                 11%|█         | 20/183 [00:25<03:42,  1.37s/it]{'eval_loss': 1.4151115417480469, 'eval_runtime': 2.2146, 'eval_samples_per_second': 58.249, 'eval_steps_per_second': 14.901, 'epoch': 0.16}
+
+>>> [Step 20] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=12.7> Worldwide, 0.05-2 % of the population is estimated to have anaphylaxis at some point in life, and rates appear to be increasing.
+EXPLANATION: The <FKGL=4.6> token specifies that the target Flesch-Kincaid Grade Level should be approximately 4.6. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=4.6>
+>>> Reference:
+ Worldwide, about 0.05-2 % of people have anaphylaxis at some point in their lives.<|eot_id|>
+>>> Prediction:
+ Approximately 0.05-2 % of the population is estimated to have anaphylaxis at some point in life.
+================================================================================
+
+>>> [Step 20] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=10.7> Bilateral pain is particularly common in those who have migraines without an aura.
+EXPLANATION: The <FKGL=8.4> token specifies that the target Flesch-Kincaid Grade Level should be approximately 8.4. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=8.4>
+>>> Reference:
+ Being a female is a risk factor, and so is having family members who had migraines.<|eot_id|>
+>>> Prediction:
+ Bilateral pain is particularly common in those who have migraines without an aura.
+================================================================================
+
+>>> [Step 20] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=7.2> Food waste or food loss is food material that is discarded or unable to be used.
+EXPLANATION: The <FKGL=6.4> token specifies that the target Flesch-Kincaid Grade Level should be approximately 6.4. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=6.4>
+>>> Reference:
+ It is unknown how much food waste occurs during food processing.<|eot_id|>
+>>> Prediction:
+ Food waste or food loss is food material that is discarded or unable to be used.
+================================================================================
+
+>>> [Step 20] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=10.3> The fossils occur within an area of 500 km2, in southeast Morocco 's Draa Valley, north of Zagora.
+EXPLANATION: The <FKGL=8.0> token specifies that the target Flesch-Kincaid Grade Level should be approximately 8.0. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=8.0>
+>>> Reference:
+ The fossils a span an area of 500 km2, in southeast Morocco 's Draa Valley, north of Zagora.<|eot_id|>
+>>> Prediction:
+ The fossils occur in an area of 500 km2, in southeast Morocco's Draa Valley, north of Zagora.
+================================================================================
+{'loss': 1.5087, 'grad_norm': 18.968048095703125, 'learning_rate': 3.3333333333333333e-06, 'epoch': 0.32}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.45it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.34it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.39it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.87it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.55it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.35it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.22it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.13it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.08it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.03it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.00it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 14.97it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 14.96it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 14.94it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 14.98it/s][A                                                
+                                               [A 11%|█         | 20/183 [00:27<03:42,  1.37s/it]
+100%|██████████| 33/33 [00:02<00:00, 14.98it/s][A
+                                               [A 11%|█▏        | 21/183 [00:28<05:13,  1.94s/it] 12%|█▏        | 22/183 [00:29<04:30,  1.68s/it] 13%|█▎        | 23/183 [00:30<04:00,  1.50s/it] 13%|█▎        | 24/183 [00:32<03:38,  1.37s/it] 14%|█▎        | 25/183 [00:33<03:23,  1.29s/it] 14%|█▍        | 26/183 [00:34<03:12,  1.23s/it] 15%|█▍        | 27/183 [00:35<03:04,  1.18s/it] 15%|█▌        | 28/183 [00:36<02:58,  1.15s/it] 16%|█▌        | 29/183 [00:37<02:54,  1.13s/it] 16%|█▋        | 30/183 [00:38<02:50,  1.12s/it]                                                 16%|█▋        | 30/183 [00:38<02:50,  1.12s/it]{'eval_loss': 1.296183705329895, 'eval_runtime': 2.179, 'eval_samples_per_second': 59.202, 'eval_steps_per_second': 15.145, 'epoch': 0.32}
+{'loss': 1.3305, 'grad_norm': 10.771672248840332, 'learning_rate': 5e-06, 'epoch': 0.49}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.39it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.30it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.35it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.83it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.52it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.32it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.20it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.11it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.05it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.00it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 14.97it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 14.96it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 14.94it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 14.93it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 14.98it/s][A                                                
+                                               [A 16%|█▋        | 30/183 [00:40<02:50,  1.12s/it]
+100%|██████████| 33/33 [00:02<00:00, 14.98it/s][A
+                                               [A 17%|█▋        | 31/183 [00:41<04:27,  1.76s/it] 17%|█▋        | 32/183 [00:42<03:55,  1.56s/it] 18%|█▊        | 33/183 [00:43<03:32,  1.42s/it] 19%|█▊        | 34/183 [00:45<03:16,  1.32s/it] 19%|█▉        | 35/183 [00:46<03:04,  1.25s/it] 20%|█▉        | 36/183 [00:47<02:56,  1.20s/it] 20%|██        | 37/183 [00:48<02:49,  1.16s/it] 21%|██        | 38/183 [00:49<02:45,  1.14s/it] 21%|██▏       | 39/183 [00:50<02:41,  1.12s/it] 22%|██▏       | 40/183 [00:52<03:33,  1.50s/it]                                                 22%|██▏       | 40/183 [00:52<03:33,  1.50s/it]{'eval_loss': 1.2229888439178467, 'eval_runtime': 2.1817, 'eval_samples_per_second': 59.129, 'eval_steps_per_second': 15.126, 'epoch': 0.49}
+
+>>> [Step 40] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=9.0> At the University of Western Australia, with his colleague Barry J. Marshall, Warren proved that the bacterium is the cause of stomach ulcers.
+EXPLANATION: The <FKGL=8.6> token specifies that the target Flesch-Kincaid Grade Level should be approximately 8.6. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=8.6>
+>>> Reference:
+ At the University of Western Australia with Barry J. Marshall, Warren proved that the bacterium is the cause of stomach ulcers.<|eot_id|>
+>>> Prediction:
+ At the University of Western Australia, with his colleague Barry J. Marshall, Warren proved that the bacterium is the cause of stomach ulcers.
+================================================================================
+
+>>> [Step 40] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=6.8> It occurs in most people with asthma and up to 20 % of people without asthma.
+EXPLANATION: The <FKGL=6.4> token specifies that the target Flesch-Kincaid Grade Level should be approximately 6.4. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=6.4>
+>>> Reference:
+ Up to 40 % of people with allergic rhinitis also have asthma.<|eot_id|>
+>>> Prediction:
+ People with asthma have asthma, and up to 20 % of people without asthma have asthma.
+================================================================================
+
+>>> [Step 40] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=31.5> Any group for sanitary epidemiological reconnaissance includes: epidemiologist, specialist on infections, assistant of epidemiologist ( bacteriologist-lab assistant ), medical orderly ( if necessary, the group will include zoologist or parasitologist ).
+EXPLANATION: The <FKGL=29.9> token specifies that the target Flesch-Kincaid Grade Level should be approximately 29.9. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=29.9>
+>>> Reference:
+ Mobile equipped group for sanitary epidemiological reconnaissance includes: epidemiologist, specialist on infections, assistant of epidemiologist ( bacteriologist - lab assistant ), medical orderly ( if necessary, the group will include zoologist or parasitologist ).<|eot_id|>
+>>> Prediction:
+ Any group for sanitary epidemiological reconnaissance includes: epidemiologist, specialist on infections, assistant of epidemiologist ( bacteriologist-lab assistant ), medical orderly ( if necessary, the group will include zoologist or parasitologist ).
+================================================================================
+
+>>> [Step 40] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are an expert in controlled text simplification. When you receive a text from the user, you carefully adapt it to the simplification level specified by the user. Please generate only the simplified text, without any additional explanations or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=10.0> Spontaneous remissions may last years.
+EXPLANATION: The <FKGL=8.8> token specifies that the target Flesch-Kincaid Grade Level should be approximately 8.8. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=8.8>
+>>> Reference:
+ Sometimes the attacks stop completely for a number of years, only to resume afterwards.<|eot_id|>
+>>> Prediction:
+ Spontaneous remissions may last years.
+================================================================================
+{'loss': 1.3157, 'grad_norm': 13.495506286621094, 'learning_rate': 4.9474829307735115e-06, 'epoch': 0.65}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.40it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.30it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.36it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.84it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.52it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.32it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.19it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.10it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.04it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 14.99it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 14.97it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 14.95it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 14.94it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 14.93it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 14.98it/s][A                                                
+                                               [A 22%|██▏       | 40/183 [00:55<03:33,  1.50s/it]
+100%|██████████| 33/33 [00:02<00:00, 14.98it/s][A
+                                               [A 22%|██▏       | 41/183 [00:56<04:47,  2.03s/it] 23%|██▎       | 42/183 [00:57<04:05,  1.74s/it] 23%|██▎       | 43/183 [00:58<03:36,  1.55s/it] 24%|██▍       | 44/183 [00:59<03:15,  1.41s/it] 25%|██▍       | 45/183 [01:00<03:00,  1.31s/it] 25%|██▌       | 46/183 [01:01<02:50,  1.24s/it] 26%|██▌       | 47/183 [01:02<02:42,  1.19s/it] 26%|██▌       | 48/183 [01:03<02:36,  1.16s/it] 27%|██▋       | 49/183 [01:04<02:32,  1.14s/it] 27%|██▋       | 50/183 [01:05<02:29,  1.12s/it]                                                 27%|██▋       | 50/183 [01:05<02:29,  1.12s/it]{'eval_loss': 1.2070250511169434, 'eval_runtime': 2.1821, 'eval_samples_per_second': 59.117, 'eval_steps_per_second': 15.123, 'epoch': 0.65}
+{'loss': 1.3314, 'grad_norm': 10.23869514465332, 'learning_rate': 4.792138157142158e-06, 'epoch': 0.81}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.31it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.18it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.29it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.79it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.50it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.31it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.18it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.10it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.04it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.00it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 14.97it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 14.95it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 14.94it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 14.93it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 14.97it/s][A                                                
+                                               [A 27%|██▋       | 50/183 [01:08<02:29,  1.12s/it]
+100%|██████████| 33/33 [00:02<00:00, 14.97it/s][A
+                                               [A 28%|██▊       | 51/183 [01:09<03:53,  1.77s/it] 28%|██▊       | 52/183 [01:10<03:24,  1.56s/it] 29%|██▉       | 53/183 [01:11<03:04,  1.42s/it] 30%|██▉       | 54/183 [01:12<02:49,  1.32s/it] 30%|███       | 55/183 [01:13<02:39,  1.25s/it] 31%|███       | 56/183 [01:14<02:32,  1.20s/it] 31%|███       | 57/183 [01:15<02:26,  1.16s/it] 32%|███▏      | 58/183 [01:16<02:22,  1.14s/it] 32%|███▏      | 59/183 [01:17<02:19,  1.12s/it] 33%|███▎      | 60/183 [01:20<02:59,  1.46s/it]                                                 33%|███▎      | 60/183 [01:20<02:59,  1.46s/it]{'eval_loss': 1.1873152256011963, 'eval_runtime': 2.1842, 'eval_samples_per_second': 59.062, 'eval_steps_per_second': 15.109, 'epoch': 0.81}
+
+>>> [Step 60] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=11.5> Fluid accumulation in the lungs may cause dyspnea and crackles on auscultation.
+EXPLANATION: The <FKGL=6.8> token specifies that the target Flesch-Kincaid Grade Level should be approximately 6.8. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=6.8>
+>>> Reference:
+ If fluid accumulates in the lungs, people may become short of breath.<|eot_id|>
+>>> Prediction:
+ The lungs may become congested and the chest may become tight, causing shortness of breath.
+================================================================================
+
+>>> [Step 60] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=13.0> The word croup comes from the Early Modern English verb croup , meaning `` to cry hoarsely '' ; the name was first applied to the disease in Scotland and popularized in the 18th century .
+EXPLANATION: The <FKGL=9.5> token specifies that the target Flesch-Kincaid Grade Level should be approximately 9.5. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=9.5>
+>>> Reference:
+ The word croup comes from the Early Modern English verb croup , meaning `` to cry hoarsely '' ; the name was first used for the disease in Scotland .<|eot_id|>
+>>> Prediction:
+ The word croup comes from the Early Modern English verb croup, meaning `` to cry hoarsely '' ; the name was first used in Scotland and popularized in the 18th century.
+================================================================================
+
+>>> [Step 60] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=17.8> In the early 1970s , she became a founding member of The Furies Collective , a lesbian feminist newspaper collective which held that heterosexuality was the root of all oppression .
+EXPLANATION: The <FKGL=15.4> token specifies that the target Flesch-Kincaid Grade Level should be approximately 15.4. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=15.4>
+>>> Reference:
+ In the 1970s , she became helped start The Furies Collective , a lesbian feminist newspaper collective which said that heterosexuality was the cause of all oppression .<|eot_id|>
+>>> Prediction:
+ In the 1970s she became a member of The Furies Collective, a lesbian feminist newspaper.
+================================================================================
+
+>>> [Step 60] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=18.6> Undernutrition and vitamin A deficiency may predispose to mortality.
+EXPLANATION: The <FKGL=13.1> token specifies that the target Flesch-Kincaid Grade Level should be approximately 13.1. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=13.1>
+>>> Reference:
+ Undernutrition and vitamin A deficiency may increase the risk of death in people infected with measles.<|eot_id|>
+>>> Prediction:
+ Undernutrition and vitamin A deficiency may lead to death.
+================================================================================
+{'loss': 1.1581, 'grad_norm': 12.460127830505371, 'learning_rate': 4.540492280890555e-06, 'epoch': 0.97}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 21.82it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 16.70it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 15.96it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.59it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.34it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.20it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.11it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.05it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.00it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 14.97it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 14.95it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 14.94it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 14.93it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 14.92it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 14.97it/s][A                                                
+                                               [A 33%|███▎      | 60/183 [01:22<02:59,  1.46s/it]
+100%|██████████| 33/33 [00:02<00:00, 14.97it/s][A
+                                               [A 33%|███▎      | 61/183 [01:23<04:04,  2.01s/it] 34%|███▍      | 62/183 [01:24<03:18,  1.64s/it] 34%|███▍      | 63/183 [02:09<29:31, 14.76s/it] 35%|███▍      | 64/183 [02:10<21:08, 10.66s/it] 36%|███▌      | 65/183 [02:11<15:18,  7.78s/it] 36%|███▌      | 66/183 [02:12<11:15,  5.77s/it] 37%|███▋      | 67/183 [02:13<08:26,  4.37s/it] 37%|███▋      | 68/183 [02:14<06:28,  3.38s/it] 38%|███▊      | 69/183 [02:15<05:06,  2.69s/it] 38%|███▊      | 70/183 [02:17<04:09,  2.21s/it]                                                 38%|███▊      | 70/183 [02:17<04:09,  2.21s/it]{'eval_loss': 1.1655170917510986, 'eval_runtime': 2.1981, 'eval_samples_per_second': 58.686, 'eval_steps_per_second': 15.013, 'epoch': 0.97}
+{'loss': 0.887, 'grad_norm': 8.832651138305664, 'learning_rate': 4.203117865141635e-06, 'epoch': 1.13}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.41it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.31it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.37it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.84it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.52it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.32it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.20it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.11it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.05it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.01it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 14.97it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 14.96it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 14.94it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 14.93it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 14.97it/s][A                                                
+                                               [A 38%|███▊      | 70/183 [02:19<04:09,  2.21s/it]
+100%|██████████| 33/33 [00:02<00:00, 14.97it/s][A
+                                               [A 39%|███▉      | 71/183 [02:20<04:43,  2.53s/it] 39%|███▉      | 72/183 [02:21<03:53,  2.10s/it] 40%|███▉      | 73/183 [02:22<03:17,  1.80s/it] 40%|████      | 74/183 [02:23<02:52,  1.58s/it] 41%|████      | 75/183 [02:24<02:34,  1.43s/it] 42%|████▏     | 76/183 [02:25<02:22,  1.33s/it] 42%|████▏     | 77/183 [02:26<02:12,  1.25s/it] 43%|████▎     | 78/183 [02:27<02:06,  1.20s/it] 43%|████▎     | 79/183 [02:29<02:01,  1.17s/it] 44%|████▎     | 80/183 [02:30<02:15,  1.32s/it]                                                 44%|████▎     | 80/183 [02:30<02:15,  1.32s/it]{'eval_loss': 1.1764665842056274, 'eval_runtime': 2.1835, 'eval_samples_per_second': 59.08, 'eval_steps_per_second': 15.114, 'epoch': 1.13}
+
+>>> [Step 80] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=11.5> Other decongestants such as pseudoephedrine appear effective in adults.
+EXPLANATION: The <FKGL=10.7> token specifies that the target Flesch-Kincaid Grade Level should be approximately 10.7. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=10.7>
+>>> Reference:
+ Other decongestants such as pseudoephedrine are also effective in adults.<|eot_id|>
+>>> Prediction:
+ Other decongestants such as pseudoephedrine appear effective in adults.
+================================================================================
+
+>>> [Step 80] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are an expert in controlled text simplification. When you receive a text, you simplify it by rewriting it in a manner that is easier to read. Your simplification is guided by the simplification criteria specified by the user. You generate only the simplification result, without any additional comments or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=9.2> Influenza viruses infect both humans and pigs, but do not infect birds.
+EXPLANATION: The <FKGL=7.6> token specifies that the target Flesch-Kincaid Grade Level should be approximately 7.6. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=7.6>
+>>> Reference:
+ This type of influenza virus can also infect humans and birds.<|eot_id|>
+>>> Prediction:
+ Influenza viruses infect both humans and pigs, but do not infect birds.
+================================================================================
+
+>>> [Step 80] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=10.7> Bilateral pain is particularly common in those who have migraines without an aura.
+EXPLANATION: The <FKGL=8.4> token specifies that the target Flesch-Kincaid Grade Level should be approximately 8.4. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=8.4>
+>>> Reference:
+ Being a female is a risk factor, and so is having family members who had migraines.<|eot_id|>
+>>> Prediction:
+ Migraines without aura are very common.
+================================================================================
+
+>>> [Step 80] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are an expert in controlled text simplification. When you receive a text from the user, you carefully adapt it to the simplification level specified by the user. Please generate only the simplified text, without any additional explanations or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=14.7> AIDS patients may require lifelong maintenance therapy with itraconazole for meningeal and disseminated infection.
+EXPLANATION: The <FKGL=12.7> token specifies that the target Flesch-Kincaid Grade Level should be approximately 12.7. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=12.7>
+>>> Reference:
+ After the infection is controlled, people with AIDS or another condition that weakens the immune system may need to take itraconazole by mouth until their immune system has recovered, possibly for the rest of their life. Itraconazole helps prevent sporotrichosis from recurring while the immune system is weak.<|eot_id|>
+>>> Prediction:
+ People with AIDS may need lifelong treatment with itraconazole for meningitis and disseminated infection.
+================================================================================
+{'loss': 0.8312, 'grad_norm': 12.095280647277832, 'learning_rate': 3.794189242333107e-06, 'epoch': 1.29}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.51it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.37it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.43it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.91it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.59it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.39it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.26it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.17it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.10it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.06it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.04it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 15.02it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 15.01it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 15.00it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 15.04it/s][A                                                
+                                               [A 44%|████▎     | 80/183 [02:32<02:15,  1.32s/it]
+100%|██████████| 33/33 [00:02<00:00, 15.04it/s][A
+                                               [A 44%|████▍     | 81/183 [02:33<03:13,  1.90s/it] 45%|████▍     | 82/183 [02:35<02:47,  1.65s/it] 45%|████▌     | 83/183 [02:36<02:28,  1.48s/it] 46%|████▌     | 84/183 [02:37<02:14,  1.36s/it] 46%|████▋     | 85/183 [02:38<02:05,  1.28s/it] 47%|████▋     | 86/183 [02:39<01:58,  1.22s/it] 48%|████▊     | 87/183 [02:40<01:53,  1.18s/it] 48%|████▊     | 88/183 [02:41<01:49,  1.15s/it] 49%|████▊     | 89/183 [02:42<01:46,  1.13s/it] 49%|████▉     | 90/183 [02:43<01:43,  1.11s/it]                                                 49%|████▉     | 90/183 [02:43<01:43,  1.11s/it]{'eval_loss': 1.192590355873108, 'eval_runtime': 2.1722, 'eval_samples_per_second': 59.386, 'eval_steps_per_second': 15.192, 'epoch': 1.29}
+{'loss': 0.8392, 'grad_norm': 12.690584182739258, 'learning_rate': 3.3308869986991493e-06, 'epoch': 1.45}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.46it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.35it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.42it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.89it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.57it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.37it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.24it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.15it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.09it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.05it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.03it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 15.01it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 14.99it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 14.99it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 15.03it/s][A                                                
+                                               [A 49%|████▉     | 90/183 [02:45<01:43,  1.11s/it]
+100%|██████████| 33/33 [00:02<00:00, 15.03it/s][A
+                                               [A 50%|████▉     | 91/183 [02:46<02:41,  1.76s/it] 50%|█████     | 92/183 [02:48<02:21,  1.56s/it] 51%|█████     | 93/183 [02:49<02:07,  1.41s/it] 51%|█████▏    | 94/183 [02:50<01:56,  1.31s/it] 52%|█████▏    | 95/183 [02:51<01:49,  1.24s/it] 52%|█████▏    | 96/183 [02:52<01:44,  1.20s/it] 53%|█████▎    | 97/183 [02:53<01:39,  1.16s/it] 54%|█████▎    | 98/183 [02:54<01:36,  1.14s/it] 54%|█████▍    | 99/183 [02:55<01:34,  1.12s/it] 55%|█████▍    | 100/183 [02:58<02:11,  1.58s/it]                                                  55%|█████▍    | 100/183 [02:58<02:11,  1.58s/it]{'eval_loss': 1.2004133462905884, 'eval_runtime': 2.1742, 'eval_samples_per_second': 59.333, 'eval_steps_per_second': 15.178, 'epoch': 1.45}
+
+>>> [Step 100] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=7.5> The adjacent image was taken 20 August 1999 with the Chandra X-ray Observatory 's 0.3-10.0 keV Advanced CCD Imaging Spectrometer ( ACIS ), and covers an area of 7.5 x 7.2 arc minutes.
+EXPLANATION: The <FKGL=6.2> token specifies that the target Flesch-Kincaid Grade Level should be approximately 6.2. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=6.2>
+>>> Reference:
+ The image on the right was taken in 1999 with the Chandra X-ray Observatory 's 0.3-10.0 keV Advanced Imaging Spectrometer, and covers an area of 7.5 x 7.2 arc minutes.<|eot_id|>
+>>> Prediction:
+ The adjacent image was taken 20 August 1999 with the Chandra X-ray Observatory's 0.3-10.0 keV Advanced CCD Imaging Spectrometer ( ACIS ), and covers an area of 7.5 x 7.2 arc minutes.
+================================================================================
+
+>>> [Step 100] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=19.1> In what is perhaps an in-joke within an in-joke, one of the scenes from Indiana Jones and the Temple of Doom actually features a man being eaten by a crocodile (closely related to the alligator) accompanied by the scream. Research by Burtt suggests that Sheb Wooley, best known for his novelty song `` The Purple People Eater '' in 1958 and as scout Pete Nolan on the television series Rawhide, is likely to have been the voice actor who originally performed the scream.
+EXPLANATION: The <FKGL=12.2> token specifies that the target Flesch-Kincaid Grade Level should be approximately 12.2. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=12.2>
+>>> Reference:
+ Other sound designers picked up on the effect, and use of the sound in movies became a tradition in the community of sound designers. Research by Burtt shows that actor and singer Sheb Wooley, best known for his song `` Flying Purple People Eater '' in 1958, is likely to have been the voice actor who first performed the scream.<|eot_id|>
+>>> Prediction:
+ In what is an in-joke within an in-joke, one of the scenes from Indiana Jones and the Temple of Doom features a man being eaten by a crocodile (closely related to the alligator) accompanied by the scream.
+================================================================================
+
+>>> [Step 100] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=10.3> After 1 or 2 days, the cutaneous lesions become vesicular, then pustular.
+EXPLANATION: The <FKGL=6.0> token specifies that the target Flesch-Kincaid Grade Level should be approximately 6.0. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=6.0>
+>>> Reference:
+ After 1 or 2 days, the spots turn into blisters, which fill with pus (forming pustules).<|eot_id|>
+>>> Prediction:
+ After 1 or 2 days, the cutaneous lesions become vesicular, then pustular.
+================================================================================
+
+>>> [Step 100] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=9.1> After the discovery of the first case of BSE in the US on 23 December 2003, Japan halted US beef imports.
+EXPLANATION: The <FKGL=6.8> token specifies that the target Flesch-Kincaid Grade Level should be approximately 6.8. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=6.8>
+>>> Reference:
+ It 's a disease that affects a cow 's nervous system and their physical state.<|eot_id|>
+>>> Prediction:
+ After the discovery of the first case of BSE in the US on 23 December 2003, the US stopped importing beef from the UK.
+================================================================================
+{'loss': 0.8165, 'grad_norm': 9.928317070007324, 'learning_rate': 2.832676155041135e-06, 'epoch': 1.62}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.44it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.35it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.41it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.89it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.57it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.37it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.24it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.15it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.09it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.05it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.03it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 15.01it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 15.00it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 14.99it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 15.03it/s][A                                                 
+                                               [A 55%|█████▍    | 100/183 [03:00<02:11,  1.58s/it]
+100%|██████████| 33/33 [00:02<00:00, 15.03it/s][A
+                                               [A 55%|█████▌    | 101/183 [03:01<02:51,  2.09s/it] 56%|█████▌    | 102/183 [03:02<02:24,  1.78s/it] 56%|█████▋    | 103/183 [03:03<02:05,  1.57s/it] 57%|█████▋    | 104/183 [03:04<01:52,  1.43s/it] 57%|█████▋    | 105/183 [03:05<01:43,  1.32s/it] 58%|█████▊    | 106/183 [03:06<01:36,  1.25s/it] 58%|█████▊    | 107/183 [03:08<01:31,  1.20s/it] 59%|█████▉    | 108/183 [03:09<01:27,  1.17s/it] 60%|█████▉    | 109/183 [03:10<01:24,  1.14s/it] 60%|██████    | 110/183 [03:11<01:21,  1.12s/it]                                                  60%|██████    | 110/183 [03:11<01:21,  1.12s/it]{'eval_loss': 1.1953216791152954, 'eval_runtime': 2.1743, 'eval_samples_per_second': 59.33, 'eval_steps_per_second': 15.177, 'epoch': 1.62}
+{'loss': 0.9147, 'grad_norm': 11.650297164916992, 'learning_rate': 2.3204883700516813e-06, 'epoch': 1.78}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.44it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.35it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.41it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.89it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.57it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.37it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.24it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.15it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.09it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.05it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.03it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 15.01it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 14.99it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 14.98it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 15.03it/s][A                                                 
+                                               [A 60%|██████    | 110/183 [03:13<01:21,  1.12s/it]
+100%|██████████| 33/33 [00:02<00:00, 15.03it/s][A
+                                               [A 61%|██████    | 111/183 [03:14<02:07,  1.76s/it] 61%|██████    | 112/183 [03:15<01:50,  1.56s/it] 62%|██████▏   | 113/183 [03:16<01:39,  1.42s/it] 62%|██████▏   | 114/183 [03:17<01:30,  1.32s/it] 63%|██████▎   | 115/183 [03:18<01:24,  1.25s/it] 63%|██████▎   | 116/183 [03:19<01:20,  1.20s/it] 64%|██████▍   | 117/183 [03:21<01:16,  1.16s/it] 64%|██████▍   | 118/183 [03:22<01:14,  1.14s/it] 65%|██████▌   | 119/183 [03:23<01:12,  1.13s/it] 66%|██████▌   | 120/183 [03:25<01:34,  1.49s/it]                                                  66%|██████▌   | 120/183 [03:25<01:34,  1.49s/it]{'eval_loss': 1.1887396574020386, 'eval_runtime': 2.1746, 'eval_samples_per_second': 59.322, 'eval_steps_per_second': 15.175, 'epoch': 1.78}
+
+>>> [Step 120] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are an expert in controlled text simplification. When you receive a text, you simplify it by rewriting it in a manner that is easier to read. Your simplification is guided by the simplification criteria specified by the user. You generate only the simplification result, without any additional comments or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=11.9> Small- bowel transplantation is advocated for patients who are not candidates for long- term TPN and in whom adaptation does not occur.
+EXPLANATION: The <FKGL=11.5> token specifies that the target Flesch-Kincaid Grade Level should be approximately 11.5. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=11.5>
+>>> Reference:
+ Small intestine transplantation is an alternative for people who do not adapt to their short bowel and who can not tolerate long- term TPN.<|eot_id|>
+>>> Prediction:
+ Small-bowel transplantation is advocated for people who are not good candidates for long-term TPN and who do not adapt well.
+================================================================================
+
+>>> [Step 120] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=8.0> The lesion slowly enlarges, often ulcerates, and may spread to other skin areas. Lesions heal slowly, with scarring.
+EXPLANATION: The <FKGL=7.4> token specifies that the target Flesch-Kincaid Grade Level should be approximately 7.4. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=7.4>
+>>> Reference:
+ The sores slowly enlarge and spread to nearby tissue, causing further damage. Sores heal slowly and may result in permanent scarring.<|eot_id|>
+>>> Prediction:
+ The lesion slowly enlarges, often ulcerates, and may spread to other skin areas. It heals slowly, with scarring.
+================================================================================
+
+>>> [Step 120] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=11.5> Fluid accumulation in the lungs may cause dyspnea and crackles on auscultation.
+EXPLANATION: The <FKGL=6.8> token specifies that the target Flesch-Kincaid Grade Level should be approximately 6.8. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=6.8>
+>>> Reference:
+ If fluid accumulates in the lungs, people may become short of breath.<|eot_id|>
+>>> Prediction:
+ Fluid accumulation in the lungs may cause shortness of breath and crackles when the lungs are auscultated.
+================================================================================
+
+>>> [Step 120] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=19.7> The distinction between `` epidemic '' and `` endemic '' was first drawn by Hippocrates , to distinguish between diseases that are `` visited upon '' a population ( epidemic ) from those that `` reside within '' a population ( endemic ) .
+EXPLANATION: The <FKGL=19.3> token specifies that the target Flesch-Kincaid Grade Level should be approximately 19.3. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=19.3>
+>>> Reference:
+ He has also drawn the distinction between ` epidemic ' and ` endemic ' to distinguish between diseases that are ` visited upon ' a population ( epidemic ) from those that ` reside within ' a population ( endemic ) .<|eot_id|>
+>>> Prediction:
+ The distinction between `` epidemic '' and `` endemic '' was first drawn by Hippocrates, to distinguish between diseases that are `` visited upon '' a population ( epidemic ) from those that `` live in '' a population ( endemic ).
+================================================================================
+{'loss': 0.7931, 'grad_norm': 12.231400489807129, 'learning_rate': 1.8158425248197931e-06, 'epoch': 1.94}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.47it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.37it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.42it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.89it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.56it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.36it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.23it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.15it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.08it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.05it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.02it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 15.00it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 14.99it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 14.98it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 15.02it/s][A                                                 
+                                               [A 66%|██████▌   | 120/183 [03:27<01:34,  1.49s/it]
+100%|██████████| 33/33 [00:02<00:00, 15.02it/s][A
+                                               [A 66%|██████▌   | 121/183 [03:28<02:05,  2.02s/it] 67%|██████▋   | 122/183 [03:29<01:46,  1.74s/it] 67%|██████▋   | 123/183 [03:30<01:32,  1.54s/it] 68%|██████▊   | 124/183 [03:31<01:17,  1.32s/it] 68%|██████▊   | 125/183 [04:17<14:02, 14.52s/it] 69%|██████▉   | 126/183 [04:18<09:57, 10.49s/it] 69%|██████▉   | 127/183 [04:19<07:09,  7.67s/it] 70%|██████▉   | 128/183 [04:20<05:12,  5.69s/it] 70%|███████   | 129/183 [04:21<03:52,  4.31s/it] 71%|███████   | 130/183 [04:22<02:57,  3.34s/it]                                                  71%|███████   | 130/183 [04:22<02:57,  3.34s/it]{'eval_loss': 1.176356315612793, 'eval_runtime': 2.175, 'eval_samples_per_second': 59.309, 'eval_steps_per_second': 15.172, 'epoch': 1.94}
+{'loss': 0.676, 'grad_norm': 10.198225975036621, 'learning_rate': 1.3399406359765921e-06, 'epoch': 2.1}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.55it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.43it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.48it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.94it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.62it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.42it/s][A
+ 48%|████▊     | 16/33 [00:00<00:01, 15.29it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.20it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.14it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.09it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.06it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 15.05it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 15.03it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 15.02it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 15.07it/s][A                                                 
+                                               [A 71%|███████   | 130/183 [04:24<02:57,  3.34s/it]
+100%|██████████| 33/33 [00:02<00:00, 15.07it/s][A
+                                               [A 72%|███████▏  | 131/183 [04:25<02:52,  3.32s/it] 72%|███████▏  | 132/183 [04:26<02:14,  2.65s/it] 73%|███████▎  | 133/183 [04:27<01:48,  2.18s/it] 73%|███████▎  | 134/183 [04:29<01:30,  1.85s/it] 74%|███████▍  | 135/183 [04:30<01:17,  1.62s/it] 74%|███████▍  | 136/183 [04:31<01:08,  1.46s/it] 75%|███████▍  | 137/183 [04:32<01:01,  1.34s/it] 75%|███████▌  | 138/183 [04:33<00:56,  1.27s/it] 76%|███████▌  | 139/183 [04:34<00:53,  1.21s/it] 77%|███████▋  | 140/183 [04:36<01:03,  1.47s/it]                                                  77%|███████▋  | 140/183 [04:36<01:03,  1.47s/it]{'eval_loss': 1.1991790533065796, 'eval_runtime': 2.1681, 'eval_samples_per_second': 59.499, 'eval_steps_per_second': 15.221, 'epoch': 2.1}
+
+>>> [Step 140] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=9.1> After the discovery of the first case of BSE in the US on 23 December 2003, Japan halted US beef imports.
+EXPLANATION: The <FKGL=6.8> token specifies that the target Flesch-Kincaid Grade Level should be approximately 6.8. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=6.8>
+>>> Reference:
+ It 's a disease that affects a cow 's nervous system and their physical state.<|eot_id|>
+>>> Prediction:
+ After the first case of BSE was found in the US in 2003, the US stopped buying beef from Canada.
+================================================================================
+
+>>> [Step 140] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=18.1> When determining the order of a sigmatropic shift involving a hydrogen atom migration it is critical to count across all atoms involved in the reaction rather than only across the closest atoms.
+EXPLANATION: The <FKGL=9.9> token specifies that the target Flesch-Kincaid Grade Level should be approximately 9.9. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=9.9>
+>>> Reference:
+ So, chemists count across all atoms involved in the reaction rather than only across the closest atoms.<|eot_id|>
+>>> Prediction:
+ To determine the order of a sigmatropic shift involving a hydrogen atom migration it is important to count across all atoms involved in the reaction rather than only across the closest atoms.
+================================================================================
+
+>>> [Step 140] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=11.5> Other decongestants such as pseudoephedrine appear effective in adults.
+EXPLANATION: The <FKGL=10.7> token specifies that the target Flesch-Kincaid Grade Level should be approximately 10.7. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=10.7>
+>>> Reference:
+ Other decongestants such as pseudoephedrine are also effective in adults.<|eot_id|>
+>>> Prediction:
+ Other decongestants such as pseudoephedrine appear effective in adults.
+================================================================================
+
+>>> [Step 140] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=25.7> Clinical evaluation. Diagnosis is primarily clinical.
+EXPLANATION: The <FKGL=13.1> token specifies that the target Flesch-Kincaid Grade Level should be approximately 13.1. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=13.1>
+>>> Reference:
+ A doctor 's evaluation<|eot_id|>
+>>> Prediction:
+ Doctors also use a physical exam and a series of tests to help make the diagnosis.
+================================================================================
+{'loss': 0.4724, 'grad_norm': 11.013847351074219, 'learning_rate': 9.127770814751933e-07, 'epoch': 2.26}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.54it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.41it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.46it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.94it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.62it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.42it/s][A
+ 48%|████▊     | 16/33 [00:00<00:01, 15.28it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.20it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.13it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.10it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.07it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 15.04it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 15.03it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 15.02it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 15.07it/s][A                                                 
+                                               [A 77%|███████▋  | 140/183 [04:38<01:03,  1.47s/it]
+100%|██████████| 33/33 [00:02<00:00, 15.07it/s][A
+                                               [A 77%|███████▋  | 141/183 [04:39<01:24,  2.00s/it] 78%|███████▊  | 142/183 [04:40<01:10,  1.73s/it] 78%|███████▊  | 143/183 [04:41<01:01,  1.53s/it] 79%|███████▊  | 144/183 [04:42<00:54,  1.40s/it] 79%|███████▉  | 145/183 [04:44<00:49,  1.30s/it] 80%|███████▉  | 146/183 [04:45<00:45,  1.24s/it] 80%|████████  | 147/183 [04:46<00:42,  1.19s/it] 81%|████████  | 148/183 [04:47<00:40,  1.16s/it] 81%|████████▏ | 149/183 [04:48<00:38,  1.14s/it] 82%|████████▏ | 150/183 [04:49<00:36,  1.12s/it]                                                  82%|████████▏ | 150/183 [04:49<00:36,  1.12s/it]{'eval_loss': 1.2841918468475342, 'eval_runtime': 2.1682, 'eval_samples_per_second': 59.497, 'eval_steps_per_second': 15.22, 'epoch': 2.26}
+{'loss': 0.4272, 'grad_norm': 11.804708480834961, 'learning_rate': 5.522985636858238e-07, 'epoch': 2.42}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.52it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.40it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.46it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.93it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.61it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.41it/s][A
+ 48%|████▊     | 16/33 [00:00<00:01, 15.28it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.20it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.13it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.09it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.07it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 15.04it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 15.03it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 15.02it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 15.07it/s][A                                                 
+                                               [A 82%|████████▏ | 150/183 [04:51<00:36,  1.12s/it]
+100%|██████████| 33/33 [00:02<00:00, 15.07it/s][A
+                                               [A 83%|████████▎ | 151/183 [04:52<00:56,  1.76s/it] 83%|████████▎ | 152/183 [04:53<00:48,  1.56s/it] 84%|████████▎ | 153/183 [04:54<00:42,  1.41s/it] 84%|████████▍ | 154/183 [04:55<00:38,  1.31s/it] 85%|████████▍ | 155/183 [04:57<00:34,  1.24s/it] 85%|████████▌ | 156/183 [04:58<00:32,  1.20s/it] 86%|████████▌ | 157/183 [04:59<00:30,  1.16s/it] 86%|████████▋ | 158/183 [05:00<00:28,  1.14s/it] 87%|████████▋ | 159/183 [05:01<00:26,  1.12s/it] 87%|████████▋ | 160/183 [05:05<00:49,  2.14s/it]                                                  87%|████████▋ | 160/183 [05:05<00:49,  2.14s/it]{'eval_loss': 1.3134219646453857, 'eval_runtime': 2.1686, 'eval_samples_per_second': 59.485, 'eval_steps_per_second': 15.217, 'epoch': 2.42}
+
+>>> [Step 160] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=31.5> Any group for sanitary epidemiological reconnaissance includes: epidemiologist, specialist on infections, assistant of epidemiologist ( bacteriologist-lab assistant ), medical orderly ( if necessary, the group will include zoologist or parasitologist ).
+EXPLANATION: The <FKGL=29.9> token specifies that the target Flesch-Kincaid Grade Level should be approximately 29.9. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=29.9>
+>>> Reference:
+ Mobile equipped group for sanitary epidemiological reconnaissance includes: epidemiologist, specialist on infections, assistant of epidemiologist ( bacteriologist - lab assistant ), medical orderly ( if necessary, the group will include zoologist or parasitologist ).<|eot_id|>
+>>> Prediction:
+ Any group for sanitary epidemiological reconnaissance includes: epidemiologist, specialist on infections, assistant of epidemiologist ( bacteriologist-lab assistant ), medical orderly ( if necessary, the group will include zoologist or parasitologist ).
+================================================================================
+
+>>> [Step 160] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful text simplification assistant. You are not only an expert in simplifying texts for different readerships, but you are also very good at adapting texts according to the exact needs of the user. You output only the simplified text, no further notes or comments allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=18.6> Undernutrition and vitamin A deficiency may predispose to mortality.
+EXPLANATION: The <FKGL=13.1> token specifies that the target Flesch-Kincaid Grade Level should be approximately 13.1. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=13.1>
+>>> Reference:
+ Undernutrition and vitamin A deficiency may increase the risk of death in people infected with measles.<|eot_id|>
+>>> Prediction:
+ People with severe malabsorption of fat-soluble vitamins (A, D, E, and K) are at increased risk of death.
+================================================================================
+
+>>> [Step 160] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are an expert in controlled text simplification. When you receive a text, you simplify it by rewriting it in a manner that is easier to read. Your simplification is guided by the simplification criteria specified by the user. You generate only the simplification result, without any additional comments or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=15.8> Visible light (commonly referred to simply as light) is electromagnetic radiation that is visible to the human eye, and is responsible for the sense of sight.
+EXPLANATION: The <FKGL=9.2> token specifies that the target Flesch-Kincaid Grade Level should be approximately 9.2. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=9.2>
+>>> Reference:
+ Light is electromagnetic radiation that is in the form of a wave.<|eot_id|>
+>>> Prediction:
+ Light is electromagnetic radiation that can be seen.
+================================================================================
+
+>>> [Step 160] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=50.9> Other arguments include the lack of accounts of the death of rats before outbreaks of plague between the 14th and 17th centuries; temperatures that are too cold in northern Europe for the survival of fleas; that, despite primitive transport systems, the spread of the Black Death was much faster than that of modern bubonic plague; that mortality rates of the Black Death appear to be very high; that, while modern bubonic plague is largely endemic as a rural disease, the Black Death indiscriminately struck urban and rural areas; and that the pattern of the Black Death, with major outbreaks in the same areas separated by 5 to 15 years, differs from modern bubonic plague-which often becomes endemic for decades with annual flare-ups.
+EXPLANATION: The <FKGL=17.0> token specifies that the target Flesch-Kincaid Grade Level should be approximately 17.0. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=17.0>
+>>> Reference:
+ The initial fourteenth-century European event was called the `` Great Mortality '' by contemporary writers and, with later outbreaks, became known as the ` Black Death '.<|eot_id|>
+>>> Prediction:
+ Other reasons include the lack of accounts of the deaths of rats before outbreaks of the plague between the 14th and 17th centuries; temperatures too cold in northern Europe for the survival of fleas; that the spread of the Black Death was much faster than that of modern bubonic plague; that mortality rates of the Black Death were very high; that the Black Death indiscriminately struck both urban and rural areas; and that the pattern of the Black Death, with major outbreaks in the same areas separated by 5 to 15 years, differs from modern bubonic plague-which often has decades of flare-ups.
+================================================================================
+{'loss': 0.4109, 'grad_norm': 11.85207462310791, 'learning_rate': 2.7365010282720954e-07, 'epoch': 2.58}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.41it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.34it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.42it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.91it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.60it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.40it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.27it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.19it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.13it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.09it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.06it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 15.04it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 15.03it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 15.02it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 15.06it/s][A                                                 
+                                               [A 87%|████████▋ | 160/183 [05:08<00:49,  2.14s/it]
+100%|██████████| 33/33 [00:02<00:00, 15.06it/s][A
+                                               [A 88%|████████▊ | 161/183 [05:09<00:54,  2.47s/it] 89%|████████▊ | 162/183 [05:10<00:43,  2.06s/it] 89%|████████▉ | 163/183 [05:11<00:35,  1.76s/it] 90%|████████▉ | 164/183 [05:12<00:29,  1.56s/it] 90%|█████████ | 165/183 [05:13<00:25,  1.42s/it] 91%|█████████ | 166/183 [05:14<00:22,  1.32s/it] 91%|█████████▏| 167/183 [05:15<00:19,  1.25s/it] 92%|█████████▏| 168/183 [05:16<00:17,  1.20s/it] 92%|█████████▏| 169/183 [05:17<00:16,  1.16s/it] 93%|█████████▎| 170/183 [05:18<00:14,  1.14s/it]                                                  93%|█████████▎| 170/183 [05:18<00:14,  1.14s/it]{'eval_loss': 1.3032004833221436, 'eval_runtime': 2.1705, 'eval_samples_per_second': 59.435, 'eval_steps_per_second': 15.204, 'epoch': 2.58}
+{'loss': 0.4534, 'grad_norm': 11.303707122802734, 'learning_rate': 8.85387393063622e-08, 'epoch': 2.74}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.50it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.38it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.44it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.92it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.60it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.40it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.27it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.18it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.12it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.07it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.05it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 15.03it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 15.02it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 15.01it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 15.05it/s][A                                                 
+                                               [A 93%|█████████▎| 170/183 [05:21<00:14,  1.14s/it]
+100%|██████████| 33/33 [00:02<00:00, 15.05it/s][A
+                                               [A 93%|█████████▎| 171/183 [05:22<00:21,  1.77s/it] 94%|█████████▍| 172/183 [05:23<00:17,  1.57s/it] 95%|█████████▍| 173/183 [05:24<00:14,  1.42s/it] 95%|█████████▌| 174/183 [05:25<00:11,  1.32s/it] 96%|█████████▌| 175/183 [05:26<00:09,  1.24s/it] 96%|█████████▌| 176/183 [05:27<00:08,  1.19s/it] 97%|█████████▋| 177/183 [05:28<00:06,  1.16s/it] 97%|█████████▋| 178/183 [05:29<00:05,  1.13s/it] 98%|█████████▊| 179/183 [05:30<00:04,  1.12s/it] 98%|█████████▊| 180/183 [05:32<00:04,  1.43s/it]                                                  98%|█████████▊| 180/183 [05:32<00:04,  1.43s/it]{'eval_loss': 1.2939097881317139, 'eval_runtime': 2.1707, 'eval_samples_per_second': 59.427, 'eval_steps_per_second': 15.202, 'epoch': 2.74}
+
+>>> [Step 180] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are an expert in text simplification. When you receive a text for simplification, you generate a simplified version of that text. You carefully study the simplification criteria specified by the user and adapt the text accordingly. Please generate only the simplified text, no other notes or explanations allowed.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=10.1> Bulbar and palpebral conjunctival injection and a transient flushing or pale pink macular rash (particularly of the face) may occur. Cervical, epitrochlear, and inguinal lymph nodes are often enlarged.
+EXPLANATION: The <FKGL=5.6> token specifies that the target Flesch-Kincaid Grade Level should be approximately 5.6. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=5.6>
+>>> Reference:
+ Lymph nodes are swollen, and a rash that makes the face look flushed and red may appear briefly.<|eot_id|>
+>>> Prediction:
+ The eyelids may become red and puffy, and a rash may appear on the face, back of the hands, and sometimes the neck. The lymph nodes in the neck may be swollen.
+================================================================================
+
+>>> [Step 180] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful expert in text simplification. You generate a simplified version of the text input by the user. You simplify the text according to the instructions given by the user. When asked to simplify a text, generate only the requested simplification, without any additional comments, notes or explanations.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=13.4> Oral itraconazole 200 mg orally once a day given until 2 to 4 weeks after all lesions have resolved (typically 3 to 6 months) is the treatment of choice.
+EXPLANATION: The <FKGL=8.0> token specifies that the target Flesch-Kincaid Grade Level should be approximately 8.0. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=8.0>
+>>> Reference:
+ Skin infections are treated with itraconazole given by mouth.<|eot_id|>
+>>> Prediction:
+ The treatment of choice is an oral antifungal drug called itraconazole.
+================================================================================
+
+>>> [Step 180] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are an expert in controlled text simplification. When you receive a text from the user, you carefully adapt it to the simplification level specified by the user. Please generate only the simplified text, without any additional explanations or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=23.6> As in trigeminal neuralgia, paroxysmal attacks of unilateral brief, excruciating pain occur spontaneously or are precipitated when areas innervated by the glossopharyngeal nerve are stimulated (eg, by chewing, swallowing, coughing, talking, yawning, or sneezing).
+EXPLANATION: The <FKGL=12.9> token specifies that the target Flesch-Kincaid Grade Level should be approximately 12.9. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=12.9>
+>>> Reference:
+ In glossopharyngeal neuralgia, attacks are brief and occur intermittently, but they cause excruciating pain. Attacks may be triggered by a particular action, such as chewing, swallowing, talking, yawning, coughing, or sneezing.<|eot_id|>
+>>> Prediction:
+ In trigeminal neuralgia, pain occurs in one side of the face and is usually brief, severe, and excruciating.
+================================================================================
+
+>>> [Step 180] Prompt:
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 17 Oct 2026
+
+You are a helpful assistant. You are very good at simplifying texts. When you receive a text for simplification, you simplify it according to the instructions given by the user. Generate only the simplification, without any comments or notes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the control token prepended to your generated simplification. The control token has the following format: <METRIC=VALUE>. The control token prepended to the source text indicates the FKGL value of the source text. 
+SOURCE TEXT: <FKGL=15.8> The screening of blood donors is important at a national level, as is adhering to universal precautions within healthcare facilities.
+EXPLANATION: The <FKGL=12.1> token specifies that the target Flesch-Kincaid Grade Level should be approximately 12.1. Lower values indicate simpler text.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+<FKGL=12.1>
+>>> Reference:
+ At a national level - within each country - screening blood donors is important for preventing the spread of Hepatitis C. So is using universal precautions in healthcare facilities.<|eot_id|>
+>>> Prediction:
+ Screening of blood donors is important at a national level, as is following universal precautions within healthcare facilities.
+================================================================================
+{'loss': 0.3653, 'grad_norm': 6.65938663482666, 'learning_rate': 4.74167815738974e-09, 'epoch': 2.91}
+
+  0%|          | 0/33 [00:00<?, ?it/s][A
+  9%|▉         | 3/33 [00:00<00:01, 22.49it/s][A
+ 18%|█▊        | 6/33 [00:00<00:01, 17.38it/s][A
+ 24%|██▍       | 8/33 [00:00<00:01, 16.44it/s][A
+ 30%|███       | 10/33 [00:00<00:01, 15.92it/s][A
+ 36%|███▋      | 12/33 [00:00<00:01, 15.60it/s][A
+ 42%|████▏     | 14/33 [00:00<00:01, 15.40it/s][A
+ 48%|████▊     | 16/33 [00:01<00:01, 15.27it/s][A
+ 55%|█████▍    | 18/33 [00:01<00:00, 15.18it/s][A
+ 61%|██████    | 20/33 [00:01<00:00, 15.12it/s][A
+ 67%|██████▋   | 22/33 [00:01<00:00, 15.08it/s][A
+ 73%|███████▎  | 24/33 [00:01<00:00, 15.05it/s][A
+ 79%|███████▉  | 26/33 [00:01<00:00, 15.03it/s][A
+ 85%|████████▍ | 28/33 [00:01<00:00, 15.01it/s][A
+ 91%|█████████ | 30/33 [00:01<00:00, 15.00it/s][A
+ 97%|█████████▋| 32/33 [00:02<00:00, 15.04it/s][A                                                 
+                                               [A 98%|█████████▊| 180/183 [05:35<00:04,  1.43s/it]
+100%|██████████| 33/33 [00:02<00:00, 15.04it/s][A
+                                               [A 99%|█████████▉| 181/183 [05:36<00:03,  1.98s/it] 99%|█████████▉| 182/183 [05:37<00:01,  1.71s/it]100%|██████████| 183/183 [05:38<00:00,  1.52s/it]                                                 100%|██████████| 183/183 [07:08<00:00,  1.52s/it]100%|██████████| 183/183 [07:08<00:00,  2.34s/it]
+{'eval_loss': 1.2939927577972412, 'eval_runtime': 2.1712, 'eval_samples_per_second': 59.414, 'eval_steps_per_second': 15.199, 'epoch': 2.91}
+{'train_runtime': 428.0648, 'train_samples_per_second': 6.917, 'train_steps_per_second': 0.428, 'train_loss': 0.88514944829576, 'epoch': 2.96}
+  0%|          | 0/33 [00:00<?, ?it/s]  9%|▉         | 3/33 [00:00<00:01, 22.57it/s] 18%|█▊        | 6/33 [00:00<00:01, 17.44it/s] 24%|██▍       | 8/33 [00:00<00:01, 16.49it/s] 30%|███       | 10/33 [00:00<00:01, 15.96it/s] 36%|███▋      | 12/33 [00:00<00:01, 15.63it/s] 42%|████▏     | 14/33 [00:00<00:01, 15.43it/s] 48%|████▊     | 16/33 [00:00<00:01, 15.30it/s] 55%|█████▍    | 18/33 [00:01<00:00, 15.21it/s] 61%|██████    | 20/33 [00:01<00:00, 15.14it/s] 67%|██████▋   | 22/33 [00:01<00:00, 15.11it/s] 73%|███████▎  | 24/33 [00:01<00:00, 15.08it/s] 79%|███████▉  | 26/33 [00:01<00:00, 15.06it/s] 85%|████████▍ | 28/33 [00:01<00:00, 15.05it/s] 91%|█████████ | 30/33 [00:01<00:00, 15.04it/s] 97%|█████████▋| 32/33 [00:02<00:00, 15.08it/s]100%|██████████| 33/33 [00:02<00:00, 15.74it/s]
+Evaluation results: {'eval_loss': 1.2934952974319458, 'eval_runtime': 2.1672, 'eval_samples_per_second': 59.525, 'eval_steps_per_second': 15.227, 'epoch': 2.9554655870445345}

@@ -1,0 +1,95 @@
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[nltk_data] Downloading package punkt to /home/wada_yuto/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
+[nltk_data] Downloading package punkt_tab to
+[nltk_data]     /home/wada_yuto/nltk_data...
+[nltk_data]   Package punkt_tab is already up-to-date!
+--- Running evaluation...
+Input files:	 ['output/sft_inference/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709/output_1.json', 'output/sft_inference/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709/output_averaged.json']
+Metric:	 KEEP
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 25228.90it/s]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/core/saving.py:165: UserWarning: Found keys that are not in the model state dict but in the checkpoint: ['encoder.model.embeddings.position_ids']
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+You are using a CUDA device ('NVIDIA GeForce RTX 5090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Using LENS with topk=3
+Evaluating: 0it [00:00, ?it/s]Evaluating:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00,  1.53it/s]Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00,  1.53it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Evaluating: 0it [00:00, ?it/s]Evaluating:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00,  3.87it/s]Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00,  3.86it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Evaluating: 0it [00:00, ?it/s]Evaluating:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00,  5.81it/s]Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00,  5.80it/s]
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/pytorch_lightning/utilities/_pytree.py:21: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return [pytree], LeafSpec()
+Evaluating: 0it [00:00, ?it/s]Evaluating:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s]Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 28.64it/s]Predicting DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 28.33it/s]
+/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/src/helpers/utils.py:4: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  corr_coeff, p_value = pearsonr(x, y)
+/mnt/gpu/workspace/2025/yuto_wada/envs/wada-yuto/lib/python3.12/site-packages/numpy/lib/_polynomial_impl.py:676: RuntimeWarning: invalid value encountered in divide
+  lhs /= scale
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+
+Intel oneMKL ERROR: Parameter 4 was incorrect on entry to DGELSD.
+LENS backfill complete: 203 predictions updated (batch_size=64).
+LENS backfill complete: 0 predictions updated (batch_size=64).
+KEEP: losses computed on 47/203 samples with numbers in the source
+--- keep losses:
+Mean Squared Error (MSE): 0.24822695035460993
+Mean Absolute Error (MAE): 0.3191489361702128
+Standard Deviation of Errors: 0.49498262230962375
+Variance of Errors: 0.24500779638851164
+
+Saved loss values to stats.json
+Updated averaged predictions file with per-sample losses: output/sft_inference/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709/output_averaged.json
+Scatter plot saved to output/sft_inference/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709/keep_scatter_plot.png
+Legend saved to output/sft_inference/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709/keep_scatter_legend.png
+Control attribute vs metrics plot saved as keep_ctrl_attr_vs_metrics.png
+Error-vs-metrics plots saved.
+STD of error by reference bin saved as keep_error_std_by_ref_bin.png
+Plots saved to output/sft_inference/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709
+
+All plots saved to output/sft_inference/KEEP-medeasi-token_explanation-Llama-3.2-1B-Instruct-20260709
+
+--- Mean metrics:
+BLEU_to_source: BLEU_to_source: 42.38 (+4.79 -5.17)
+BLEU_to_ref: BLEU_to_ref: 22.74 (+3.31 -3.06)
+BERTScore_to_source: BERTScore_to_source: 0.00 (+0.00 -0.00)
+BERTScore_to_ref: BERTScore_to_ref: 0.00 (+0.00 -0.00)
+COMET: COMET: 0.00 (+0.00 -0.00)
+SARI: SARI: 40.25 (+2.41 -2.31)
+LENS: LENS: 58.53 (+2.21 -2.42)
+
+Saved evaluation summary to output/sft_results/all_results.json
+
+--- Evaluation complete.

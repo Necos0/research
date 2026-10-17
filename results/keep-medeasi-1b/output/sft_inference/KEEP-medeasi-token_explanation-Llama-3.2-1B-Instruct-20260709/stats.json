@@ -1,0 +1,9 @@
+{
+    "metric": "KEEP",
+    "MSE": 0.24822695035460993,
+    "MAE": 0.3191489361702128,
+    "std_error": 0.49498262230962375,
+    "var_error": 0.24500779638851164,
+    "num_samples": 47,
+    "numeric_sources_only": true
+}

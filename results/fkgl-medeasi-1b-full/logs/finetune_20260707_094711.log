@@ -1,0 +1,3 @@
+Logging to logs/finetune_20260707_094711.log
+*** Finetuning Qwen/Qwen2.5-0.5B-Instruct with medeasi and KEEP ***
+./run_sft_finetune.sh: line 37: python: command not found
