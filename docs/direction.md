@@ -67,6 +67,7 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
 - **SSH は鍵認証で設定済み**。`~/.ssh/config` の `Host calc40` が `~/.ssh/id_ed25519`（パスフレーズなし）を使うため、`ssh calc40 '<コマンド>'` でパスワードなしに非対話実行できる。疎通確認は `ssh -o BatchMode=yes calc40 true`。
   - calc40 のホスト鍵は 2026-10-15 に変わっていた（再インストール等と推定）。新しい鍵 `ED25519 SHA256:SSMn+h+A/DwY0WKw3OZ8md5nJ0SAEsuBhVsikaOYrU8` を登録済み。**これ以外の鍵で警告が出たら、`known_hosts` を勝手に書き換えずユーザーに報告する。**
 - **Claude が行うこと**: ブランチ作成・編集・コミット → push → サーバーでの `fetch/switch/merge` → `run_experiment.sh` の起動 → 進捗確認 → rsync で `results/<実験名>/` へ回収 → 出力の目視・一次分析 → `docs/roadmap.md` の更新。
+- **サーバーが使われていたら使わない（ユーザーの指示）**。起動の前に必ず `ssh calc40 'nvidia-smi; nvidia-smi --query-compute-apps=pid,used_memory --format=csv'` で GPU の使用状況を確かめ、**誰か（自分の別ジョブを含む）が GPU を使っていたら起動しない**。ユーザーに状況を報告し、空くまで待つ。`run_experiment.sh` にも同じガードがあり、GPU プロセスがあるかメモリ使用が 1000MiB を超えていれば、掃除・学習の前に止まる（`exp/fkgl-full-v2-epochs` 以降のブランチ）。
 - **実行前にユーザーの了承を取ること**（取り消しにくい・外部に出る操作）:
   - GitHub への push
   - サーバー上の `output/`・`models/`・`logs/`・HF キャッシュの削除（`run_experiment.sh` の掃除確認 `[y/N]` に答えることを含む）
