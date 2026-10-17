@@ -477,9 +477,11 @@ def main():
     wandb.finish()
 
     # Remove all checkpoint folders except the final output_dir
-    for ckpt in glob.glob(os.path.join(output_dir, "checkpoint-*")):
-        print(f"Removing checkpoint: {ckpt}")
-        shutil.rmtree(ckpt)
+    # （--save_each_epoch のときは各エポックの重みを推論で全部使うので消さない）
+    if not args.save_each_epoch:
+        for ckpt in glob.glob(os.path.join(output_dir, "checkpoint-*")):
+            print(f"Removing checkpoint: {ckpt}")
+            shutil.rmtree(ckpt)
 
 
 if __name__ == "__main__":
