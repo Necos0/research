@@ -110,7 +110,24 @@ def format_completion_with_special_tokens(tokenizer, completion, model_family="b
         return f"{completion.strip()}{eos}"
 
 
+# 制御トークンを使わない対照条件。プロンプトは平易化の指示と原文だけで、出力側にもタグを置かない
+NO_TAG_METRIC = "NOTAG"
+
+
 def format_prompt_with_tokenizer(tokenizer, system_prompt, user_prompt, metric_name, target_metric_value):
+    if metric_name == NO_TAG_METRIC:
+        # assistant ターンを空で開き、そこから簡約文を書かせる（通常のチャット生成と同じ形）
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        return tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            enable_thinking=False,
+            add_generation_prompt=True
+        )
+
     control_token = f"<{metric_name}={target_metric_value}>"
     messages = [
         {"role": "system", "content": system_prompt},
@@ -131,8 +148,33 @@ def format_prompt_with_tokenizer(tokenizer, system_prompt, user_prompt, metric_n
 
     return formatted_prompt
 
-def format_completion_with_tokenizer(tokenizer, completion):
+def format_completion_with_tokenizer(tokenizer, completion, leading_space=True):
     # プロンプトは制御トークン（例 <FKGL=9.6>）で終わる。chat template が assistant の
     # content を trim するため末尾の空白は残らない。ここで先頭に空白を補い
     # "<FKGL=9.6> The risk ..." と繋ぐ。空白の有無でトークンIDが変わる（"By"=1383 / " By"=3296）。
-    return f" {completion.strip()}{tokenizer.eos_token}"
+    # NOTAG（制御トークンなし）は assistant ヘッダ直後から書くので空白を補わない（leading_space=False）
+    return f"{' ' if leading_space else ''}{completion.strip()}{tokenizer.eos_token}"
+
+
+def assert_prompt_shape(prompt, metric_name):
+    """組み立てたプロンプトが期待の形かを検証する（学習・推論の両方で使う）。
+
+    datasets キャッシュ事故（修正前のプロンプトで学習していた）は「学習は成功したように
+    見えるが中身が別物」という形で表面化した。二度と静かに通さないためのガード。
+    """
+    header = "<|start_header_id|>assistant<|end_header_id|>"
+    assert prompt.count(header) == 1, (
+        "プロンプトに assistant ターンが2つある＝制御トークンが簡約文と別ターンに分離している。"
+        f"\n{prompt[-200:]}"
+    )
+    tail = prompt.rsplit("assistant<|end_header_id|>", 1)[-1]
+    if metric_name == NO_TAG_METRIC:
+        assert tail == "\n\n" and "<|eot_id|>" not in tail, (
+            "NOTAG のプロンプトが空の assistant ターンで終わっていない。"
+            f"\n{prompt[-200:]}"
+        )
+    else:
+        assert prompt.rstrip().endswith(">") and f"<{metric_name}=" in tail, (
+            "プロンプトが制御トークンで終わっていない＝簡約文の接頭辞として効かない。"
+            f"\n{prompt[-200:]}"
+        )

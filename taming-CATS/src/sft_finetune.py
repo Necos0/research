@@ -20,7 +20,7 @@ from transformers import Trainer, TrainingArguments
 from transformers import EarlyStoppingCallback
 
 from helpers.hugging_face import load_dataset_from_hf, get_model_short_name
-from helpers.prompting import select_random_system_prompt, select_random_user_prompt, select_control_token_explanation, select_random_control_token_examples
+from helpers.prompting import assert_prompt_shape, select_random_system_prompt, select_random_user_prompt, select_control_token_explanation, select_random_control_token_examples
 from helpers.prompting import create_user_prompt, format_prompt_with_special_tokens, format_completion_with_special_tokens, format_prompt_with_tokenizer, format_completion_with_tokenizer
 
 from classes.PredictionLoggerCallback import PredictionLoggerCallback
@@ -174,7 +174,8 @@ def show_examples(dataset, n=3, show_tokens=False):
 def is_source_metric(args):
     # KEEP は原文由来の数値を保持対象とするため source ベース
     #（原文側トークン <KEEP=...> を SOURCE TEXT にも前置する）
-    if args.metric_name in ["FRE", "FKGL", "ARI", "DALE-CHALL", "KEEP"]:
+    # NOTAG は制御トークンを使わない対照条件（値はプロンプトに出ないので何でもよい）
+    if args.metric_name in ["FRE", "FKGL", "ARI", "DALE-CHALL", "KEEP", "NOTAG"]:
         return True
     elif args.metric_name in ["CHAR_COMPRESSION", "WORD_COMPRESSION", "SENTENCE_COMPRESSION"]:
         return False
@@ -227,6 +228,7 @@ def load_and_prepare_dataset(dataset_name, tokenizer, args, source_based_metric=
             "completion": format_completion_with_tokenizer(
                                                         tokenizer=tokenizer,
                                                         completion=reference_simplification, 
+                                                        leading_space=args.metric_name != "NOTAG",
                                                         # model_family=args.model_family
                                                         ),
             "system_prompt_id": system_id,
@@ -255,15 +257,7 @@ def load_and_prepare_dataset(dataset_name, tokenizer, args, source_based_metric=
     # 上のキャッシュ事故は「学習は成功したように見えるが中身が別物」という形で表面化した。
     # 二度と静かに通さないため、組み立てたプロンプトが期待の形かをここで検証する。
     _sample = train_dataset[0]["prompt"]
-    _ctrl = f"<{args.metric_name}="
-    assert _sample.count("<|start_header_id|>assistant<|end_header_id|>") == 1, (
-        "プロンプトに assistant ターンが2つある＝制御トークンが簡約文と別ターンに分離している。"
-        f"\n{_sample[-200:]}"
-    )
-    assert _sample.rstrip().endswith(">") and _ctrl in _sample.rsplit("assistant<|end_header_id|>", 1)[-1], (
-        "プロンプトが制御トークンで終わっていない＝簡約文の接頭辞として効かない。"
-        f"\n{_sample[-200:]}"
-    )
+    assert_prompt_shape(_sample, args.metric_name)
     print(f"--- prompt sanity OK: ...{_sample[-60:]!r}")
 
     print("\n\n *** Before tokenization ***")
@@ -322,6 +316,7 @@ def train_model(model, tokenizer, train_dataset, val_dataset, args, output_dir, 
         logging_steps=args.logging_steps,
         push_to_hub=False,
         report_to=["wandb"],
+        seed=args.seed,   # Trainer の既定は 42 固定。--seed を学習順序にも効かせる（42 なら従来と同一）
         eval_strategy="steps",
         eval_steps=args.logging_steps,
         **save_kwargs,

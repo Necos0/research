@@ -1,13 +1,15 @@
 #!/bin/bash
 
 # =========================================================================
-# 実験: Med-EASi × <KEEP> 1B フルデータ版・エポック別評価
-#   - 目的: FKGL のエポック別評価（exp/fkgl-full-v2-epochs）で、コピー崩壊の主因は
-#           学習量（eval_loss の早期終了が 1 エポック未満の重みを採用）と判明した。
-#           KEEP も同じ条件（早期終了なしで 3 エポック、各エポック末の重みを全部評価）で回し、
-#           FKGL とエポックをそろえて数値保持率・コピー率を比較する。
-#   - KEEP v2（exp/keep-medeasi-1b-v2）との差分は --save_each_epoch のみ。
-#     exp/fkgl-full-v2-epochs との差分は METRIC_NAME=KEEP のみ（データ・ハイパラ・シードは同一）。
+# 実験: Med-EASi × 制御トークンなし（NOTAG）1B フルデータ版・エポック別評価（対照条件）
+#   - 目的: KEEP は FKGL より数値を保持するが、数値あり事例で原文に近い（保守的）。
+#           「数値の情報を与えたから保持できた」のか「KEEP タグは易しさを指示しないので
+#           そもそも平易化が控えめになるだけ」なのかを切り分けるため、制御トークンを
+#           一切使わない（数値の情報も易しさの情報も与えない）条件を学習する（ロードマップ③-9）。
+#   - プロンプトは「INSTRUCTION: Simplify the following text. / SOURCE TEXT: 原文」のみ。
+#     出力側にもタグを置かず、空の assistant ターンから簡約文を書かせる。
+#   - exp/keep-full-v2-epochs との差分は METRIC_NAME=NOTAG のみ（データ・ハイパラ・シードは同一。
+#     Trainer に seed を渡す修正込み、42 なら従来と同一）。
 # =========================================================================
 
 export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
@@ -29,7 +31,7 @@ DATASETS=(
     "medeasi"                       # ← ローカル folder 名（splits_flattened_filtered/medeasi）
     )
 METRICS=(
-    "KEEP"
+    "NOTAG"
     )
 
 for DATASET_NAME in "${DATASETS[@]}"; do

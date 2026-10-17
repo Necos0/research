@@ -152,5 +152,27 @@
     "description": "prompt with a control token, an explanation, and examples",
     "prompt": "INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. \nSOURCE TEXT: <KEEP={SOURCE_VALUE}> {TEXT}\nEXPLANATION: {EXPLANATION} \nEXAMPLES: \n- {EXAMPLE_1} \n-{EXAMPLE_2} \n- {EXAMPLE_3}"
     }
+  ],
+  "NOTAG": [
+    {
+    "id": "no_token",
+    "description": "control condition without any control token (no readability or number information)",
+    "prompt": "INSTRUCTION: Simplify the following text. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token",
+    "description": "control condition without any control token (no readability or number information)",
+    "prompt": "INSTRUCTION: Simplify the following text. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token_explanation",
+    "description": "control condition without any control token (no readability or number information)",
+    "prompt": "INSTRUCTION: Simplify the following text. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token_explanation_examples",
+    "description": "control condition without any control token (no readability or number information)",
+    "prompt": "INSTRUCTION: Simplify the following text. \nSOURCE TEXT: {TEXT}"
+    }
   ]
 }

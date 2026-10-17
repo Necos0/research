@@ -10,7 +10,7 @@ echo "Logging to $LOG_FILE"
 echo "Script started: $(date)"
 
 # =========================================================================
-# 実験: Med-EASi × <KEEP> 1B フルデータ版・エポック別評価（各エポック末のチェックポイントを全件テスト・1シード）
+# 実験: Med-EASi × 制御トークンなし（NOTAG）1B フルデータ版・エポック別評価（各エポック末のチェックポイントを全件テスト・1シード）
 export WANDB_MODE=disabled
 
 # --- GPU メモリ対策（32GB GPU で LLM 生成と評価モデルが同居するため）
@@ -18,7 +18,9 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True  # 断片化による OO
 # SKIP_BERTSCORE / SKIP_LENS は export しない（export すると後段の sft_eval.py まで
 # スキップされ、backfill が効かなくなる）。推論プロセスにのみ前置きで渡す。
 
-METRIC_NAME="KEEP"
+METRIC_NAME="NOTAG"
+# sft_eval.py の集計キー。NOTAG は制御属性を持たないので FKGL で集計する（MAE は参照文の FKGL との差）
+EVAL_METRIC_KEY="FKGL"
 DATASET="medeasi"                       # ← ローカル folder 名
 MODEL_NAME="Llama-3.2-1B-Instruct"      # short name（学習で使ったモデル）
 USER_PROMPT_ID="token_explanation"
@@ -94,7 +96,7 @@ run_one() {
   local INPUT_FILES=( "$OUTPUT_DIR"/output_*.json )   # 実際に生成されたシード分だけを集約
   python src/sft_eval.py \
     --input_files "${INPUT_FILES[@]}" \
-    --metric_key "$METRIC_NAME" \
+    --metric_key "$EVAL_METRIC_KEY" \
     --output_dir "$OUTPUT_DIR" \
     --metric_mapping "data/metric_mapping.json"\
     --model_name "$MODEL_NAME"\
