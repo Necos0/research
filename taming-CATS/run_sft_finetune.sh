@@ -1,14 +1,13 @@
 #!/bin/bash
 
 # =========================================================================
-# 実験: Med-EASi × <KEEP> 1B モデル・フルデータ版（プロンプト構築バグ修正後の再実行）
-#   - 目的: 旧 KEEP 1B（exp/keep-medeasi-1b）は FKGL 側と同じプロンプト構築バグを
-#           踏んでおり、平易化が成立していなかった。修正済みコードで再学習し、
-#           FKGL v2（exp/fkgl-medeasi-1b-full-v2）と直接比較できる健全な結果を得る。
-#   - このブランチは exp/fkgl-medeasi-1b-full-v2 から分岐しており、
-#     **差分は METRIC_NAME=KEEP のみ**（ハイパラ・データ・修正コードは完全同一）。
-#     設定: 全件・batch 4・grad_accum 4・lr 5e-6・3エポック・max_length 512。
-#   - データはローカル data/splits_flattened_full/medeasi（フル・未フィルタ）を全件使用。
+# 実験: Med-EASi × <KEEP> 1B フルデータ版・エポック別評価
+#   - 目的: FKGL のエポック別評価（exp/fkgl-full-v2-epochs）で、コピー崩壊の主因は
+#           学習量（eval_loss の早期終了が 1 エポック未満の重みを採用）と判明した。
+#           KEEP も同じ条件（早期終了なしで 3 エポック、各エポック末の重みを全部評価）で回し、
+#           FKGL とエポックをそろえて数値保持率・コピー率を比較する。
+#   - KEEP v2（exp/keep-medeasi-1b-v2）との差分は --save_each_epoch のみ。
+#     exp/fkgl-full-v2-epochs との差分は METRIC_NAME=KEEP のみ（データ・ハイパラ・シードは同一）。
 # =========================================================================
 
 export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
@@ -58,6 +57,7 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --logging_steps "10" \
             --epochs "3" \
             --patience "4" \
+            --save_each_epoch \
             --max_length "$MAX_LENGTH"\
             --wandb_project_name "ATS_with_control_tokens" \
             --wandb_entity "shtosti"\

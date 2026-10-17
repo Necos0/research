@@ -285,6 +285,26 @@ def load_and_prepare_dataset(dataset_name, tokenizer, args, source_based_metric=
 
 def train_model(model, tokenizer, train_dataset, val_dataset, args, output_dir, peft_enabled):
 
+    # --save_each_epoch: 早期終了を使わず num_train_epochs を最後まで回し、各エポック末の重みを
+    # checkpoint-<step>/ として全部残す（推論側で全エポックを評価する）。eval_loss による
+    # ベスト選択もしない。学習量とコピー率の関係を、選択基準に左右されずに測るため。
+    if args.save_each_epoch:
+        save_kwargs = dict(
+            save_strategy="epoch",
+            load_best_model_at_end=False,
+            save_total_limit=None,
+            save_only_model=True,   # optimizer 状態は不要（再開しない）。1チェックポイント約2.5GB に抑える
+        )
+    else:
+        save_kwargs = dict(
+            save_strategy="steps",
+            save_steps=args.logging_steps,
+            load_best_model_at_end=True,
+            metric_for_best_model="eval_loss",
+            greater_is_better=False,
+            save_total_limit=1,
+        )
+
     training_args = TrainingArguments(
         output_dir=output_dir,
         learning_rate=args.learning_rate,
@@ -303,14 +323,20 @@ def train_model(model, tokenizer, train_dataset, val_dataset, args, output_dir, 
         push_to_hub=False,
         report_to=["wandb"],
         eval_strategy="steps",
-        save_strategy="steps",
-        save_steps=args.logging_steps,
         eval_steps=args.logging_steps,
-        load_best_model_at_end=True,
-        metric_for_best_model="eval_loss",
-        greater_is_better=False,
-        save_total_limit=1,
+        **save_kwargs,
     )
+
+    callbacks = [PredictionLoggerCallback(
+                    tokenizer=tokenizer,
+                    val_dataset=val_dataset,
+                    log_every=args.generate_every,
+                    num_samples=4,
+                    max_length=args.max_length,
+                    gen_kwargs=None
+                    )]
+    if not args.save_each_epoch:
+        callbacks.append(EarlyStoppingCallback(early_stopping_patience=args.patience))
 
     trainer = Trainer(
         model=model,
@@ -318,19 +344,8 @@ def train_model(model, tokenizer, train_dataset, val_dataset, args, output_dir, 
         eval_dataset=val_dataset,
         args=training_args,
         processing_class=tokenizer,   # transformers>=5 では tokenizer= は廃止
-        callbacks=[PredictionLoggerCallback(
-                        tokenizer=tokenizer, 
-                        val_dataset=val_dataset, 
-                        log_every=args.generate_every,
-                        num_samples=4,
-                        max_length=args.max_length,
-                        gen_kwargs=None
-                        ),
-                    EarlyStoppingCallback(
-                        early_stopping_patience=args.patience
-                        )
-                        ]
-                        )
+        callbacks=callbacks,
+        )
 
     trainer.train()
 
@@ -369,6 +384,8 @@ def parse_args():
     parser.add_argument("--generate_every", type=int, default=20)
     parser.add_argument("--seed", type=int, default=42, help="Seed for determenism")
     parser.add_argument("--patience", type=int, default=3, help="patience period for early stopping")
+    parser.add_argument("--save_each_epoch", action="store_true",
+                        help="早期終了せず全エポック学習し、各エポック末のチェックポイントを全部残す（--patience は無視）")
     # for dynamic prompting
     parser.add_argument("--prompting_type", type=str, default="vanilla", choices=["vanilla", "reasoning", "transformations"])
     parser.add_argument("--user_prompt_id", type=str, default="token_explanation", choices=["no_token", "token", "token_explanation", "token_explanation_examples"])
@@ -460,9 +477,11 @@ def main():
     wandb.finish()
 
     # Remove all checkpoint folders except the final output_dir
-    for ckpt in glob.glob(os.path.join(output_dir, "checkpoint-*")):
-        print(f"Removing checkpoint: {ckpt}")
-        shutil.rmtree(ckpt)
+    # （--save_each_epoch のときは各エポックの重みを推論で全部使うので消さない）
+    if not args.save_each_epoch:
+        for ckpt in glob.glob(os.path.join(output_dir, "checkpoint-*")):
+            print(f"Removing checkpoint: {ckpt}")
+            shutil.rmtree(ckpt)
 
 
 if __name__ == "__main__":

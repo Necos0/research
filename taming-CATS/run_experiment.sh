@@ -88,6 +88,22 @@ if [ "${_STAGE:-0}" -lt 2 ]; then
     echo "  OK: $BRANCH @ $(git rev-parse --short HEAD)（origin と一致・作業ツリーはクリーン）"
 fi
 
+# --- GPU の使用状況チェック ----------------------------------------------------
+# calc40 は共有サーバー。誰か（自分の別ジョブを含む）が GPU を使っていたら、学習を始めずに止まる。
+# 掃除（STAGE 4）より前に置き、使用中なら何も消さない。
+echo "=== GPU の使用状況を確認"
+GPU_PROCS=$(nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader 2>/dev/null || true)
+GPU_MEM_USED=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null | sort -n | tail -1)
+nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader | sed 's/^/  /'
+if [ -n "$GPU_PROCS" ] || [ "${GPU_MEM_USED:-0}" -gt 1000 ]; then
+    echo "ERROR: GPU が使用中です。他の人の作業を妨げないよう、学習を開始せずに終了します。"
+    echo "$GPU_PROCS" | while IFS=, read -r pid mem; do
+        [ -n "$pid" ] && echo "  pid=$pid mem=$mem user=$(ps -o user= -p "$pid" 2>/dev/null) cmd=$(ps -o comm= -p "$pid" 2>/dev/null)"
+    done
+    exit 1
+fi
+echo "  OK: GPU は空いています"
+
 # --- STAGE 2: tmux の中に入る ------------------------------------------------
 # 学習は長時間かかるため、SSH が切れても死なないよう tmux 内で回す。
 SESSION="exp-$(echo "$BRANCH" | sed 's#^exp/##; s#[^A-Za-z0-9_-]#-#g')"

@@ -15,28 +15,20 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | `results/` | サーバーから rsync で回収した実験別の結果（`.gitignore` 済み。モデル重みは除外する） |
 | `2604.01779v1.pdf` | 参照論文 |
 
-## 現在の実験：Med-EASi × `<KEEP>` 1B フルデータ版・**再実行（キャッシュ事故のやり直し）**（ロードマップ3.5）
+## 現在の実験：Med-EASi × `<KEEP>` 1B フルデータ版・**エポック別評価**（FKGL との比較用）
 
-> **⚠️ `results/keep-medeasi-1b-v2/` の結果は無効。** datasets キャッシュ事故（下記「修正したバグ 4」）により、**修正前（7/9）のプロンプトで学習していた**。症状は **62.1%（126/203）が空出力**（`<KEEP=none>` では 76.9%）、SARI 35.5・BERTScore 0.375 と全面崩壊。**比較対象の `results/fkgl-medeasi-1b-full-v2/` も同じ事故で無効。両方とも再実行が必要。**
-
-- **ブランチ**: `exp/keep-medeasi-1b-v2`（`exp/fkgl-medeasi-1b-full-v2` から分岐）
-- **目的**: 修正済みコードで KEEP を再学習・再推論し、**FKGL v2 と直接比較できる健全な結果**を得る。比較表（3.6）はこの結果が出てから作る。
-- **差分は `METRIC_NAME=KEEP` のみ**。分岐元の FKGL v2 とハイパラ・データ・修正コードがすべて同一なので、タグ以外の交絡はない。
+- **ブランチ**: `exp/keep-full-v2-epochs`（`exp/keep-full-v2-epochs` から分岐し、`exp/fkgl-full-v2-epochs` のコード一式を取り込み）
+- **目的**: FKGL のエポック別評価で、コピー崩壊の主因は**学習量**（eval_loss の早期終了が 1 エポック未満の重みを採用）と判明した（フル版でエポック1→2にするとコピー 47%→17%）。KEEP も同じ条件で回し、**FKGL（`results/fkgl-full-v2-epochs/`）とエポックをそろえて**数値保持率・コピー率・品質を比較する（ロードマップ③-7）。
+- **差分**: KEEP v2 との差分は `--save_each_epoch` のみ。`exp/fkgl-full-v2-epochs` との差分は `METRIC_NAME=KEEP` のみ（データ・ハイパラ・シード・コードは同一）。
 - **設定**:
-  - モデル `meta-llama/Llama-3.2-1B-Instruct`（gated。`HF_TOKEN` は conda env が設定するので手動 export は不要）/ データ `medeasi`（ローカル `data/splits_flattened_full`＝フル未フィルタ）/ 制御属性 `KEEP`
-  - 学習: train 1499件・val 191件（全件）/ batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6 / 3エポック / max_length 512
-  - 推論: test 203件（全件）/ 1シード（seed=37）/ batch_size 8 / max_length 1024（batch_size は 32GB GPU の OOM 対策。全プロンプトを max_length に固定パディングしているため greedy の生成結果はバッチサイズに依存しない）
-- **バグ修正が KEEP でも効くことは検証済み**: KEEP のタグ値は float ではなく文字列（`4` / `400, 20` / `none`）なので、修正3（`continue_final_message` の文字列マッチ）が壊れないかを実際の tokenizer でレンダリングして確認した。3パターンとも制御トークンが簡約文の接頭辞になり（assistant ヘッダは1つ・`<|eot_id|>` の割り込みなし）、completion 先頭への BOS 混入もない。
-- **タグ値の設計（再掲）**: train/val は「正解文が実際に保持している数値のみ」、test は「原文の全数値」。データ側でこの通りになっていることも検証済み（train/val 100%一致）。
-- **実行後に必ず確認すること**:
-  1. 学習開始直後に **`--- prompt sanity OK: ...'<KEEP=none>'`** が出ること（出なければプロンプト構築が壊れている）。
-  2. 学習ログの DEBUG に出るプロンプトの **`Today Date` が実行日と一致**すること（古ければキャッシュを踏んでいる）。
-  3. 出力を**目視**し、**空出力がほぼ0**・`The ` 始まりが参照文並み（約1割）・原文コピーが過大でないこと。SARI/LENS が論文値と一致していても品質は保証されない。
-- **評価時の注意（分析で判明）**:
-  - **数値保持率は単独では `<KEEP>` の効果を示さない**。原文をコピーするほど保持率は自動的に上がるため、必ず **原文コピー率・空出力数とセット**で報告する。
-  - 数値あり47件のうち、**識別的なのは22件だけ**（参照文が数値を落とす事例）。残り25件は参照文も全保持で誰でも 1.000 になり、混ぜると差が薄まる。**22件を主軸に見る**。
-  - 保持率は「マクロ平均（現行）」「**ミクロ＝何個中何個**」「**完全保持事例率**」を出す。現行コードはマクロのみ。
-  - **`losses.MAE` は KEEP では壊れている**: 参照文を目標として扱うため、保持率100%を達成すると MAE が 0.383 と**悪化**する（成功を罰する指標）。KEEP では使わない。
+  - モデル `meta-llama/Llama-3.2-1B-Instruct` / データ `medeasi`（`data/splits_flattened_full`）/ 制御属性 `KEEP`
+  - 学習: train 1499件・val 191件 / batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6（cosine, warmup 30）/ **3エポックを最後まで**（早期終了なし）/ max_length 512 / seed 42
+  - 推論: **各エポック末の重みそれぞれ**で test 203件 / 1シード（seed=37）/ greedy / batch_size 8 / max_length 1024 → `output/sft_inference/<model>/epoch{1,2,3}/`
+- **タグ値の設計（再掲）**: train/val は「正解文が実際に保持している数値のみ」、test は「原文の全数値」。
+- **評価時の注意**:
+  - **数値保持率は原文コピー率とセットで見る**（コピーするほど保持率は自動的に上がる）。コピー率は `copy_stats.txt`。
+  - 保持率は**数値あり全47件**で見る（参照文が数値を落とす22件に絞るのは無効。参照文は人間作成でモデルの脱落と無関係）。マクロ・ミクロ（何個中何個）・完全保持事例率を出す。
+  - **`losses.MAE` は KEEP では壊れている**（参照文を目標とするため、保持率100%で悪化する）。使わない。
 
 ### 修正したバグ（v1 = `exp/fkgl-medeasi-1b-full` の失敗原因）
 
@@ -121,7 +113,7 @@ Today Date: 09 Jul 2026        ← 実行日は 7/13, 7/14
 ```bash
 cd /Users/wadaketsunin/research
 git add -A && git commit -m "exp: <条件の説明>"   # 未コミットの変更があれば
-git push -u origin exp/keep-medeasi-1b-v2
+git push -u origin exp/keep-full-v2-epochs
 ```
 
 **2.（サーバー）1コマンドで実行**
@@ -129,8 +121,8 @@ git push -u origin exp/keep-medeasi-1b-v2
 ```bash
 ssh wada_yuto@calc40
 cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
-  && git fetch origin && git switch exp/keep-medeasi-1b-v2 && git merge --ff-only origin/exp/keep-medeasi-1b-v2 \
-  && ./run_experiment.sh exp/keep-medeasi-1b-v2
+  && git fetch origin && git switch exp/keep-full-v2-epochs && git merge --ff-only origin/exp/keep-full-v2-epochs \
+  && ./run_experiment.sh exp/keep-full-v2-epochs
 ```
 
 **ブランチの切り替えはスクリプトの外でやる**（先頭の `git fetch/switch/merge`）。`run_experiment.sh` は自分では switch せず、**引数のブランチ名と実際のチェックアウトが一致しているかを検証するだけ**。次のいずれかなら**学習を始める前に止まり**、直すコマンドを表示する:
@@ -143,7 +135,7 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
 
 `git pull` ではなく **`git merge --ff-only origin/<branch>`** を使うこと。`git pull --ff-only` は upstream（追跡情報）が未設定のローカルブランチだと `exit 1` で落ちる。
 
-これだけで次を全部やる（特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/keep-medeasi-1b-v2 1`）:
+これだけで次を全部やる（特定の GPU に固定したいときだけ第2引数で指定: `./run_experiment.sh exp/keep-full-v2-epochs 1`）:
 
 1. **チェックアウトを検証**（指定ブランチに居るか・origin と一致しているか・作業ツリーがクリーンか）。違えば**学習を始める前に止まる**
 2. **tmux セッションを自動で張る**（SSH が切れても継続。`Ctrl-b` → `d` で detach）
@@ -159,7 +151,7 @@ cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
 進捗確認・再接続:
 
 ```bash
-tmux attach -t exp-keep-medeasi-1b-v2      # セッション名は exp- + ブランチ名（exp/ を除く）
+tmux attach -t exp-keep-full-v2-epochs      # セッション名は exp- + ブランチ名（exp/ を除く）
 ```
 
 **3.（Mac）結果を回収（モデル重みは除外する）**
@@ -167,12 +159,12 @@ tmux attach -t exp-keep-medeasi-1b-v2      # セッション名は exp- + ブラ
 完了時にスクリプトが表示するコマンドをそのまま貼ればよい。
 
 ```bash
-mkdir -p /Users/wadaketsunin/research/results/keep-medeasi-1b-v2
+mkdir -p /Users/wadaketsunin/research/results/keep-full-v2-epochs
 rsync -av --exclude='*.safetensors' \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/output \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/models \
   wada_yuto@calc40:/mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS/logs \
-  /Users/wadaketsunin/research/results/keep-medeasi-1b-v2/
+  /Users/wadaketsunin/research/results/keep-full-v2-epochs/
 ```
 
 **モデル重み（`*.safetensors`）は回収しない。** 1実験あたり約4.9GB とアーカイブの99%以上を占めるが、**Mac には CUDA が無く使い道がない**。再現性は「ブランチ＝実験」で担保される。`models/` の `args.json` / `config.json` / `tokenizer.json` は残すので、実験条件の証跡とローカルでのプロンプト再現には使える（除外により 4.9GB → 約20MB）。
