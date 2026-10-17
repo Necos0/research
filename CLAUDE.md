@@ -17,4 +17,5 @@ main は常に worktree **`/Users/wadaketsunin/research-main`** に展開して�
 - **`exp/*` ブランチにある共通文書は、main を取り込んだ時点の写し**で、古いことがある。読まない・編集しない。
 - **実験ブランチへは `git merge main` で取り込む**。main のコードは古いので、実験ブランチは従来どおり元の実験ブランチから切る。切ったら `git merge main` で共通文書とこの CLAUDE.md を入れる。main には共通文書のコミットしか積まないので、このマージで変わるのは共通文書だけ。衝突したら main 側を採用する（`git checkout --theirs CLAUDE.md docs/direction.md docs/roadmap.md`）。
 - worktree が無い場合は作り直す: `git -C /Users/wadaketsunin/research worktree add /Users/wadaketsunin/research-main main`
+- **`/Users/wadaketsunin/research` 自体が main にいるときは worktree は不要**（同じブランチは2か所でチェックアウトできないので作れない）。そのまま `docs/` を読み書きする。`exp/*` に切り替えたら、上のコマンドで worktree を作り直す。
 - 実験固有の文書（README の「現在の実験」節、`docs/results_*.html` など）は、従来どおり各 `exp/*` ブランチに置く。
