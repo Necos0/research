@@ -77,10 +77,13 @@ Taming-CATSの「制御トークン」の仕組みを応用・拡張する。
   ```bash
   ssh calc40 'cd /mnt/gpu/workspace/2025/yuto_wada/research/taming-CATS \
     && git fetch origin && git switch exp/<実験名> && git merge --ff-only origin/exp/<実験名> \
-    && tmux new-session -d -s exp-<実験名> "./run_experiment.sh exp/<実験名>; echo; echo --- 終了; read"'
+    && tmux new-session -d -s exp-<実験名> "bash -lc \"./run_experiment.sh exp/<実験名>\"; echo; echo --- 終了; read"'
   ssh calc40 'tmux capture-pane -p -t exp-<実験名> | tail -40'      # 画面の確認
   ssh calc40 'tmux send-keys -t exp-<実験名> y Enter'               # 掃除の確認に答える（ユーザー了承後のみ）
   ```
+  - **`bash -lc` を必ず挟む**。ssh から作った tmux はログイン時の設定を読まないので、conda（`/opt/miniforge3`）が見つからずに [3/6] で止まる（2026-10-17 に実際に止まった）。
+  - Claude Code 側は `.claude/settings.local.json`（git 管理外）で `ssh calc40 ...` を許可済み。これが無いと、掃除の確認への応答が自動許可モードに拒否される。
+  - サーバーは GitHub から HTTPS で取得するので、**リポジトリは公開のままにしておく**（非公開にすると `git fetch` が認証を求めて失敗する。2026-10-17 に公開に戻した）。
   - Claude の1コマンドは最大10分で打ち切られるため、**学習を ssh の前景で回してはいけない**（必ず tmux の中で回す）。
   - 起動直後に `--- prompt sanity OK: ...` が出ていることを `capture-pane` で確認する。
 - **完了の監視（学習は約30分かかる）**: 接続が切れてもジョブは止まらない。ジョブは calc40 上の tmux が持っており、Claude の ssh は起動したらすぐ抜ける（SSH を張りっぱなしにしない）。
