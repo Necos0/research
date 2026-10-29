@@ -10,7 +10,7 @@ echo "Logging to $LOG_FILE"
 echo "Script started: $(date)"
 
 # =========================================================================
-# 実験: Med-EASi × <FKGL> 1B フルデータ版・エポック別評価（各エポック末のチェックポイントを全件テスト・1シード）
+# 実験: Med-EASi × <FKGL> 1B・目標値を書き換える実験（最終=エポック3の重みで、出力側の FKGL タグだけ変えた test を推論）
 export WANDB_MODE=disabled
 
 # --- GPU メモリ対策（32GB GPU で LLM 生成と評価モデルが同居するため）
@@ -25,7 +25,9 @@ USER_PROMPT_ID="token_explanation"
 LOCAL_DATA_DIR="data/splits_flattened_full"   # 学習時と同じデータを指定すること（test は全条件で同じ 203 件）
 # true: models/<MODEL_DIR>/checkpoint-*（学習の --save_each_epoch で残した各エポック末の重み）を全部評価する。
 # false: 従来どおり models/<MODEL_DIR> 直下の最終（早期終了ならベスト）重みだけを評価する。
-EVAL_EACH_CHECKPOINT=true
+EVAL_EACH_CHECKPOINT=false
+# 目標値を書き換えた test（src/build_fkgl_counterfactual_tests.py が output/ 配下に生成）を条件ごとに推論する
+COUNTERFACTUAL_CONDITIONS=(ref0 abs4 abs8 abs12 abs16 refm4 refm2 refp2)
 
 # 学習で生成された最新の models/ ディレクトリを自動選択
 MODEL_DIR=$(ls -1dt "models/${METRIC_NAME}-${DATASET}-${USER_PROMPT_ID}-"* 2>/dev/null | head -1 | xargs -n1 basename)
@@ -45,7 +47,7 @@ SEEDS=(
 
 # 1つの重み（MODEL_PATH）について 推論 → 評価 → コピー率の集計 を行う
 run_one() {
-  local MODEL_PATH="$1" OUTPUT_DIR="$2" LABEL="$3"
+  local MODEL_PATH="$1" OUTPUT_DIR="$2" LABEL="$3" LOCAL_DATA_DIR="${4:-$LOCAL_DATA_DIR}"
   mkdir -p "$OUTPUT_DIR"
   echo
   echo "##### [$LABEL] MODEL_PATH=$MODEL_PATH → $OUTPUT_DIR"
@@ -121,7 +123,17 @@ if [ "$EVAL_EACH_CHECKPOINT" = true ]; then
   echo "===== エポック別のコピー率（まとめ）"
   cat output/sft_inference/"$MODEL_DIR"/epoch*/copy_stats.txt
 else
-  run_one "$MODELS_DIR/$MODEL_DIR" "output/sft_inference/$MODEL_DIR" "final"
+  # 学習は --save_each_epoch で3エポック回し切るので、直下の重み＝エポック3
+  PYTHONPATH=src python src/build_fkgl_counterfactual_tests.py output/counterfactual_data || exit 1
+  for COND in "${COUNTERFACTUAL_CONDITIONS[@]}"; do
+    run_one "$MODELS_DIR/$MODEL_DIR" "output/sft_inference/$MODEL_DIR/cf_${COND}" "cf_${COND}" "output/counterfactual_data/${COND}"
+  done
+  echo
+  echo "===== 条件別のコピー率（まとめ）"
+  cat output/sft_inference/"$MODEL_DIR"/cf_*/copy_stats.txt
+  echo
+  echo "===== 与えた目標に対する集計"
+  PYTHONPATH=src python src/fkgl_counterfactual_eval.py "output/sft_inference/$MODEL_DIR"
 fi
 
 echo "Script completed: $(date)"
