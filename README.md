@@ -17,6 +17,8 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 ## 現在の実験：Med-EASi × `<FKGL>`＋`<KEEP>` **同時制御** 1B フルデータ版・エポック別評価（ロードマップ ④-4.1）
 
+> **シード違いの再現実験**: `exp/fkgl-keep-full-v2-epochs` の学習シードを **43** にしたもの（他は同一）。結果は `results/fkgl-keep-full-v2-epochs-seed43/`。
+
 - **ブランチ**: `exp/fkgl-keep-full-v2-epochs`（`exp/keep-full-v2-epochs-seed43` から分岐。Trainer に seed を渡す修正込みで、シードは 42 に戻した）
 - **目的**: 同じ平易化の制御（FKGL タグ）に KEEP タグを足すと、数値の保持率が上がるかを確かめる。FKGL 単独モデルは目標 FKGL を下げるほど数値を落とす（目標4で 33/87 個、④-4.3）。同時制御モデルで、**低い目標でも数値が残るか**を見る（この学習の後、④-4.3 と同じ目標の書き換え実験を行う）。
 - **タグ**: 出力側 `<FKGL=y> <KEEP=a, b>`、原文側 `<FKGL=x> <KEEP=...>`。制御属性名は `FKGL_KEEP`（`helpers/prompting.py` の `COMBINED_METRICS`）。値の作り方は単独モデルと同じ（FKGL は参照文の値、KEEP は train/val が「正解文が実際に保持している数値のみ」、test が「原文の全数値」）。
@@ -24,7 +26,7 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 - **差分**: `exp/fkgl-full-v2-epochs`・`exp/keep-full-v2-epochs` との差分は制御属性と **max_length（512→768）** のみ。タグ2つ分でプロンプトが長く、512 だと train の約1割で簡約文の末尾が切れる見込み（単独モデルでは約1.5%）。切れた件数は学習ログの `--- truncation:` で確認する。
 - **設定**:
   - モデル `meta-llama/Llama-3.2-1B-Instruct` / データ `medeasi`（`data/splits_flattened_full`）/ 制御属性 `FKGL_KEEP`
-  - 学習: train 1499件・val 191件 / batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6（cosine, warmup 30）/ **3エポックを最後まで**（早期終了なし）/ max_length 768 / seed 42
+  - 学習: train 1499件・val 191件 / batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6（cosine, warmup 30）/ **3エポックを最後まで**（早期終了なし）/ max_length 768 / seed 43
   - 推論: **各エポック末の重みそれぞれ**で test 203件 / 1シード（seed=37）/ greedy / batch_size 8 / max_length 1024 → `output/sft_inference/<model>/epoch{1,2,3}/`
 - **学習を回す前に確認すること**: 学習ログの `prompt sanity OK` と、DEBUG で表示されるプロンプト全体に、原文側・出力側とも2つのタグが入っていること（経緯 E1・E2）。
 - **評価**:
