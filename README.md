@@ -15,7 +15,15 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | `results/` | サーバーから rsync で回収した実験別の結果（`.gitignore` 済み。モデル重みは除外する） |
 | `2604.01779v1.pdf` | 参照論文 |
 
-## 現在の実験：Med-EASi × `<FKGL>` 1B フルデータ版・**エポック別評価**（コピー崩壊の切り分け①：学習量）
+## 現在の実験：FKGL 単独モデル（シード44）で FKGL の目標値を書き換える（④-4.3.1 の比較相手の3シード化）
+
+- **ブランチ**: `exp/fkgl-counterfactual-targets-seed44`（学習は `exp/fkgl-full-v2-epochs-seed44` と同一。推論は `exp/fkgl-counterfactual-targets` の書き換え実験を持ってきた）
+- **目的**: 同時制御モデルの書き換え実験（シード42・43・44）と、同じシードどうしで比べる。ref0 が `exp/fkgl-full-v2-epochs-seed44` のエポック3と一致するかで学習の再現を確かめる
+- 結果は `results/fkgl-counterfactual-targets-seed44/`
+
+以下は分岐元の実験の説明。
+
+## 分岐元の実験：Med-EASi × `<FKGL>` 1B フルデータ版・**エポック別評価**（コピー崩壊の切り分け①：学習量）
 
 > **シード違いの再現実験**: `exp/fkgl-full-v2-epochs` の学習シードを **44** にしたもの（他は同一。シードは学習データの読み順に効く。Trainer にも `seed` を渡すよう修正、42 なら従来と同一）。結果は `results/fkgl-full-v2-epochs-seed44/`。
 
