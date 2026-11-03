@@ -11,7 +11,7 @@ echo "Script started: $(date)"
 
 # =========================================================================
 # 実験: Med-EASi × <FKGL>＋<KEEP> 同時制御 1B・目標値を書き換える実験（ロードマップ ④-4.3.1）
-#   エポック3の重み（exp/fkgl-keep-full-v2-epochs、シード42）に、出力側の FKGL タグだけを書き換えた test を与える。
+#   エポック3の重み（exp/fkgl-keep-full-v2-epochs-seed44、シード44）に、出力側の FKGL タグだけを書き換えた test を与える。
 #   KEEP タグは書き換えない（原文の全数値）。FKGL 単独モデルの同じ実験（exp/fkgl-counterfactual-targets）と比べ、
 #   低い目標でも数値が残るかを見る。学習はしない（サーバーに残した重みを使い、この推論スクリプトだけを回す）
 export WANDB_MODE=disabled

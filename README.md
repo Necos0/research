@@ -17,6 +17,8 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 
 ## 現在の実験：FKGL＋KEEP 同時制御モデルで FKGL の目標値を書き換える（ロードマップ ④-4.3.1、推論のみ）
 
+> **シード違い**: 同時制御モデルのシード **44** で同じ書き換え実験を行う。サーバーに残っているシード44 の重みに `run_sft_inference.sh` だけを回す。結果は `results/fkgl-keep-counterfactual-targets-seed44/`。
+
 - **ブランチ**: `exp/fkgl-keep-counterfactual-targets`（`exp/fkgl-keep-full-v2-epochs` から分岐。書き換え用のスクリプトは `exp/fkgl-counterfactual-targets` から持ってきた）
 - **目的**: 同時制御モデル（シード42・エポック3）の出力側の FKGL タグだけを書き換え（abs4/8/12/16、参照文 −4/−2/0/+2）、FKGL 単独モデルの同じ実験（目標4で数値の保持 33/87）より数値が残るかを見る。KEEP タグは原文の全数値のまま
 - **実行**: 学習はしない。サーバーに残した `exp/fkgl-keep-full-v2-epochs` の重みに `run_sft_inference.sh` だけを回す（`run_experiment.sh` は掃除で重みを消すので使わない）
