@@ -8,7 +8,7 @@
 #   - タグは出力側 "<FKGL=y> <KEEP=a, b>"、原文側 "<FKGL=x> <KEEP=...>"（METRIC_NAME=FKGL_KEEP）。
 #   - exp/fkgl-full-v2-epochs・exp/keep-full-v2-epochs との差分は METRIC_NAME と MAX_LENGTH のみ
 #     （データ・ハイパラ・3エポック・早期終了なし・各エポック末の重みを評価、は同一）。
-#   - シード 42。43・44 は従来どおり -seed43 / -seed44 ブランチで回す。
+#   - 【シード違い】学習シード 43（exp/fkgl-keep-full-v2-epochs-seed43 と同一の学習）。
 # =========================================================================
 
 export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
@@ -61,7 +61,7 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --epochs "3" \
             --patience "4" \
             --save_each_epoch \
-            --seed "42" \
+            --seed "43" \
             --max_length "$MAX_LENGTH"\
             --wandb_project_name "ATS_with_control_tokens" \
             --wandb_entity "shtosti"\
