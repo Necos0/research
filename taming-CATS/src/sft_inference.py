@@ -10,6 +10,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, LlamaForCausalLM
 # from peft import LoraConfig, PeftModelForCausalLM, get_peft_config
 
 from helpers.prompting import select_random_system_prompt, select_random_user_prompt, select_control_token_explanation, select_random_control_token_examples
+from helpers.prompting import component_metrics, get_metric_value
 from helpers.prompting import create_user_prompt, format_prompt_with_special_tokens, format_completion_with_special_tokens, format_prompt_with_tokenizer, format_completion_with_tokenizer
 from helpers.hugging_face import load_dataset_from_hf, get_model_short_name
 from classes.Metrics import Metrics
@@ -124,7 +125,7 @@ def load_and_prepare_model(model_name, model_family, model_path, model_class, ma
 
 
 def is_source_metric(args):
-    if args.metric_name in ["FRE", "FKGL", "ARI", "DALE-CHALL", "Dale-Chall", "KEEP"]:
+    if args.metric_name in ["FRE", "FKGL", "ARI", "DALE-CHALL", "Dale-Chall", "KEEP", "FKGL_KEEP"]:
         return True
     return False
     
@@ -140,11 +141,10 @@ def load_and_prepare_test_set(dataset_name, tokenizer, max_length, control_token
 
         system_id, system_prompt = select_random_system_prompt(system_prompts)
 
-        metric_key_mapped = metric_mapping[args.metric_name]
-
         if source_based_metric:
-            source_metric_value = row["source_metrics"][metric_key_mapped]
-            target_metric_value = row["target_metrics"][metric_key_mapped]
+            # 組み合わせ指標（FKGL_KEEP）では構成要素ごとの値の dict になる
+            source_metric_value = get_metric_value(row["source_metrics"], args.metric_name, metric_mapping)
+            target_metric_value = get_metric_value(row["target_metrics"], args.metric_name, metric_mapping)
         else:
             source_metric_value = None
             if args.metric_name == "WORD_COMPRESSION":
@@ -231,7 +231,8 @@ def load_and_prepare_test_set(dataset_name, tokenizer, max_length, control_token
         "プロンプトに assistant ターンが2つある＝制御トークンが簡約文と別ターンに分離している。"
         f"\n{_sample[-200:]}"
     )
-    assert _sample.rstrip().endswith(">") and f"<{args.metric_name}=" in _sample.rsplit("assistant<|end_header_id|>", 1)[-1], (
+    _assistant = _sample.rsplit("assistant<|end_header_id|>", 1)[-1]
+    assert _sample.rstrip().endswith(">") and all(f"<{m}=" in _assistant for m in component_metrics(args.metric_name)), (
         "プロンプトが制御トークンで終わっていない＝簡約文の接頭辞として効かない。"
         f"\n{_sample[-200:]}"
     )

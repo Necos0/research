@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # =========================================================================
-# 【シード違い】exp/keep-full-v2-epochs の学習シードを 43 にした再現実験（他は同一）。
-# 実験: Med-EASi × <KEEP> 1B フルデータ版・エポック別評価
-#   - 目的: FKGL のエポック別評価（exp/fkgl-full-v2-epochs）で、コピー崩壊の主因は
-#           学習量（eval_loss の早期終了が 1 エポック未満の重みを採用）と判明した。
-#           KEEP も同じ条件（早期終了なしで 3 エポック、各エポック末の重みを全部評価）で回し、
-#           FKGL とエポックをそろえて数値保持率・コピー率を比較する。
-#   - KEEP v2（exp/keep-medeasi-1b-v2）との差分は --save_each_epoch のみ。
-#     exp/fkgl-full-v2-epochs との差分は METRIC_NAME=KEEP のみ（データ・ハイパラ・シードは同一）。
+# 実験: Med-EASi × <FKGL>＋<KEEP> 同時制御 1B フルデータ版・エポック別評価（ロードマップ ④-4.1）
+#   - 目的: 同じ平易化の制御（FKGL タグ）に KEEP タグを足すと、数値の保持率が上がるかを確かめる。
+#           FKGL 単独モデルは目標 FKGL を下げるほど数値を落とす（目標4で 33/87 個、④-4.3）。
+#           同時制御モデルで、低い目標でも数値が残るかを見る。
+#   - タグは出力側 "<FKGL=y> <KEEP=a, b>"、原文側 "<FKGL=x> <KEEP=...>"（METRIC_NAME=FKGL_KEEP）。
+#   - exp/fkgl-full-v2-epochs・exp/keep-full-v2-epochs との差分は METRIC_NAME と MAX_LENGTH のみ
+#     （データ・ハイパラ・3エポック・早期終了なし・各エポック末の重みを評価、は同一）。
+#   - シード 42。43・44 は従来どおり -seed43 / -seed44 ブランチで回す。
 # =========================================================================
 
 export WANDB_MODE=disabled          # W&B を使わない（著者entityへのログを回避）
@@ -19,8 +19,10 @@ LOG_FILE="logs/finetune_$(date +%Y%m%d_%H%M%S).log"
 exec > >(tee -a "$LOG_FILE") 2>&1
 echo "Logging to $LOG_FILE"
 
-MAX_LENGTH=512                      # 大語彙で巨大ロジット→OOM回避のため短めに
-                                    # （FKGL v2 と同値。比較の公平性のため変更しない）
+MAX_LENGTH=768                      # 単独モデル（512）より長くする。タグ2つ分の指示と説明で
+                                    # プロンプトが KEEP 単独より約90トークン長く、512 だと train の
+                                    # 約1割で簡約文の末尾が切れる（単独モデルでは約1.5%）。
+                                    # 切れた件数は学習ログの "--- truncation:" で確認する
 
 # --- model name（本走行の 1B モデル）
 #   ※ gated モデルのため、サーバー側で HF トークン（ライセンス承認済み）が必要
@@ -30,7 +32,7 @@ DATASETS=(
     "medeasi"                       # ← ローカル folder 名（splits_flattened_filtered/medeasi）
     )
 METRICS=(
-    "KEEP"
+    "FKGL_KEEP"
     )
 
 for DATASET_NAME in "${DATASETS[@]}"; do
@@ -59,7 +61,7 @@ for DATASET_NAME in "${DATASETS[@]}"; do
             --epochs "3" \
             --patience "4" \
             --save_each_epoch \
-            --seed "43" \
+            --seed "42" \
             --max_length "$MAX_LENGTH"\
             --wandb_project_name "ATS_with_control_tokens" \
             --wandb_entity "shtosti"\

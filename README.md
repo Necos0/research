@@ -15,23 +15,22 @@ LLM によるテキスト平易化において、可読性レベルの制御に�
 | `results/` | サーバーから rsync で回収した実験別の結果（`.gitignore` 済み。モデル重みは除外する） |
 | `2604.01779v1.pdf` | 参照論文 |
 
-## 現在の実験：Med-EASi × `<KEEP>` 1B フルデータ版・**エポック別評価**（FKGL との比較用）
+## 現在の実験：Med-EASi × `<FKGL>`＋`<KEEP>` **同時制御** 1B フルデータ版・エポック別評価（ロードマップ ④-4.1）
 
-> **シード違いの再現実験**: `exp/keep-full-v2-epochs` の学習シードを **43** にしたもの（他は同一。シードは学習データの読み順に効く。Trainer にも `seed` を渡すよう修正、42 なら従来と同一）。結果は `results/keep-full-v2-epochs-seed43/`。
-
-
-- **ブランチ**: `exp/keep-full-v2-epochs`（`exp/keep-medeasi-1b-v2` から分岐し、`exp/fkgl-full-v2-epochs` のコード一式を取り込み）
-- **目的**: FKGL のエポック別評価で、コピー崩壊の主因は**学習量**（eval_loss の早期終了が 1 エポック未満の重みを採用）と判明した（フル版でエポック1→2にするとコピー 47%→17%）。KEEP も同じ条件で回し、**FKGL（`results/fkgl-full-v2-epochs/`）とエポックをそろえて**数値保持率・コピー率・品質を比較する（ロードマップ③-7）。
-- **差分**: KEEP v2 との差分は `--save_each_epoch` のみ。`exp/fkgl-full-v2-epochs` との差分は `METRIC_NAME=KEEP` のみ（データ・ハイパラ・シード・コードは同一）。
+- **ブランチ**: `exp/fkgl-keep-full-v2-epochs`（`exp/keep-full-v2-epochs-seed43` から分岐。Trainer に seed を渡す修正込みで、シードは 42 に戻した）
+- **目的**: 同じ平易化の制御（FKGL タグ）に KEEP タグを足すと、数値の保持率が上がるかを確かめる。FKGL 単独モデルは目標 FKGL を下げるほど数値を落とす（目標4で 33/87 個、④-4.3）。同時制御モデルで、**低い目標でも数値が残るか**を見る（この学習の後、④-4.3 と同じ目標の書き換え実験を行う）。
+- **タグ**: 出力側 `<FKGL=y> <KEEP=a, b>`、原文側 `<FKGL=x> <KEEP=...>`。制御属性名は `FKGL_KEEP`（`helpers/prompting.py` の `COMBINED_METRICS`）。値の作り方は単独モデルと同じ（FKGL は参照文の値、KEEP は train/val が「正解文が実際に保持している数値のみ」、test が「原文の全数値」）。
+- **プロンプト**: `data/prompts/user_prompts.json` の `FKGL_KEEP`。FKGL と KEEP の指示を1つにまとめ、EXPLANATION には両方のタグの説明を並べる。
+- **差分**: `exp/fkgl-full-v2-epochs`・`exp/keep-full-v2-epochs` との差分は制御属性と **max_length（512→768）** のみ。タグ2つ分でプロンプトが長く、512 だと train の約1割で簡約文の末尾が切れる見込み（単独モデルでは約1.5%）。切れた件数は学習ログの `--- truncation:` で確認する。
 - **設定**:
-  - モデル `meta-llama/Llama-3.2-1B-Instruct` / データ `medeasi`（`data/splits_flattened_full`）/ 制御属性 `KEEP`
-  - 学習: train 1499件・val 191件 / batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6（cosine, warmup 30）/ **3エポックを最後まで**（早期終了なし）/ max_length 512 / seed 42
+  - モデル `meta-llama/Llama-3.2-1B-Instruct` / データ `medeasi`（`data/splits_flattened_full`）/ 制御属性 `FKGL_KEEP`
+  - 学習: train 1499件・val 191件 / batch_size 4（gradient_accumulation 4 → 実効16）/ learning_rate 5e-6（cosine, warmup 30）/ **3エポックを最後まで**（早期終了なし）/ max_length 768 / seed 42
   - 推論: **各エポック末の重みそれぞれ**で test 203件 / 1シード（seed=37）/ greedy / batch_size 8 / max_length 1024 → `output/sft_inference/<model>/epoch{1,2,3}/`
-- **タグ値の設計（再掲）**: train/val は「正解文が実際に保持している数値のみ」、test は「原文の全数値」。
-- **評価時の注意**:
-  - **数値保持率は原文コピー率とセットで見る**（コピーするほど保持率は自動的に上がる）。コピー率は `copy_stats.txt`。
-  - 保持率は**数値あり全47件**で見る（参照文が数値を落とす22件に絞るのは無効。参照文は人間作成でモデルの脱落と無関係）。マクロ・ミクロ（何個中何個）・完全保持事例率を出す。
-  - **`losses.MAE` は KEEP では壊れている**（参照文を目標とするため、保持率100%で悪化する）。使わない。
+- **学習を回す前に確認すること**: 学習ログの `prompt sanity OK` と、DEBUG で表示されるプロンプト全体に、原文側・出力側とも2つのタグが入っていること（経緯 E1・E2）。
+- **評価**:
+  - `sft_eval.py` の MAE・制御統計は主指標 FKGL で計算する（`metric_mapping.json` で `FKGL_KEEP` → `FKGL`）
+  - 数値の保持は `src/numeric_eval.py`、コピー率は `copy_stats.txt`。**数値保持率は原文コピー率とセットで見る**
+  - 比較相手: FKGL 単独 `results/fkgl-full-v2-epochs*/`、KEEP 単独 `results/keep-full-v2-epochs*/`（エポック3）
 
 ### 修正したバグ（v1 = `exp/fkgl-medeasi-1b-full` の失敗原因）
 

@@ -19,7 +19,8 @@ def load_json(file_path: str):
         return json.load(file)
 
 def is_source_metric(args):
-    if args.metric_key in ["FRE", "FKGL", "ARI", "DALE-CHALL", "Dale-Chall"]:
+    # FKGL_KEEP は主指標 FKGL で損失を計算する（metric_mapping.json で FKGL に対応づけ）
+    if args.metric_key in ["FRE", "FKGL", "ARI", "DALE-CHALL", "Dale-Chall", "FKGL_KEEP"]:
         return True
     return False
 

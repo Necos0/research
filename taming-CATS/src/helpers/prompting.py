@@ -1,5 +1,35 @@
 import random
 
+# 複数の制御タグを同時に付ける「組み合わせ指標」と、その構成要素（タグを並べる順）。
+# 値は {構成要素: 値} の dict で受け渡し、タグは "<FKGL=8.2> <KEEP=50, 3>" のように並べる。
+# metric_mapping.json では組み合わせ指標を主指標（FKGL）に対応づけてあり、
+# 推論結果の reference_metric_value・評価の MAE はその主指標で計算される。
+COMBINED_METRICS = {
+    "FKGL_KEEP": ["FKGL", "KEEP"],
+}
+
+
+def component_metrics(metric_name):
+    """組み合わせ指標なら構成要素のリスト、単独の指標なら [metric_name] を返す。"""
+    return COMBINED_METRICS.get(metric_name, [metric_name])
+
+
+def get_metric_value(metrics_row, metric_name, metric_mapping):
+    """データ行の source_metrics / target_metrics から制御タグの値を取り出す。
+
+    組み合わせ指標では構成要素ごとの値を dict で返す。
+    """
+    if metric_name in COMBINED_METRICS:
+        return {m: metrics_row[metric_mapping[m]] for m in COMBINED_METRICS[metric_name]}
+    return metrics_row[metric_mapping[metric_name]]
+
+
+def control_token_string(metric_name, value):
+    """制御タグの文字列。例: "<FKGL=8.2>"、組み合わせなら "<FKGL=8.2> <KEEP=50, 3>"。"""
+    if isinstance(value, dict):
+        return " ".join(f"<{m}={value[m]}>" for m in component_metrics(metric_name))
+    return f"<{metric_name}={value}>"
+
 
 def select_random_system_prompt(system_prompts, seed=None):
     """Randomly selects a system prompt from the list and returns its ID and text."""
@@ -22,6 +52,11 @@ def select_random_user_prompt(user_prompts, metric_name, source_metric_value, ta
 
 def select_control_token_explanation(control_tokens, metric_name, target_metric_value):
     """Selects a control token explanation based on the metric name and value."""
+    if isinstance(target_metric_value, dict):
+        # 組み合わせ指標: 構成要素ごとの説明を、それぞれの目標値で埋めてつなぐ
+        explanations = [select_control_token_explanation(control_tokens, m, target_metric_value[m])
+                        for m in component_metrics(metric_name)]
+        return " ".join(e for e in explanations if e)
     control_token = control_tokens.get(metric_name)
     if control_token:
         return control_token["explanation"].replace("{TARGET_VALUE}", str(target_metric_value))
@@ -61,8 +96,13 @@ def create_user_prompt(user_prompts, metric_name, source_metric_value, target_me
             for i, example in enumerate(examples, start=1):
                 prompt_text = prompt_text.replace(f"{{EXAMPLE_{i}}}", example)
 
-        prompt_text = prompt_text.replace("{SOURCE_VALUE}", str(source_metric_value))
-        prompt_text = prompt_text.replace("{TARGET_VALUE}", str(target_metric_value))
+        # 組み合わせ指標は構成要素ごとのプレースホルダ（{SOURCE_FKGL}・{TARGET_KEEP} など）を埋める
+        for placeholder, value in (("SOURCE", source_metric_value), ("TARGET", target_metric_value)):
+            if isinstance(value, dict):
+                for m, v in value.items():
+                    prompt_text = prompt_text.replace(f"{{{placeholder}_{m}}}", str(v))
+            else:
+                prompt_text = prompt_text.replace(f"{{{placeholder}_VALUE}}", str(value))
         prompt_text = prompt_text.replace("{TEXT}", text)
         prompt_text = prompt_text.replace("{EOT_TOKEN}", "<|eot_id|>")
         # print(f"Prompt before return: {prompt_text}") # for debugging
@@ -111,7 +151,7 @@ def format_completion_with_special_tokens(tokenizer, completion, model_family="b
 
 
 def format_prompt_with_tokenizer(tokenizer, system_prompt, user_prompt, metric_name, target_metric_value):
-    control_token = f"<{metric_name}={target_metric_value}>"
+    control_token = control_token_string(metric_name, target_metric_value)
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},

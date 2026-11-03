@@ -21,6 +21,7 @@ from transformers import EarlyStoppingCallback
 
 from helpers.hugging_face import load_dataset_from_hf, get_model_short_name
 from helpers.prompting import select_random_system_prompt, select_random_user_prompt, select_control_token_explanation, select_random_control_token_examples
+from helpers.prompting import component_metrics, get_metric_value
 from helpers.prompting import create_user_prompt, format_prompt_with_special_tokens, format_completion_with_special_tokens, format_prompt_with_tokenizer, format_completion_with_tokenizer
 
 from classes.PredictionLoggerCallback import PredictionLoggerCallback
@@ -148,10 +149,18 @@ def tokenize_dataset(dataset, tokenizer, max_length):
         return {
             "input_ids": input_ids,
             "labels": labels,
-            "attention_mask": attention_mask
+            "attention_mask": attention_mask,
+            "full_length": len(prompt_ids) + len(completion_ids),
         }
 
-    return dataset.map(tokenize, batched=False, load_from_cache_file=False)
+    dataset = dataset.map(tokenize, batched=False, load_from_cache_file=False)
+    # max_length を超えた事例は簡約文の末尾が切れたまま学習される。プロンプトの長い条件
+    # （FKGL_KEEP）ほど切れやすく、条件間の比較を歪めるので件数を必ず出す。
+    lengths = dataset["full_length"]
+    truncated = sum(1 for n in lengths if n > max_length)
+    print(f"--- truncation: {truncated}/{len(lengths)} examples exceed max_length={max_length} "
+          f"(longest {max(lengths)} tokens)")
+    return dataset.remove_columns(["full_length"])
 
 def show_examples(dataset, n=3, show_tokens=False):
     indices = random.sample(range(len(dataset)), min(n, len(dataset)))
@@ -174,7 +183,7 @@ def show_examples(dataset, n=3, show_tokens=False):
 def is_source_metric(args):
     # KEEP は原文由来の数値を保持対象とするため source ベース
     #（原文側トークン <KEEP=...> を SOURCE TEXT にも前置する）
-    if args.metric_name in ["FRE", "FKGL", "ARI", "DALE-CHALL", "KEEP"]:
+    if args.metric_name in ["FRE", "FKGL", "ARI", "DALE-CHALL", "KEEP", "FKGL_KEEP"]:
         return True
     elif args.metric_name in ["CHAR_COMPRESSION", "WORD_COMPRESSION", "SENTENCE_COMPRESSION"]:
         return False
@@ -191,9 +200,9 @@ def load_and_prepare_dataset(dataset_name, tokenizer, args, source_based_metric=
     def process_instance(row):
         system_id, system_prompt = select_random_system_prompt(system_prompts)
 
-        metric_key_in_dataset = metric_mapping[args.metric_name]
-        source_metric_value = row["source_metrics"][metric_key_in_dataset] if source_based_metric else None
-        target_metric_value = row["target_metrics"][metric_key_in_dataset]
+        # 組み合わせ指標（FKGL_KEEP）では構成要素ごとの値の dict になる
+        source_metric_value = get_metric_value(row["source_metrics"], args.metric_name, metric_mapping) if source_based_metric else None
+        target_metric_value = get_metric_value(row["target_metrics"], args.metric_name, metric_mapping)
         reference_simplification = row["simplification_text"]
 
         explanation = select_control_token_explanation(control_tokens, args.metric_name, target_metric_value) \
@@ -255,12 +264,12 @@ def load_and_prepare_dataset(dataset_name, tokenizer, args, source_based_metric=
     # 上のキャッシュ事故は「学習は成功したように見えるが中身が別物」という形で表面化した。
     # 二度と静かに通さないため、組み立てたプロンプトが期待の形かをここで検証する。
     _sample = train_dataset[0]["prompt"]
-    _ctrl = f"<{args.metric_name}="
     assert _sample.count("<|start_header_id|>assistant<|end_header_id|>") == 1, (
         "プロンプトに assistant ターンが2つある＝制御トークンが簡約文と別ターンに分離している。"
         f"\n{_sample[-200:]}"
     )
-    assert _sample.rstrip().endswith(">") and _ctrl in _sample.rsplit("assistant<|end_header_id|>", 1)[-1], (
+    _assistant = _sample.rsplit("assistant<|end_header_id|>", 1)[-1]
+    assert _sample.rstrip().endswith(">") and all(f"<{m}=" in _assistant for m in component_metrics(args.metric_name)), (
         "プロンプトが制御トークンで終わっていない＝簡約文の接頭辞として効かない。"
         f"\n{_sample[-200:]}"
     )

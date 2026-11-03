@@ -152,5 +152,27 @@
     "description": "prompt with a control token, an explanation, and examples",
     "prompt": "INSTRUCTION: Simplify the following text. You MUST preserve, exactly and without omission, every numerical value listed in the control token prepended to your generated simplification. The control token has the following format: <KEEP=VALUE>, where VALUE lists the numbers to keep. The control token prepended to the source text lists the numbers found in the source text that must be preserved. \nSOURCE TEXT: <KEEP={SOURCE_VALUE}> {TEXT}\nEXPLANATION: {EXPLANATION} \nEXAMPLES: \n- {EXAMPLE_1} \n-{EXAMPLE_2} \n- {EXAMPLE_3}"
     }
+  ],
+  "FKGL_KEEP": [
+    {
+    "id": "no_token",
+    "description": "prompt without control tokens, simply with a target FKGL value and the numbers to keep",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to {TARGET_FKGL}, while preserving exactly (unchanged and without omission) the following numbers: {TARGET_KEEP}. \nSOURCE TEXT: {TEXT}"
+    },
+    {
+    "id": "token",
+    "description": "prompt with FKGL and KEEP control tokens",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the <FKGL=VALUE> control token prepended to your generated simplification. You MUST also preserve, exactly and without omission, every numerical value listed in the <KEEP=VALUE> control token prepended to your generated simplification, where VALUE lists the numbers to keep. The control tokens prepended to the source text indicate the FKGL value of the source text and list the numbers found in the source text that must be preserved. \nSOURCE TEXT: <FKGL={SOURCE_FKGL}> <KEEP={SOURCE_KEEP}> {TEXT}"
+    },
+    {
+    "id": "token_explanation",
+    "description": "prompt with FKGL and KEEP control tokens and their explanations",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the <FKGL=VALUE> control token prepended to your generated simplification. You MUST also preserve, exactly and without omission, every numerical value listed in the <KEEP=VALUE> control token prepended to your generated simplification, where VALUE lists the numbers to keep. The control tokens prepended to the source text indicate the FKGL value of the source text and list the numbers found in the source text that must be preserved. \nSOURCE TEXT: <FKGL={SOURCE_FKGL}> <KEEP={SOURCE_KEEP}> {TEXT}\nEXPLANATION: {EXPLANATION}"
+    },
+    {
+    "id": "token_explanation_examples",
+    "description": "prompt with FKGL and KEEP control tokens, explanations, and examples",
+    "prompt": "INSTRUCTION: Simplify the following text such that its Flesch-Kincaid Grade Level (FKGL) score is approximately equal to that specified in the <FKGL=VALUE> control token prepended to your generated simplification. You MUST also preserve, exactly and without omission, every numerical value listed in the <KEEP=VALUE> control token prepended to your generated simplification, where VALUE lists the numbers to keep. The control tokens prepended to the source text indicate the FKGL value of the source text and list the numbers found in the source text that must be preserved. \nSOURCE TEXT: <FKGL={SOURCE_FKGL}> <KEEP={SOURCE_KEEP}> {TEXT}\nEXPLANATION: {EXPLANATION} \nEXAMPLES: \n- {EXAMPLE_1} \n-{EXAMPLE_2} \n- {EXAMPLE_3}"
+    }
   ]
 }
