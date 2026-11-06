@@ -4,3 +4,6 @@ results/
 
 # Jupyter
 .ipynb_checkpoints/
+
+# 先輩の卒論 PDF（他人の著作物。公開リポジトリなので git には載せない）
+docs/卒論_先輩/

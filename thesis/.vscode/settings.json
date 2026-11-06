@@ -1,0 +1,20 @@
+{
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-gg",
+        "-pdfdvi",
+        "%DOC%"
+      ]
+    }
+  ],
+  "latex-workshop.chktex.enabled": false,
+  "latex-workshop.docker.enabled": false,
+  "latex-workshop.docker.image.latex": "nshun/latex",
+  "latex-workshop.latex.autoBuild.run": "onSave",
+  "latex-workshop.latex.outDir": ".",
+  "latex-workshop.synctex.afterBuild.enabled": true,
+  "latex-workshop.view.pdf.viewer": "tab"
+}

@@ -1,0 +1,973 @@
+\makeatletter
+\providecommand{\cos}{\mathop{\operator@font cos}\nolimits}
+\providecommand{\sin}{\mathop{\operator@font sin}\nolimits}
+\providecommand{\tan}{\mathop{\operator@font tan}\nolimits}
+\providecommand{\sec}{\mathop{\operator@font sec}\nolimits}
+\providecommand{\csc}{\mathop{\operator@font csc}\nolimits}
+\providecommand{\cosec}{\mathop{\operator@font cosec}\nolimits}
+\providecommand{\cosh}{\mathop{\operator@font cosh}\nolimits}
+\providecommand{\sinh}{\mathop{\operator@font sinh}\nolimits}
+\providecommand{\tanh}{\mathop{\operator@font tanh}\nolimits}
+\providecommand{\sech}{\mathop{\operator@font sech}\nolimits}
+\providecommand{\csch}{\mathop{\operator@font csch}\nolimits}
+\providecommand{\cosech}{\mathop{\operator@font cosech}\nolimits}
+
+\providecommand{\acos}{\mathop{\operator@font acos}\nolimits}
+\providecommand{\asin}{\mathop{\operator@font asin}\nolimits}
+\providecommand{\atan}{\mathop{\operator@font atan}\nolimits}
+\providecommand{\asec}{\mathop{\operator@font asec}\nolimits}
+\providecommand{\acsc}{\mathop{\operator@font acsc}\nolimits}
+\providecommand{\acosec}{\mathop{\operator@font acosec}\nolimits}
+\providecommand{\acosh}{\mathop{\operator@font acosh}\nolimits}
+\providecommand{\asinh}{\mathop{\operator@font asinh}\nolimits}
+\providecommand{\atanh}{\mathop{\operator@font atanh}\nolimits}
+\providecommand{\asech}{\mathop{\operator@font asech}\nolimits}
+\providecommand{\acsch}{\mathop{\operator@font acsch}\nolimits}
+\providecommand{\acosech}{\mathop{\operator@font acosech}\nolimits}
+
+\providecommand{\arccos}{\mathop{\operator@font arccos}\nolimits}
+\providecommand{\arcsin}{\mathop{\operator@font arcsin}\nolimits}
+\providecommand{\arctan}{\mathop{\operator@font arctan}\nolimits}
+\providecommand{\arcsec}{\mathop{\operator@font arcsec}\nolimits}
+\providecommand{\arccsc}{\mathop{\operator@font arccsc}\nolimits}
+\providecommand{\arccosec}{\mathop{\operator@font arccosec}\nolimits}
+\providecommand{\arccosh}{\mathop{\operator@font arccosh}\nolimits}
+\providecommand{\arcsinh}{\mathop{\operator@font arcsinh}\nolimits}
+\providecommand{\arctanh}{\mathop{\operator@font arctanh}\nolimits}
+\providecommand{\arcsech}{\mathop{\operator@font arcsech}\nolimits}
+\providecommand{\arccsch}{\mathop{\operator@font arccsch}\nolimits}
+\providecommand{\arccosech}{\mathop{\operator@font arccosech}\nolimits}
+
+\providecommand{\argmax}{\mathop{\operator@font argmax}\limits}
+\providecommand{\argmin}{\mathop{\operator@font argmin}\limits}
+\providecommand{\tr}{\mathop{\operator@font tr}\nolimits}
+\providecommand{\Var}{\mathop{\operator@font Var}\nolimits}
+\providecommand{\erf}{\mathop{\operator@font erf}\nolimits}
+\providecommand{\ext}{\mathop{\operator@font ext}}
+\providecommand{\extr}{\mathop{\operator@font extr}}
+\providecommand{\sign}{\mathop{\operator@font sign}\nolimits}
+\providecommand{\const}{\mathop{\operator@font const}\nolimits}
+\providecommand{\Differential}[2]{\frac{{\operator@font d} #1}{{\operator@font d} #2}}
+\providecommand{\Partial}[2]{\frac{\partial #1}{\partial #2}}
+\providecommand{\PartialD}[3]{\frac{\partial^2 #1}{\partial #2 \partial #3}}
+\providecommand{\KL}{\mathop{\operator@font KL}\nolimits}
+\providecommand{\E}{{\operator@font E}}
+\providecommand{\H}{{\operator@font H}}
+\providecommand{\I}{{\operator@font I}}
+\providecommand{\Expectation}[2]{\left\langle #1 \right\rangle_{#2}}
+\providecommand{\DKL}[2]{D_{\operator@font KL}\left[ #1 \ \big\| \ #2 \right]}
+\providecommand{\Mod}[1]{{\operator@font \quad \left(mod~#1 \right)}}
+\makeatother
+
+
+\providecommand{\registered}{$^{\tiny{\textregistered}}$}
+\providecommand{\trademark}{{\small\texttrademark}}
+
+
+\providecommand{\rma}{{\mathrm{a}}}
+\providecommand{\rmb}{{\mathrm{b}}}
+\providecommand{\rmc}{{\mathrm{c}}}
+\providecommand{\rmd}{{\mathrm{d}}}
+\providecommand{\rme}{{\mathrm{e}}}
+\providecommand{\rmf}{{\mathrm{f}}}
+\providecommand{\rmg}{{\mathrm{g}}}
+\providecommand{\rmh}{{\mathrm{h}}}
+\providecommand{\rmi}{{\mathrm{i}}}
+\providecommand{\rmj}{{\mathrm{j}}}
+\providecommand{\rmk}{{\mathrm{k}}}
+\providecommand{\rml}{{\mathrm{l}}}
+\providecommand{\rmm}{{\mathrm{m}}}
+\providecommand{\rmn}{{\mathrm{n}}}
+\providecommand{\rmo}{{\mathrm{o}}}
+\providecommand{\rmp}{{\mathrm{p}}}
+\providecommand{\rmq}{{\mathrm{q}}}
+\providecommand{\rmr}{{\mathrm{r}}}
+\providecommand{\rms}{{\mathrm{s}}}
+\providecommand{\rmt}{{\mathrm{t}}}
+\providecommand{\rmu}{{\mathrm{u}}}
+\providecommand{\rmv}{{\mathrm{v}}}
+\providecommand{\rmw}{{\mathrm{w}}}
+\providecommand{\rmx}{{\mathrm{x}}}
+\providecommand{\rmy}{{\mathrm{y}}}
+\providecommand{\rmz}{{\mathrm{z}}}
+\providecommand{\rmA}{{\mathrm{A}}}
+\providecommand{\rmB}{{\mathrm{B}}}
+\providecommand{\rmC}{{\mathrm{C}}}
+\providecommand{\rmD}{{\mathrm{D}}}
+\providecommand{\rmE}{{\mathrm{E}}}
+\providecommand{\rmF}{{\mathrm{F}}}
+\providecommand{\rmG}{{\mathrm{G}}}
+\providecommand{\rmH}{{\mathrm{H}}}
+\providecommand{\rmI}{{\mathrm{I}}}
+\providecommand{\rmJ}{{\mathrm{J}}}
+\providecommand{\rmK}{{\mathrm{K}}}
+\providecommand{\rmL}{{\mathrm{L}}}
+\providecommand{\rmM}{{\mathrm{M}}}
+\providecommand{\rmN}{{\mathrm{N}}}
+\providecommand{\rmO}{{\mathrm{O}}}
+\providecommand{\rmP}{{\mathrm{P}}}
+\providecommand{\rmQ}{{\mathrm{Q}}}
+\providecommand{\rmR}{{\mathrm{R}}}
+\providecommand{\rmS}{{\mathrm{S}}}
+\providecommand{\rmT}{{\mathrm{T}}}
+\providecommand{\rmU}{{\mathrm{U}}}
+\providecommand{\rmV}{{\mathrm{V}}}
+\providecommand{\rmW}{{\mathrm{W}}}
+\providecommand{\rmX}{{\mathrm{X}}}
+\providecommand{\rmY}{{\mathrm{Y}}}
+\providecommand{\rmZ}{{\mathrm{Z}}}
+\providecommand{\rmalpha}{{\mathrm{\alpha}}}
+\providecommand{\rmbeta}{{\mathrm{\beta}}}
+\providecommand{\rmgamma}{{\mathrm{\gamma}}}
+\providecommand{\rmdelta}{{\mathrm{\delta}}}
+\providecommand{\rmepsilon}{{\mathrm{\epsilon}}}
+\providecommand{\rmzeta}{{\mathrm{\zeta}}}
+\providecommand{\rmeta}{{\mathrm{\eta}}}
+\providecommand{\rmtheta}{{\mathrm{\theta}}}
+\providecommand{\rmiota}{{\mathrm{\iota}}}
+\providecommand{\rmkappa}{{\mathrm{\kappa}}}
+\providecommand{\rmlambda}{{\mathrm{\lambda}}}
+\providecommand{\rmmu}{{\mathrm{\mu}}}
+\providecommand{\rmnu}{{\mathrm{\nu}}}
+\providecommand{\rmxi}{{\mathrm{\xi}}}
+\providecommand{\rmomicron}{{\mathrm{\omicron}}}
+\providecommand{\rmpi}{{\mathrm{\pi}}}
+\providecommand{\rmrho}{{\mathrm{\rho}}}
+\providecommand{\rmsigma}{{\mathrm{\sigma}}}
+\providecommand{\rmtau}{{\mathrm{\tau}}}
+\providecommand{\rmupsilon}{{\mathrm{\upsilon}}}
+\providecommand{\rmphi}{{\mathrm{\phi}}}
+\providecommand{\rmchi}{{\mathrm{\chi}}}
+\providecommand{\rmpsi}{{\mathrm{\psi}}}
+\providecommand{\rmomega}{{\mathrm{\omega}}}
+\providecommand{\rmGamma}{{\mathrm{\Gamma}}}
+\providecommand{\rmDelta}{{\mathrm{\Delta}}}
+\providecommand{\rmTheta}{{\mathrm{\Theta}}}
+\providecommand{\rmLambda}{{\mathrm{\Lambda}}}
+\providecommand{\rmXi}{{\mathrm{\Xi}}}
+\providecommand{\rmPi}{{\mathrm{\Pi}}}
+\providecommand{\rmSigma}{{\mathrm{\Sigma}}}
+\providecommand{\rmPhi}{{\mathrm{\Phi}}}
+\providecommand{\rmPsi}{{\mathrm{\Psi}}}
+\providecommand{\rmUpsilon}{{\mathrm{\Upsilon}}}
+\providecommand{\rmOmega}{{\mathrm{\Omega}}}
+
+\providecommand{\calA}{{\mathcal{A}}}
+\providecommand{\calB}{{\mathcal{B}}}
+\providecommand{\calC}{{\mathcal{C}}}
+\providecommand{\calD}{{\mathcal{D}}}
+\providecommand{\calE}{{\mathcal{E}}}
+\providecommand{\calF}{{\mathcal{F}}}
+\providecommand{\calG}{{\mathcal{G}}}
+\providecommand{\calH}{{\mathcal{H}}}
+\providecommand{\calI}{{\mathcal{I}}}
+\providecommand{\calJ}{{\mathcal{J}}}
+\providecommand{\calK}{{\mathcal{K}}}
+\providecommand{\calL}{{\mathcal{L}}}
+\providecommand{\calM}{{\mathcal{M}}}
+\providecommand{\calN}{{\mathcal{N}}}
+\providecommand{\calO}{{\mathcal{O}}}
+\providecommand{\calP}{{\mathcal{P}}}
+\providecommand{\calQ}{{\mathcal{Q}}}
+\providecommand{\calR}{{\mathcal{R}}}
+\providecommand{\calS}{{\mathcal{S}}}
+\providecommand{\calT}{{\mathcal{T}}}
+\providecommand{\calU}{{\mathcal{U}}}
+\providecommand{\calV}{{\mathcal{V}}}
+\providecommand{\calW}{{\mathcal{W}}}
+\providecommand{\calX}{{\mathcal{X}}}
+\providecommand{\calY}{{\mathcal{Y}}}
+\providecommand{\calZ}{{\mathcal{Z}}}
+
+\providecommand{\ha}{{\hat{a}}}
+\providecommand{\hb}{{\hat{b}}}
+\providecommand{\hc}{{\hat{c}}}
+\providecommand{\hd}{{\hat{d}}}
+\providecommand{\he}{{\hat{e}}}
+\providecommand{\hf}{{\hat{f}}}
+\providecommand{\hg}{{\hat{g}}}
+\providecommand{\hh}{{\hat{h}}}
+\providecommand{\hi}{{\hat{i}}}
+\providecommand{\hj}{{\hat{j}}}
+\providecommand{\hk}{{\hat{k}}}
+\providecommand{\hl}{{\hat{l}}}
+\providecommand{\hm}{{\hat{m}}}
+\providecommand{\hn}{{\hat{n}}}
+\providecommand{\ho}{{\hat{o}}}
+\providecommand{\hp}{{\hat{p}}}
+\providecommand{\hq}{{\hat{q}}}
+\providecommand{\hr}{{\hat{r}}}
+\providecommand{\hs}{{\hat{s}}}
+%\providecommand{\ht}{{\hat{t}}}
+\providecommand{\hu}{{\hat{u}}}
+\providecommand{\hv}{{\hat{v}}}
+\providecommand{\hw}{{\hat{w}}}
+\providecommand{\hx}{{\hat{x}}}
+\providecommand{\hy}{{\hat{y}}}
+\providecommand{\hz}{{\hat{z}}}
+\providecommand{\hA}{{\hat{A}}}
+\providecommand{\hB}{{\hat{B}}}
+\providecommand{\hC}{{\hat{C}}}
+\providecommand{\hD}{{\hat{D}}}
+\providecommand{\hE}{{\hat{E}}}
+\providecommand{\hF}{{\hat{F}}}
+\providecommand{\hG}{{\hat{G}}}
+\providecommand{\hH}{{\hat{H}}}
+\providecommand{\hI}{{\hat{I}}}
+\providecommand{\hJ}{{\hat{J}}}
+\providecommand{\hK}{{\hat{K}}}
+\providecommand{\hL}{{\hat{L}}}
+\providecommand{\hM}{{\hat{M}}}
+\providecommand{\hN}{{\hat{N}}}
+\providecommand{\hO}{{\hat{O}}}
+\providecommand{\hP}{{\hat{P}}}
+\providecommand{\hQ}{{\hat{Q}}}
+\providecommand{\hR}{{\hat{R}}}
+\providecommand{\hS}{{\hat{S}}}
+\providecommand{\hT}{{\hat{T}}}
+\providecommand{\hU}{{\hat{U}}}
+\providecommand{\hV}{{\hat{V}}}
+\providecommand{\hW}{{\hat{W}}}
+\providecommand{\hX}{{\hat{X}}}
+\providecommand{\hY}{{\hat{Y}}}
+\providecommand{\hZ}{{\hat{Z}}}
+\providecommand{\halpha}{{\hat{\alpha}}}
+\providecommand{\hbeta}{{\hat{\beta}}}
+\providecommand{\hgamma}{{\hat{\gamma}}}
+\providecommand{\hdelta}{{\hat{\delta}}}
+\providecommand{\hepsilon}{{\hat{\epsilon}}}
+\providecommand{\hzeta}{{\hat{\zeta}}}
+\providecommand{\heta}{{\hat{\eta}}}
+\providecommand{\htheta}{{\hat{\theta}}}
+\providecommand{\hiota}{{\hat{\iota}}}
+\providecommand{\hkappa}{{\hat{\kappa}}}
+\providecommand{\hlambda}{{\hat{\lambda}}}
+\providecommand{\hmu}{{\hat{\mu}}}
+\providecommand{\hnu}{{\hat{\nu}}}
+\providecommand{\hxi}{{\hat{\xi}}}
+\providecommand{\homicron}{{\hat{\omicron}}}
+\providecommand{\hpi}{{\hat{\pi}}}
+\providecommand{\hrho}{{\hat{\rho}}}
+\providecommand{\hsigma}{{\hat{\sigma}}}
+\providecommand{\htau}{{\hat{\tau}}}
+\providecommand{\hupsilon}{{\hat{\upsilon}}}
+\providecommand{\hphi}{{\hat{\phi}}}
+\providecommand{\hchi}{{\hat{\chi}}}
+\providecommand{\hpsi}{{\hat{\psi}}}
+\providecommand{\homega}{{\hat{\omega}}}
+\providecommand{\hGamma}{{\hat{\Gamma}}}
+\providecommand{\hDelta}{{\hat{\Delta}}}
+\providecommand{\hTheta}{{\hat{\Theta}}}
+\providecommand{\hLambda}{{\hat{\Lambda}}}
+\providecommand{\hXi}{{\hat{\Xi}}}
+\providecommand{\hPi}{{\hat{\Pi}}}
+\providecommand{\hSigma}{{\hat{\Sigma}}}
+\providecommand{\hPhi}{{\hat{\Phi}}}
+\providecommand{\hPsi}{{\hat{\Psi}}}
+\providecommand{\hUpsilon}{{\hat{\Upsilon}}}
+\providecommand{\hOmega}{{\hat{\Omega}}}
+
+\providecommand{\ta}{{\tilde{a}}}
+\providecommand{\tb}{{\tilde{b}}}
+\providecommand{\tc}{{\tilde{c}}}
+\providecommand{\td}{{\tilde{d}}}
+\providecommand{\te}{{\tilde{e}}}
+\providecommand{\tf}{{\tilde{f}}}
+\providecommand{\tg}{{\tilde{g}}}
+\providecommand{\th}{{\tilde{h}}}
+\providecommand{\ti}{{\tilde{i}}}
+\providecommand{\tj}{{\tilde{j}}}
+\providecommand{\tk}{{\tilde{k}}}
+\providecommand{\tl}{{\tilde{l}}}
+\providecommand{\tm}{{\tilde{m}}}
+\providecommand{\tn}{{\tilde{n}}}
+%\providecommand{\to}{{\tilde{o}}}
+\providecommand{\tp}{{\tilde{p}}}
+\providecommand{\tq}{{\tilde{q}}}
+%\providecommand{\tr}{{\tilde{r}}}
+\providecommand{\ts}{{\tilde{s}}}
+%\providecommand{\tt}{{\tilde{t}}}
+\providecommand{\tu}{{\tilde{u}}}
+\providecommand{\tv}{{\tilde{v}}}
+\providecommand{\tw}{{\tilde{w}}}
+\providecommand{\tx}{{\tilde{x}}}
+\providecommand{\ty}{{\tilde{y}}}
+\providecommand{\tz}{{\tilde{z}}}
+\providecommand{\tA}{{\tilde{A}}}
+\providecommand{\tB}{{\tilde{B}}}
+\providecommand{\tC}{{\tilde{C}}}
+\providecommand{\tD}{{\tilde{D}}}
+\providecommand{\tE}{{\tilde{E}}}
+\providecommand{\tF}{{\tilde{F}}}
+\providecommand{\tG}{{\tilde{G}}}
+\providecommand{\tH}{{\tilde{H}}}
+\providecommand{\tI}{{\tilde{I}}}
+\providecommand{\tJ}{{\tilde{J}}}
+\providecommand{\tK}{{\tilde{K}}}
+\providecommand{\tL}{{\tilde{L}}}
+\providecommand{\tM}{{\tilde{M}}}
+\providecommand{\tN}{{\tilde{N}}}
+\providecommand{\tO}{{\tilde{O}}}
+\providecommand{\tP}{{\tilde{P}}}
+\providecommand{\tQ}{{\tilde{Q}}}
+\providecommand{\tR}{{\tilde{R}}}
+\providecommand{\tS}{{\tilde{S}}}
+\providecommand{\tT}{{\tilde{T}}}
+\providecommand{\tU}{{\tilde{U}}}
+\providecommand{\tV}{{\tilde{V}}}
+\providecommand{\tW}{{\tilde{W}}}
+\providecommand{\tX}{{\tilde{X}}}
+\providecommand{\tY}{{\tilde{Y}}}
+\providecommand{\tZ}{{\tilde{Z}}}
+\providecommand{\talpha}{{\tilde{\alpha}}}
+\providecommand{\tbeta}{{\tilde{\beta}}}
+\providecommand{\tgamma}{{\tilde{\gamma}}}
+\providecommand{\tdelta}{{\tilde{\delta}}}
+\providecommand{\tepsilon}{{\tilde{\epsilon}}}
+\providecommand{\tzeta}{{\tilde{\zeta}}}
+\providecommand{\teta}{{\tilde{\eta}}}
+\providecommand{\ttheta}{{\tilde{\theta}}}
+\providecommand{\tiota}{{\tilde{\iota}}}
+\providecommand{\tkappa}{{\tilde{\kappa}}}
+\providecommand{\tlambda}{{\tilde{\lambda}}}
+\providecommand{\tmu}{{\tilde{\mu}}}
+\providecommand{\tnu}{{\tilde{\nu}}}
+\providecommand{\txi}{{\tilde{\xi}}}
+\providecommand{\tomicron}{{\tilde{\omicron}}}
+\providecommand{\tpi}{{\tilde{\pi}}}
+\providecommand{\trho}{{\tilde{\rho}}}
+\providecommand{\tsigma}{{\tilde{\sigma}}}
+\providecommand{\ttau}{{\tilde{\tau}}}
+\providecommand{\tupsilon}{{\tilde{\upsilon}}}
+\providecommand{\tphi}{{\tilde{\phi}}}
+\providecommand{\tchi}{{\tilde{\chi}}}
+\providecommand{\tpsi}{{\tilde{\psi}}}
+\providecommand{\tomega}{{\tilde{\omega}}}
+\providecommand{\tGamma}{{\tilde{\Gamma}}}
+\providecommand{\tDelta}{{\tilde{\Delta}}}
+\providecommand{\tTheta}{{\tilde{\Theta}}}
+\providecommand{\tLambda}{{\tilde{\Lambda}}}
+\providecommand{\tXi}{{\tilde{\Xi}}}
+\providecommand{\tPi}{{\tilde{\Pi}}}
+\providecommand{\tSigma}{{\tilde{\Sigma}}}
+\providecommand{\tPhi}{{\tilde{\Phi}}}
+\providecommand{\tPsi}{{\tilde{\Psi}}}
+\providecommand{\tUpsilon}{{\tilde{\Upsilon}}}
+\providecommand{\tOmega}{{\tilde{\Omega}}}
+
+\providecommand{\oa}{{\bar{a}}}
+\providecommand{\ob}{{\bar{b}}}
+\providecommand{\oc}{{\bar{c}}}
+\providecommand{\od}{{\bar{d}}}
+\providecommand{\oe}{{\bar{e}}}
+\providecommand{\of}{{\bar{f}}}
+\providecommand{\og}{{\bar{g}}}
+\providecommand{\oh}{{\bar{h}}}
+\providecommand{\oi}{{\bar{i}}}
+\providecommand{\oj}{{\bar{j}}}
+\providecommand{\ok}{{\bar{k}}}
+\providecommand{\ol}{{\bar{l}}}
+\providecommand{\om}{{\bar{m}}}
+\providecommand{\on}{{\bar{n}}}
+\providecommand{\oo}{{\bar{o}}}
+\providecommand{\op}{{\bar{p}}}
+\providecommand{\oq}{{\bar{q}}}
+%\providecommand{\or}{{\bar{r}}}
+\providecommand{\os}{{\bar{s}}}
+\providecommand{\ot}{{\bar{t}}}
+\providecommand{\ou}{{\bar{u}}}
+\providecommand{\ov}{{\bar{v}}}
+\providecommand{\ow}{{\bar{w}}}
+\providecommand{\ox}{{\bar{x}}}
+\providecommand{\oy}{{\bar{y}}}
+\providecommand{\oz}{{\bar{z}}}
+\providecommand{\oA}{{\bar{A}}}
+\providecommand{\oB}{{\bar{B}}}
+\providecommand{\oC}{{\bar{C}}}
+\providecommand{\oD}{{\bar{D}}}
+\providecommand{\oE}{{\bar{E}}}
+\providecommand{\oF}{{\bar{F}}}
+\providecommand{\oG}{{\bar{G}}}
+\providecommand{\oH}{{\bar{H}}}
+\providecommand{\oI}{{\bar{I}}}
+\providecommand{\oJ}{{\bar{J}}}
+\providecommand{\oK}{{\bar{K}}}
+\providecommand{\oL}{{\bar{L}}}
+\providecommand{\oM}{{\bar{M}}}
+\providecommand{\oN}{{\bar{N}}}
+\providecommand{\oO}{{\bar{O}}}
+\providecommand{\oP}{{\bar{P}}}
+\providecommand{\oQ}{{\bar{Q}}}
+\providecommand{\oR}{{\bar{R}}}
+\providecommand{\oS}{{\bar{S}}}
+\providecommand{\oT}{{\bar{T}}}
+\providecommand{\oU}{{\bar{U}}}
+\providecommand{\oV}{{\bar{V}}}
+\providecommand{\oW}{{\bar{W}}}
+\providecommand{\oX}{{\bar{X}}}
+\providecommand{\oY}{{\bar{Y}}}
+\providecommand{\oZ}{{\bar{Z}}}
+\providecommand{\oalpha}{{\bar{\alpha}}}
+\providecommand{\obeta}{{\bar{\beta}}}
+\providecommand{\ogamma}{{\bar{\gamma}}}
+\providecommand{\odelta}{{\bar{\delta}}}
+\providecommand{\oepsilon}{{\bar{\epsilon}}}
+\providecommand{\ozeta}{{\bar{\zeta}}}
+\providecommand{\oeta}{{\bar{\eta}}}
+\providecommand{\otheta}{{\bar{\theta}}}
+\providecommand{\oiota}{{\bar{\iota}}}
+\providecommand{\okappa}{{\bar{\kappa}}}
+\providecommand{\olambda}{{\bar{\lambda}}}
+\providecommand{\omu}{{\bar{\mu}}}
+\providecommand{\onu}{{\bar{\nu}}}
+\providecommand{\oxi}{{\bar{\xi}}}
+\providecommand{\oomicron}{{\bar{\omicron}}}
+\providecommand{\opi}{{\bar{\pi}}}
+\providecommand{\orho}{{\bar{\rho}}}
+\providecommand{\osigma}{{\bar{\sigma}}}
+\providecommand{\otau}{{\bar{\tau}}}
+\providecommand{\oupsilon}{{\bar{\upsilon}}}
+\providecommand{\ophi}{{\bar{\phi}}}
+\providecommand{\ochi}{{\bar{\chi}}}
+\providecommand{\opsi}{{\bar{\psi}}}
+\providecommand{\oomega}{{\bar{\omega}}}
+\providecommand{\oGamma}{{\bar{\Gamma}}}
+\providecommand{\oDelta}{{\bar{\Delta}}}
+\providecommand{\oTheta}{{\bar{\Theta}}}
+\providecommand{\oLambda}{{\bar{\Lambda}}}
+\providecommand{\oXi}{{\bar{\Xi}}}
+\providecommand{\oPi}{{\bar{\Pi}}}
+\providecommand{\oSigma}{{\bar{\Sigma}}}
+\providecommand{\oPhi}{{\bar{\Phi}}}
+\providecommand{\oPsi}{{\bar{\Psi}}}
+\providecommand{\oUpsilon}{{\bar{\Upsilon}}}
+\providecommand{\oOmega}{{\bar{\Omega}}}
+
+\providecommand{\ca}{{\check{a}}}
+\providecommand{\cb}{{\check{b}}}
+\providecommand{\cc}{{\check{c}}}
+\providecommand{\cd}{{\check{d}}}
+\providecommand{\ce}{{\check{e}}}
+\providecommand{\cf}{{\check{f}}}
+\providecommand{\cg}{{\check{g}}}
+\providecommand{\ch}{{\check{h}}}
+\providecommand{\ci}{{\check{i}}}
+\providecommand{\cj}{{\check{j}}}
+\providecommand{\ck}{{\check{k}}}
+\providecommand{\cl}{{\check{l}}}
+\providecommand{\cm}{{\check{m}}}
+\providecommand{\cn}{{\check{n}}}
+\providecommand{\co}{{\check{o}}}
+\providecommand{\cp}{{\check{p}}}
+\providecommand{\cq}{{\check{q}}}
+%\providecommand{\cr}{{\check{r}}}
+\providecommand{\cs}{{\check{s}}}
+\providecommand{\ct}{{\check{t}}}
+\providecommand{\cu}{{\check{u}}}
+\providecommand{\cv}{{\check{v}}}
+\providecommand{\cw}{{\check{w}}}
+\providecommand{\cx}{{\check{x}}}
+\providecommand{\cy}{{\check{y}}}
+\providecommand{\cz}{{\check{z}}}
+\providecommand{\cA}{{\check{A}}}
+\providecommand{\cB}{{\check{B}}}
+\providecommand{\cC}{{\check{C}}}
+\providecommand{\cD}{{\check{D}}}
+\providecommand{\cE}{{\check{E}}}
+\providecommand{\cF}{{\check{F}}}
+\providecommand{\cG}{{\check{G}}}
+\providecommand{\cH}{{\check{H}}}
+\providecommand{\cI}{{\check{I}}}
+\providecommand{\cJ}{{\check{J}}}
+\providecommand{\cK}{{\check{K}}}
+\providecommand{\cL}{{\check{L}}}
+\providecommand{\cM}{{\check{M}}}
+\providecommand{\cN}{{\check{N}}}
+\providecommand{\cO}{{\check{O}}}
+\providecommand{\cP}{{\check{P}}}
+\providecommand{\cQ}{{\check{Q}}}
+\providecommand{\cR}{{\check{R}}}
+\providecommand{\cS}{{\check{S}}}
+\providecommand{\cT}{{\check{T}}}
+\providecommand{\cU}{{\check{U}}}
+\providecommand{\cV}{{\check{V}}}
+\providecommand{\cW}{{\check{W}}}
+\providecommand{\cX}{{\check{X}}}
+\providecommand{\cY}{{\check{Y}}}
+\providecommand{\cZ}{{\check{Z}}}
+\providecommand{\calpha}{{\check{\alpha}}}
+\providecommand{\cbeta}{{\check{\beta}}}
+\providecommand{\cgamma}{{\check{\gamma}}}
+\providecommand{\cdelta}{{\check{\delta}}}
+\providecommand{\cepsilon}{{\check{\epsilon}}}
+\providecommand{\czeta}{{\check{\zeta}}}
+\providecommand{\ceta}{{\check{\eta}}}
+\providecommand{\ctheta}{{\check{\theta}}}
+\providecommand{\ciota}{{\check{\iota}}}
+\providecommand{\ckappa}{{\check{\kappa}}}
+\providecommand{\clambda}{{\check{\lambda}}}
+\providecommand{\cmu}{{\check{\mu}}}
+\providecommand{\cnu}{{\check{\nu}}}
+\providecommand{\cxi}{{\check{\xi}}}
+\providecommand{\comicron}{{\check{\omicron}}}
+\providecommand{\cpi}{{\check{\pi}}}
+\providecommand{\crho}{{\check{\rho}}}
+\providecommand{\csigma}{{\check{\sigma}}}
+\providecommand{\ctau}{{\check{\tau}}}
+\providecommand{\cupsilon}{{\check{\upsilon}}}
+\providecommand{\cphi}{{\check{\phi}}}
+\providecommand{\cchi}{{\check{\chi}}}
+\providecommand{\cpsi}{{\check{\psi}}}
+\providecommand{\comega}{{\check{\omega}}}
+\providecommand{\cGamma}{{\check{\Gamma}}}
+\providecommand{\cDelta}{{\check{\Delta}}}
+\providecommand{\cTheta}{{\check{\Theta}}}
+\providecommand{\cLambda}{{\check{\Lambda}}}
+\providecommand{\cXi}{{\check{\Xi}}}
+\providecommand{\cPi}{{\check{\Pi}}}
+\providecommand{\cSigma}{{\check{\Sigma}}}
+\providecommand{\cPhi}{{\check{\Phi}}}
+\providecommand{\cPsi}{{\check{\Psi}}}
+\providecommand{\cUpsilon}{{\check{\Upsilon}}}
+\providecommand{\cOmega}{{\check{\Omega}}}
+
+\providecommand{\ba}{{\bm a}}
+\providecommand{\bb}{{\bm b}}
+\providecommand{\bc}{{\bm c}}
+\providecommand{\bd}{{\bm d}}
+\providecommand{\be}{{\bm e}}
+%\providecommand{\bf}{{\bm f}}
+\providecommand{\bg}{{\bm g}}
+\providecommand{\bh}{{\bm h}}
+\providecommand{\bi}{{\bm i}}
+\providecommand{\bj}{{\bm j}}
+\providecommand{\bk}{{\bm k}}
+\providecommand{\bl}{{\bm l}}
+\providecommand{\bmm}{{\bm m}}
+\providecommand{\bn}{{\bm n}}
+\providecommand{\bo}{{\bm o}}
+\providecommand{\bp}{{\bm p}}
+\providecommand{\bq}{{\bm q}}
+\providecommand{\br}{{\bm r}}
+\providecommand{\bs}{{\bm s}}
+\providecommand{\bt}{{\bm t}}
+\providecommand{\bu}{{\bm u}}
+\providecommand{\bv}{{\bm v}}
+\providecommand{\bw}{{\bm w}}
+\providecommand{\bx}{{\bm x}}
+\providecommand{\by}{{\bm y}}
+\providecommand{\bz}{{\bm z}}
+\providecommand{\bA}{{\bm A}}
+\providecommand{\bB}{{\bm B}}
+\providecommand{\bC}{{\bm C}}
+\providecommand{\bD}{{\bm D}}
+\providecommand{\bE}{{\bm E}}
+\providecommand{\bF}{{\bm F}}
+\providecommand{\bG}{{\bm G}}
+\providecommand{\bH}{{\bm H}}
+\providecommand{\bI}{{\bm I}}
+\providecommand{\bJ}{{\bm J}}
+\providecommand{\bK}{{\bm K}}
+\providecommand{\bL}{{\bm L}}
+\providecommand{\bM}{{\bm M}}
+\providecommand{\bN}{{\bm N}}
+\providecommand{\bO}{{\bm O}}
+\providecommand{\bP}{{\bm P}}
+\providecommand{\bQ}{{\bm Q}}
+\providecommand{\bR}{{\bm R}}
+\providecommand{\bS}{{\bm S}}
+\providecommand{\bT}{{\bm T}}
+\providecommand{\bU}{{\bm U}}
+\providecommand{\bV}{{\bm V}}
+\providecommand{\bW}{{\bm W}}
+\providecommand{\bX}{{\bm X}}
+\providecommand{\bY}{{\bm Y}}
+\providecommand{\bZ}{{\bm Z}}
+\providecommand{\balpha}{{\bm \alpha}}
+\providecommand{\bbeta}{{\bm \beta}}
+\providecommand{\bgamma}{{\bm \gamma}}
+\providecommand{\bdelta}{{\bm \delta}}
+\providecommand{\bepsilon}{{\bm \epsilon}}
+\providecommand{\bzeta}{{\bm \zeta}}
+\providecommand{\bmeta}{{\bm \eta}}
+\providecommand{\btheta}{{\bm \theta}}
+\providecommand{\biota}{{\bm \iota}}
+\providecommand{\bkappa}{{\bm \kappa}}
+\providecommand{\blambda}{{\bm \lambda}}
+\providecommand{\bmu}{{\bm \mu}}
+\providecommand{\bnu}{{\bm \nu}}
+\providecommand{\bxi}{{\bm \xi}}
+\providecommand{\bomicron}{{\bm \omicron}}
+\providecommand{\bpi}{{\bm \pi}}
+\providecommand{\brho}{{\bm \rho}}
+\providecommand{\bsigma}{{\bm \sigma}}
+\providecommand{\btau}{{\bm \tau}}
+\providecommand{\bupsilon}{{\bm \upsilon}}
+\providecommand{\bphi}{{\bm \phi}}
+\providecommand{\bchi}{{\bm \chi}}
+\providecommand{\bpsi}{{\bm \psi}}
+\providecommand{\bomega}{{\bm \omega}}
+\providecommand{\bGamma}{{\bm \Gamma}}
+\providecommand{\bDelta}{{\bm \Delta}}
+\providecommand{\bTheta}{{\bm \Theta}}
+\providecommand{\bLambda}{{\bm \Lambda}}
+\providecommand{\bXi}{{\bm \Xi}}
+\providecommand{\bPi}{{\bm \Pi}}
+\providecommand{\bSigma}{{\bm \Sigma}}
+\providecommand{\bPhi}{{\bm \Phi}}
+\providecommand{\bPsi}{{\bm \Psi}}
+\providecommand{\bUpsilon}{{\bm \Upsilon}}
+\providecommand{\bOmega}{{\bm \Omega}}
+
+\providecommand{\hba}{{\hat{\bm a}}}
+\providecommand{\hbb}{{\hat{\bm b}}}
+\providecommand{\hbc}{{\hat{\bm c}}}
+\providecommand{\hbd}{{\hat{\bm d}}}
+\providecommand{\hbe}{{\hat{\bm e}}}
+\providecommand{\hbf}{{\hat{\bm f}}}
+\providecommand{\hbg}{{\hat{\bm g}}}
+\providecommand{\hbh}{{\hat{\bm h}}}
+\providecommand{\hbi}{{\hat{\bm i}}}
+\providecommand{\hbj}{{\hat{\bm j}}}
+\providecommand{\hbk}{{\hat{\bm k}}}
+\providecommand{\hbl}{{\hat{\bm l}}}
+\providecommand{\hbm}{{\hat{\bm m}}}
+\providecommand{\hbn}{{\hat{\bm n}}}
+\providecommand{\hbo}{{\hat{\bm o}}}
+\providecommand{\hbp}{{\hat{\bm p}}}
+\providecommand{\hbq}{{\hat{\bm q}}}
+\providecommand{\hbr}{{\hat{\bm r}}}
+\providecommand{\hbs}{{\hat{\bm s}}}
+\providecommand{\hbt}{{\hat{\bm t}}}
+\providecommand{\hbu}{{\hat{\bm u}}}
+\providecommand{\hbv}{{\hat{\bm v}}}
+\providecommand{\hbw}{{\hat{\bm w}}}
+\providecommand{\hbx}{{\hat{\bm x}}}
+\providecommand{\hby}{{\hat{\bm y}}}
+\providecommand{\hbz}{{\hat{\bm z}}}
+\providecommand{\hbA}{{\hat{\bm A}}}
+\providecommand{\hbB}{{\hat{\bm B}}}
+\providecommand{\hbC}{{\hat{\bm C}}}
+\providecommand{\hbD}{{\hat{\bm D}}}
+\providecommand{\hbE}{{\hat{\bm E}}}
+\providecommand{\hbF}{{\hat{\bm F}}}
+\providecommand{\hbG}{{\hat{\bm G}}}
+\providecommand{\hbH}{{\hat{\bm H}}}
+\providecommand{\hbI}{{\hat{\bm I}}}
+\providecommand{\hbJ}{{\hat{\bm J}}}
+\providecommand{\hbK}{{\hat{\bm K}}}
+\providecommand{\hbL}{{\hat{\bm L}}}
+\providecommand{\hbM}{{\hat{\bm M}}}
+\providecommand{\hbN}{{\hat{\bm N}}}
+\providecommand{\hbO}{{\hat{\bm O}}}
+\providecommand{\hbP}{{\hat{\bm P}}}
+\providecommand{\hbQ}{{\hat{\bm Q}}}
+\providecommand{\hbR}{{\hat{\bm R}}}
+\providecommand{\hbS}{{\hat{\bm S}}}
+\providecommand{\hbT}{{\hat{\bm T}}}
+\providecommand{\hbU}{{\hat{\bm U}}}
+\providecommand{\hbV}{{\hat{\bm V}}}
+\providecommand{\hbW}{{\hat{\bm W}}}
+\providecommand{\hbX}{{\hat{\bm X}}}
+\providecommand{\hbY}{{\hat{\bm Y}}}
+\providecommand{\hbZ}{{\hat{\bm Z}}}
+\providecommand{\hbalpha}{{\hat{\bm \alpha}}}
+\providecommand{\hbbeta}{{\hat{\bm \beta}}}
+\providecommand{\hbgamma}{{\hat{\bm \gamma}}}
+\providecommand{\hbdelta}{{\hat{\bm \delta}}}
+\providecommand{\hbepsilon}{{\hat{\bm \epsilon}}}
+\providecommand{\hbzeta}{{\hat{\bm \zeta}}}
+\providecommand{\hbmeta}{{\hat{\bm \eta}}}
+\providecommand{\hbtheta}{{\hat{\bm \theta}}}
+\providecommand{\hbiota}{{\hat{\bm \iota}}}
+\providecommand{\hbkappa}{{\hat{\bm \kappa}}}
+\providecommand{\hblambda}{{\hat{\bm \lambda}}}
+\providecommand{\hbmu}{{\hat{\bm \mu}}}
+\providecommand{\hbnu}{{\hat{\bm \nu}}}
+\providecommand{\hbxi}{{\hat{\bm \xi}}}
+\providecommand{\hbomicron}{{\hat{\bm \omicron}}}
+\providecommand{\hbpi}{{\hat{\bm \pi}}}
+\providecommand{\hbrho}{{\hat{\bm \rho}}}
+\providecommand{\hbsigma}{{\hat{\bm \sigma}}}
+\providecommand{\hbtau}{{\hat{\bm \tau}}}
+\providecommand{\hbupsilon}{{\hat{\bm \upsilon}}}
+\providecommand{\hbphi}{{\hat{\bm \phi}}}
+\providecommand{\hbchi}{{\hat{\bm \chi}}}
+\providecommand{\hbpsi}{{\hat{\bm \psi}}}
+\providecommand{\hbomega}{{\hat{\bm \omega}}}
+\providecommand{\hbGamma}{{\hat{\bm \Gamma}}}
+\providecommand{\hbDelta}{{\hat{\bm \Delta}}}
+\providecommand{\hbTheta}{{\hat{\bm \Theta}}}
+\providecommand{\hbLambda}{{\hat{\bm \Lambda}}}
+\providecommand{\hbXi}{{\hat{\bm \Xi}}}
+\providecommand{\hbPi}{{\hat{\bm \Pi}}}
+\providecommand{\hbSigma}{{\hat{\bm \Sigma}}}
+\providecommand{\hbPhi}{{\hat{\bm \Phi}}}
+\providecommand{\hbPsi}{{\hat{\bm \Psi}}}
+\providecommand{\hbUpsilon}{{\hat{\bm \Upsilon}}}
+\providecommand{\hbOmega}{{\hat{\bm \Omega}}}
+
+\providecommand{\tba}{{\tilde{\bm a}}}
+\providecommand{\tbb}{{\tilde{\bm b}}}
+\providecommand{\tbc}{{\tilde{\bm c}}}
+\providecommand{\tbd}{{\tilde{\bm d}}}
+\providecommand{\tbe}{{\tilde{\bm e}}}
+\providecommand{\tbf}{{\tilde{\bm f}}}
+\providecommand{\tbg}{{\tilde{\bm g}}}
+\providecommand{\tbh}{{\tilde{\bm h}}}
+\providecommand{\tbi}{{\tilde{\bm i}}}
+\providecommand{\tbj}{{\tilde{\bm j}}}
+\providecommand{\tbk}{{\tilde{\bm k}}}
+\providecommand{\tbl}{{\tilde{\bm l}}}
+\providecommand{\tbm}{{\tilde{\bm m}}}
+\providecommand{\tbn}{{\tilde{\bm n}}}
+\providecommand{\tbo}{{\tilde{\bm o}}}
+\providecommand{\tbp}{{\tilde{\bm p}}}
+\providecommand{\tbq}{{\tilde{\bm q}}}
+\providecommand{\tbr}{{\tilde{\bm r}}}
+\providecommand{\tbs}{{\tilde{\bm s}}}
+\providecommand{\tbt}{{\tilde{\bm t}}}
+\providecommand{\tbu}{{\tilde{\bm u}}}
+\providecommand{\tbv}{{\tilde{\bm v}}}
+\providecommand{\tbw}{{\tilde{\bm w}}}
+\providecommand{\tbx}{{\tilde{\bm x}}}
+\providecommand{\tby}{{\tilde{\bm y}}}
+\providecommand{\tbz}{{\tilde{\bm z}}}
+\providecommand{\tbA}{{\tilde{\bm A}}}
+\providecommand{\tbB}{{\tilde{\bm B}}}
+\providecommand{\tbC}{{\tilde{\bm C}}}
+\providecommand{\tbD}{{\tilde{\bm D}}}
+\providecommand{\tbE}{{\tilde{\bm E}}}
+\providecommand{\tbF}{{\tilde{\bm F}}}
+\providecommand{\tbG}{{\tilde{\bm G}}}
+\providecommand{\tbH}{{\tilde{\bm H}}}
+\providecommand{\tbI}{{\tilde{\bm I}}}
+\providecommand{\tbJ}{{\tilde{\bm J}}}
+\providecommand{\tbK}{{\tilde{\bm K}}}
+\providecommand{\tbL}{{\tilde{\bm L}}}
+\providecommand{\tbM}{{\tilde{\bm M}}}
+\providecommand{\tbN}{{\tilde{\bm N}}}
+\providecommand{\tbO}{{\tilde{\bm O}}}
+\providecommand{\tbP}{{\tilde{\bm P}}}
+\providecommand{\tbQ}{{\tilde{\bm Q}}}
+\providecommand{\tbR}{{\tilde{\bm R}}}
+\providecommand{\tbS}{{\tilde{\bm S}}}
+\providecommand{\tbT}{{\tilde{\bm T}}}
+\providecommand{\tbU}{{\tilde{\bm U}}}
+\providecommand{\tbV}{{\tilde{\bm V}}}
+\providecommand{\tbW}{{\tilde{\bm W}}}
+\providecommand{\tbX}{{\tilde{\bm X}}}
+\providecommand{\tbY}{{\tilde{\bm Y}}}
+\providecommand{\tbZ}{{\tilde{\bm Z}}}
+\providecommand{\tbalpha}{{\tilde{\bm \alpha}}}
+\providecommand{\tbbeta}{{\tilde{\bm \beta}}}
+\providecommand{\tbgamma}{{\tilde{\bm \gamma}}}
+\providecommand{\tbdelta}{{\tilde{\bm \delta}}}
+\providecommand{\tbepsilon}{{\tilde{\bm \epsilon}}}
+\providecommand{\tbzeta}{{\tilde{\bm \zeta}}}
+\providecommand{\tbmeta}{{\tilde{\bm \eta}}}
+\providecommand{\tbtheta}{{\tilde{\bm \theta}}}
+\providecommand{\tbiota}{{\tilde{\bm \iota}}}
+\providecommand{\tbkappa}{{\tilde{\bm \kappa}}}
+\providecommand{\tblambda}{{\tilde{\bm \lambda}}}
+\providecommand{\tbmu}{{\tilde{\bm \mu}}}
+\providecommand{\tbnu}{{\tilde{\bm \nu}}}
+\providecommand{\tbxi}{{\tilde{\bm \xi}}}
+\providecommand{\tbomicron}{{\tilde{\bm \omicron}}}
+\providecommand{\tbpi}{{\tilde{\bm \pi}}}
+\providecommand{\tbrho}{{\tilde{\bm \rho}}}
+\providecommand{\tbsigma}{{\tilde{\bm \sigma}}}
+\providecommand{\tbtau}{{\tilde{\bm \tau}}}
+\providecommand{\tbupsilon}{{\tilde{\bm \upsilon}}}
+\providecommand{\tbphi}{{\tilde{\bm \phi}}}
+\providecommand{\tbchi}{{\tilde{\bm \chi}}}
+\providecommand{\tbpsi}{{\tilde{\bm \psi}}}
+\providecommand{\tbomega}{{\tilde{\bm \omega}}}
+\providecommand{\tbGamma}{{\tilde{\bm \Gamma}}}
+\providecommand{\tbDelta}{{\tilde{\bm \Delta}}}
+\providecommand{\tbTheta}{{\tilde{\bm \Theta}}}
+\providecommand{\tbLambda}{{\tilde{\bm \Lambda}}}
+\providecommand{\tbXi}{{\tilde{\bm \Xi}}}
+\providecommand{\tbPi}{{\tilde{\bm \Pi}}}
+\providecommand{\tbSigma}{{\tilde{\bm \Sigma}}}
+\providecommand{\tbPhi}{{\tilde{\bm \Phi}}}
+\providecommand{\tbPsi}{{\tilde{\bm \Psi}}}
+\providecommand{\tbUpsilon}{{\tilde{\bm \Upsilon}}}
+\providecommand{\tbOmega}{{\tilde{\bm \Omega}}}
+
+\providecommand{\oba}{{\bar{\bm a}}}
+\providecommand{\obb}{{\bar{\bm b}}}
+\providecommand{\obc}{{\bar{\bm c}}}
+\providecommand{\obd}{{\bar{\bm d}}}
+\providecommand{\obe}{{\bar{\bm e}}}
+\providecommand{\obf}{{\bar{\bm f}}}
+\providecommand{\obg}{{\bar{\bm g}}}
+\providecommand{\obh}{{\bar{\bm h}}}
+\providecommand{\obi}{{\bar{\bm i}}}
+\providecommand{\obj}{{\bar{\bm j}}}
+\providecommand{\obk}{{\bar{\bm k}}}
+\providecommand{\obl}{{\bar{\bm l}}}
+\providecommand{\obm}{{\bar{\bm m}}}
+\providecommand{\obn}{{\bar{\bm n}}}
+\providecommand{\obo}{{\bar{\bm o}}}
+\providecommand{\obp}{{\bar{\bm p}}}
+\providecommand{\obq}{{\bar{\bm q}}}
+\providecommand{\obr}{{\bar{\bm r}}}
+\providecommand{\obs}{{\bar{\bm s}}}
+\providecommand{\obt}{{\bar{\bm t}}}
+\providecommand{\obu}{{\bar{\bm u}}}
+\providecommand{\obv}{{\bar{\bm v}}}
+\providecommand{\obw}{{\bar{\bm w}}}
+\providecommand{\obx}{{\bar{\bm x}}}
+\providecommand{\oby}{{\bar{\bm y}}}
+\providecommand{\obz}{{\bar{\bm z}}}
+\providecommand{\obA}{{\bar{\bm A}}}
+\providecommand{\obB}{{\bar{\bm B}}}
+\providecommand{\obC}{{\bar{\bm C}}}
+\providecommand{\obD}{{\bar{\bm D}}}
+\providecommand{\obE}{{\bar{\bm E}}}
+\providecommand{\obF}{{\bar{\bm F}}}
+\providecommand{\obG}{{\bar{\bm G}}}
+\providecommand{\obH}{{\bar{\bm H}}}
+\providecommand{\obI}{{\bar{\bm I}}}
+\providecommand{\obJ}{{\bar{\bm J}}}
+\providecommand{\obK}{{\bar{\bm K}}}
+\providecommand{\obL}{{\bar{\bm L}}}
+\providecommand{\obM}{{\bar{\bm M}}}
+\providecommand{\obN}{{\bar{\bm N}}}
+\providecommand{\obO}{{\bar{\bm O}}}
+\providecommand{\obP}{{\bar{\bm P}}}
+\providecommand{\obQ}{{\bar{\bm Q}}}
+\providecommand{\obR}{{\bar{\bm R}}}
+\providecommand{\obS}{{\bar{\bm S}}}
+\providecommand{\obT}{{\bar{\bm T}}}
+\providecommand{\obU}{{\bar{\bm U}}}
+\providecommand{\obV}{{\bar{\bm V}}}
+\providecommand{\obW}{{\bar{\bm W}}}
+\providecommand{\obX}{{\bar{\bm X}}}
+\providecommand{\obY}{{\bar{\bm Y}}}
+\providecommand{\obZ}{{\bar{\bm Z}}}
+\providecommand{\obalpha}{{\bar{\bm \alpha}}}
+\providecommand{\obbeta}{{\bar{\bm \beta}}}
+\providecommand{\obgamma}{{\bar{\bm \gamma}}}
+\providecommand{\obdelta}{{\bar{\bm \delta}}}
+\providecommand{\obepsilon}{{\bar{\bm \epsilon}}}
+\providecommand{\obzeta}{{\bar{\bm \zeta}}}
+\providecommand{\obmeta}{{\bar{\bm \eta}}}
+\providecommand{\obtheta}{{\bar{\bm \theta}}}
+\providecommand{\obiota}{{\bar{\bm \iota}}}
+\providecommand{\obkappa}{{\bar{\bm \kappa}}}
+\providecommand{\oblambda}{{\bar{\bm \lambda}}}
+\providecommand{\obmu}{{\bar{\bm \mu}}}
+\providecommand{\obnu}{{\bar{\bm \nu}}}
+\providecommand{\obxi}{{\bar{\bm \xi}}}
+\providecommand{\obomicron}{{\bar{\bm \omicron}}}
+\providecommand{\obpi}{{\bar{\bm \pi}}}
+\providecommand{\obrho}{{\bar{\bm \rho}}}
+\providecommand{\obsigma}{{\bar{\bm \sigma}}}
+\providecommand{\obtau}{{\bar{\bm \tau}}}
+\providecommand{\obupsilon}{{\bar{\bm \upsilon}}}
+\providecommand{\obphi}{{\bar{\bm \phi}}}
+\providecommand{\obchi}{{\bar{\bm \chi}}}
+\providecommand{\obpsi}{{\bar{\bm \psi}}}
+\providecommand{\obomega}{{\bar{\bm \omega}}}
+\providecommand{\obGamma}{{\bar{\bm \Gamma}}}
+\providecommand{\obDelta}{{\bar{\bm \Delta}}}
+\providecommand{\obTheta}{{\bar{\bm \Theta}}}
+\providecommand{\obLambda}{{\bar{\bm \Lambda}}}
+\providecommand{\obXi}{{\bar{\bm \Xi}}}
+\providecommand{\obPi}{{\bar{\bm \Pi}}}
+\providecommand{\obSigma}{{\bar{\bm \Sigma}}}
+\providecommand{\obPhi}{{\bar{\bm \Phi}}}
+\providecommand{\obPsi}{{\bar{\bm \Psi}}}
+\providecommand{\obUpsilon}{{\bar{\bm \Upsilon}}}
+\providecommand{\obOmega}{{\bar{\bm \Omega}}}
+
+\providecommand{\cba}{{\check{\bm a}}}
+\providecommand{\cbb}{{\check{\bm b}}}
+\providecommand{\cbc}{{\check{\bm c}}}
+\providecommand{\cbd}{{\check{\bm d}}}
+\providecommand{\cbe}{{\check{\bm e}}}
+\providecommand{\cbf}{{\check{\bm f}}}
+\providecommand{\cbg}{{\check{\bm g}}}
+\providecommand{\cbh}{{\check{\bm h}}}
+\providecommand{\cbi}{{\check{\bm i}}}
+\providecommand{\cbj}{{\check{\bm j}}}
+\providecommand{\cbk}{{\check{\bm k}}}
+\providecommand{\cbl}{{\check{\bm l}}}
+\providecommand{\cbm}{{\check{\bm m}}}
+\providecommand{\cbn}{{\check{\bm n}}}
+\providecommand{\cbc}{{\check{\bm c}}}
+\providecommand{\cbp}{{\check{\bm p}}}
+\providecommand{\cbq}{{\check{\bm q}}}
+\providecommand{\cbr}{{\check{\bm r}}}
+\providecommand{\cbs}{{\check{\bm s}}}
+\providecommand{\cbt}{{\check{\bm t}}}
+\providecommand{\cbu}{{\check{\bm u}}}
+\providecommand{\cbv}{{\check{\bm v}}}
+\providecommand{\cbw}{{\check{\bm w}}}
+\providecommand{\cbx}{{\check{\bm x}}}
+\providecommand{\cby}{{\check{\bm y}}}
+\providecommand{\cbz}{{\check{\bm z}}}
+\providecommand{\cbA}{{\check{\bm A}}}
+\providecommand{\cbB}{{\check{\bm B}}}
+\providecommand{\cbC}{{\check{\bm C}}}
+\providecommand{\cbD}{{\check{\bm D}}}
+\providecommand{\cbE}{{\check{\bm E}}}
+\providecommand{\cbF}{{\check{\bm F}}}
+\providecommand{\cbG}{{\check{\bm G}}}
+\providecommand{\cbH}{{\check{\bm H}}}
+\providecommand{\cbI}{{\check{\bm I}}}
+\providecommand{\cbJ}{{\check{\bm J}}}
+\providecommand{\cbK}{{\check{\bm K}}}
+\providecommand{\cbL}{{\check{\bm L}}}
+\providecommand{\cbM}{{\check{\bm M}}}
+\providecommand{\cbN}{{\check{\bm N}}}
+\providecommand{\cbO}{{\check{\bm O}}}
+\providecommand{\cbP}{{\check{\bm P}}}
+\providecommand{\cbQ}{{\check{\bm Q}}}
+\providecommand{\cbR}{{\check{\bm R}}}
+\providecommand{\cbS}{{\check{\bm S}}}
+\providecommand{\cbT}{{\check{\bm T}}}
+\providecommand{\cbU}{{\check{\bm U}}}
+\providecommand{\cbV}{{\check{\bm V}}}
+\providecommand{\cbW}{{\check{\bm W}}}
+\providecommand{\cbX}{{\check{\bm X}}}
+\providecommand{\cbY}{{\check{\bm Y}}}
+\providecommand{\cbZ}{{\check{\bm Z}}}
+\providecommand{\cbalpha}{{\check{\bm \alpha}}}
+\providecommand{\cbbeta}{{\check{\bm \beta}}}
+\providecommand{\cbgamma}{{\check{\bm \gamma}}}
+\providecommand{\cbdelta}{{\check{\bm \delta}}}
+\providecommand{\cbepsilon}{{\check{\bm \epsilon}}}
+\providecommand{\cbzeta}{{\check{\bm \zeta}}}
+\providecommand{\cbmeta}{{\check{\bm \eta}}}
+\providecommand{\cbtheta}{{\check{\bm \theta}}}
+\providecommand{\cbiota}{{\check{\bm \iota}}}
+\providecommand{\cbkappa}{{\check{\bm \kappa}}}
+\providecommand{\cblambda}{{\check{\bm \lambda}}}
+\providecommand{\cbmu}{{\check{\bm \mu}}}
+\providecommand{\cbnu}{{\check{\bm \nu}}}
+\providecommand{\cbxi}{{\check{\bm \xi}}}
+\providecommand{\cbomicron}{{\check{\bm \omicron}}}
+\providecommand{\cbpi}{{\check{\bm \pi}}}
+\providecommand{\cbrho}{{\check{\bm \rho}}}
+\providecommand{\cbsigma}{{\check{\bm \sigma}}}
+\providecommand{\cbtau}{{\check{\bm \tau}}}
+\providecommand{\cbupsilon}{{\check{\bm \upsilon}}}
+\providecommand{\cbphi}{{\check{\bm \phi}}}
+\providecommand{\cbchi}{{\check{\bm \chi}}}
+\providecommand{\cbpsi}{{\check{\bm \psi}}}
+\providecommand{\cbomega}{{\check{\bm \omega}}}
+\providecommand{\cbGamma}{{\check{\bm \Gamma}}}
+\providecommand{\cbDelta}{{\check{\bm \Delta}}}
+\providecommand{\cbTheta}{{\check{\bm \Theta}}}
+\providecommand{\cbLambda}{{\check{\bm \Lambda}}}
+\providecommand{\cbXi}{{\check{\bm \Xi}}}
+\providecommand{\cbPi}{{\check{\bm \Pi}}}
+\providecommand{\cbSigma}{{\check{\bm \Sigma}}}
+\providecommand{\cbPhi}{{\check{\bm \Phi}}}
+\providecommand{\cbPsi}{{\check{\bm \Psi}}}
+\providecommand{\cbUpsilon}{{\check{\bm \Upsilon}}}
+\providecommand{\cbOmega}{{\check{\bm \Omega}}}
+

@@ -19,3 +19,12 @@ main は常に worktree **`/Users/wadaketsunin/research-main`** に展開して�
 - worktree が無い場合は作り直す: `git -C /Users/wadaketsunin/research worktree add /Users/wadaketsunin/research-main main`
 - **`/Users/wadaketsunin/research` 自体が main にいるときは worktree は不要**（同じブランチは2か所でチェックアウトできないので作れない）。そのまま `docs/` を読み書きする。`exp/*` に切り替えたら、上のコマンドで worktree を作り直す。
 - 実験固有の文書（README の「現在の実験」節、`docs/results_*.html` など）は、従来どおり各 `exp/*` ブランチに置く。
+
+## 卒論も main が正本（実験が終わっても main に残す）
+
+卒論（LaTeX）と卒論メモは全実験に共通なので、共通文書と同じく **main だけが正本**。必ず `/Users/wadaketsunin/research-main` 側で書き、main にコミットする。`git merge main` で `exp/*` に入った写しは読まない・編集しない。
+
+- `thesis/` — 卒論本体。研究室テンプレート（inouelab-waseda/tex-template）由来、upLaTeX → biber → dvipdfmx。VS Code で `/Users/wadaketsunin/research-main/thesis` を開き、`tex/sample.tex` を保存すると `tex/.latexmkrc` と `.vscode/settings.json` で自動ビルドされる
+- `docs/卒論.md`（先生の指示）、`docs/卒論_構成案.md`（章立て）
+- `docs/卒論_先輩/` — 先輩の卒論 PDF。**リポジトリは PUBLIC なので git には載せない**（`.gitignore` 済み）
+- 実験の結果を卒論に使うときは、`exp/*` 側の結果を読んで `thesis/` に図表を起こし、main にコミットする
