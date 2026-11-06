@@ -21,9 +21,9 @@
 
 ## 卒論も main が正本（実験が終わっても main に残す）
 
-卒論（LaTeX）と卒論メモは全実験に共通なので、共通文書と同じく **main だけが正本**。卒論を書くときは `git switch main` して `/Users/wadaketsunin/research/thesis` を編集し、main にコミットする。`git merge main` で `exp/*` に入った写しは読まない・編集しない。
+卒論（LaTeX）と卒論メモは全実験に共通なので、共通文書と同じく **main だけが正本**。卒論を書くときは `git switch main` して `docs/thesis/` を編集し、main にコミットする。`git merge main` で `exp/*` に入った写しは読まない・編集しない。
 
-- `thesis/` — 卒論本体。研究室テンプレート（inouelab-waseda/tex-template）由来、upLaTeX → biber → dvipdfmx。VS Code で `/Users/wadaketsunin/research` を開いたまま `thesis/tex/sample.tex` を保存すると自動ビルドされる（設定は `thesis/tex/.latexmkrc` と、git 管理外のローカル `.vscode/settings.json`）
+- `docs/thesis/` — 卒論本体。研究室テンプレート（inouelab-waseda/tex-template）由来、upLaTeX → biber → dvipdfmx。VS Code で `/Users/wadaketsunin/research` を開いたまま `docs/thesis/sample.tex` を保存すると自動ビルドされる（設定は `docs/thesis/.latexmkrc` と、git 管理外のローカル `.vscode/settings.json`）
 - `docs/卒論.md`（先生の指示）、`docs/卒論_構成案.md`（章立て）
 - `docs/卒論_先輩/` — 先輩の卒論 PDF。**リポジトリは PUBLIC なので git には載せない**（`.gitignore` 済み）
-- 実験の結果を卒論に使うときは、`results/` や `git show exp/<ブランチ>:<パス>` で読んで `thesis/` に図表を起こし、main にコミットする
+- 実験の結果を卒論に使うときは、`results/` や `git show exp/<ブランチ>:<パス>` で読んで `docs/thesis/` に図表を起こし、main にコミットする
